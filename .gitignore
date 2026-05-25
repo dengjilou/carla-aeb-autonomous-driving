@@ -1,0 +1,52 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyd
+.venv/
+.env
+*.egg-info/
+dist/
+build/
+
+# IDE
+.idea/
+.vscode/
+.lingma/
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Logs & Output
+*.log
+output/
+results/
+
+# Videos (too large for GitHub)
+*.mp4
+*.avi
+*.mov
+
+# Temp files
+*.tmp
+*.pyc
+*.exp
+*.lib
+*.obj
+.pyd
+$null
+~$*
+
+# OS
+Thumbs.db
+.DS_Store
+
+# Data
+*.csv
+*.xlsx
+*.osm.pbf
+
+# Config
+config.yaml
+config_test.yaml
