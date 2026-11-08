@@ -113,6 +113,36 @@ minimum estimated gap of 2.14 m. The adjacent-lane brake check triggered no
 AEB command. The cut-in results apply to a kinematic target moving along the
 scripted trajectory.
 
+### Cut-in parameter sweep
+
+```powershell
+py -3.7 scenarios/run_cosim_aeb.py --sweep
+```
+
+The sweep crosses three initial longitudinal offsets (6, 12, and 18 m),
+three ego target speeds (10, 12, and 14 m/s), and two scripted lane-change
+durations (1.5 and 2.0 s). Each of the 18 combinations runs both detection
+modes with the same settings, for 36 simulator runs. The 6-second observation
+window, SUMO background traffic, and AEB thresholds remain fixed.
+
+`output/cosim-aeb/sweep/` holds the per-frame CSVs, `summary.json`, and
+`comparison.csv`. The frame logs include the target center's longitudinal
+and lateral position relative to the ego vehicle. The comparison reports
+first brake, first contact, and ego speed in the frame before contact.
+Pairs without SUMO traffic or with a non-target collision are marked
+invalid. Each remaining pair is classified by whether each mode collided
+with the scripted target during the run.
+
+In the [reference sweep](docs/cutin_sweep_reference.json), prediction
+avoided contact in 2 of 18 pairs. Both modes collided in 6 pairs and
+neither collided in the other 10. At a 12 m offset and 2.0 s lane change,
+the 12 m/s case avoided contact with prediction. At 14 m/s, both modes
+collided, but the ego speed in the frame before contact dropped from
+45.16 to 38.00 km/h. In the 6 m, 14 m/s, 1.5 s case, neither mode
+braked. The target center was 0.16 m behind the ego center at the start
+of lateral motion, and 7.66 m behind at the end of the scripted
+lane change. These results describe the scripted Town04 scenarios.
+
 ## Core Features
 
 ### Stanley Lateral Controller
