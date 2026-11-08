@@ -1,0 +1,112 @@
+{
+  "step_s": 0.05,
+  "seed": 42,
+  "gains": {
+    "gap_gain": 0.3,
+    "relative_gain": 0.4
+  },
+  "cases": [
+    {
+      "ego_speed_mps": 12.0,
+      "lead_speed_mps": 10.0,
+      "offset_m": 40.0,
+      "trigger_s": 4.0,
+      "duration_s": 18.0,
+      "name": "follow_dev",
+      "kind": "follow",
+      "split": "development"
+    },
+    {
+      "ego_speed_mps": 12.0,
+      "lead_speed_mps": 12.0,
+      "offset_m": 45.0,
+      "trigger_s": 4.0,
+      "duration_s": 18.0,
+      "name": "slowdown_dev",
+      "kind": "slowdown",
+      "split": "development",
+      "slow_speed_mps": 8.0
+    },
+    {
+      "ego_speed_mps": 14.0,
+      "lead_speed_mps": 11.0,
+      "offset_m": 44.0,
+      "trigger_s": 4.0,
+      "duration_s": 18.0,
+      "name": "follow_holdout",
+      "kind": "follow",
+      "split": "holdout"
+    },
+    {
+      "ego_speed_mps": 14.0,
+      "lead_speed_mps": 14.0,
+      "offset_m": 50.0,
+      "trigger_s": 4.0,
+      "duration_s": 18.0,
+      "name": "slowdown_holdout",
+      "kind": "slowdown",
+      "split": "holdout",
+      "slow_speed_mps": 9.0
+    },
+    {
+      "ego_speed_mps": 12.0,
+      "lead_speed_mps": 8.0,
+      "offset_m": 40.0,
+      "trigger_s": 6.0,
+      "duration_s": 14.0,
+      "name": "cutout_holdout",
+      "kind": "cutout",
+      "split": "holdout"
+    },
+    {
+      "ego_speed_mps": 12.0,
+      "lead_speed_mps": 8.0,
+      "offset_m": 12.0,
+      "trigger_s": 1.0,
+      "duration_s": 6.0,
+      "name": "cutin_holdout",
+      "kind": "cutin",
+      "split": "holdout"
+    },
+    {
+      "ego_speed_mps": 12.0,
+      "lead_speed_mps": 12.0,
+      "offset_m": 22.0,
+      "trigger_s": 1.0,
+      "duration_s": 6.0,
+      "name": "hard_brake_holdout",
+      "kind": "hard_brake",
+      "split": "holdout"
+    },
+    {
+      "ego_speed_mps": 12.0,
+      "lead_speed_mps": 12.0,
+      "offset_m": 6.0,
+      "trigger_s": 1.0,
+      "duration_s": 6.0,
+      "name": "adjacent_holdout",
+      "kind": "adjacent",
+      "split": "holdout"
+    },
+    {
+      "ego_speed_mps": 12.0,
+      "lead_speed_mps": 8.0,
+      "offset_m": 6.0,
+      "trigger_s": 1.0,
+      "duration_s": 6.0,
+      "name": "short_cutin_failure",
+      "kind": "cutin",
+      "split": "holdout"
+    },
+    {
+      "ego_speed_mps": 14.0,
+      "lead_speed_mps": 8.0,
+      "offset_m": 12.0,
+      "trigger_s": 1.0,
+      "duration_s": 6.0,
+      "name": "fast_cutin_failure",
+      "kind": "cutin",
+      "split": "holdout"
+    }
+  ]
+}

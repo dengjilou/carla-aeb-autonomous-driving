@@ -1,0 +1,1211 @@
+{
+  "gains": {
+    "gap_gain": 0.3,
+    "relative_gain": 0.4
+  },
+  "runs": {
+    "follow_dev_baseline": {
+      "config": {
+        "ego_speed_mps": 12.0,
+        "lead_speed_mps": 10.0,
+        "offset_m": 40.0,
+        "trigger_s": 4.0,
+        "duration_s": 18.0,
+        "name": "follow_dev",
+        "kind": "follow",
+        "split": "development",
+        "step_s": 0.05,
+        "seed": 42
+      },
+      "mode": "baseline",
+      "metrics": {
+        "valid": true,
+        "invalid_reasons": [],
+        "verdict": "fail",
+        "event_observed_s": 4.05,
+        "first_lead_selected_s": 0.0,
+        "resumed_cruise": null,
+        "collided": false,
+        "collision_callbacks": 0,
+        "first_collision_s": null,
+        "first_aeb_s": 12.85,
+        "aeb_interventions": 1,
+        "peak_deceleration_mps2": 27.01223373413086,
+        "braked_before_contact": null,
+        "pre_contact_speed_kmh": null,
+        "min_projected_gap_m": 9.618579398027453,
+        "steady_gap_rmse_m": 20.264945689921845,
+        "steady_speed_rmse_mps": 8.330746434451612,
+        "jerk_rms_mps3": 36.95929192395785,
+        "final_speed_mps": 1.910952640571395e-08,
+        "aeb_for_other_target": false
+      },
+      "collisions": []
+    },
+    "follow_dev_acc": {
+      "config": {
+        "ego_speed_mps": 12.0,
+        "lead_speed_mps": 10.0,
+        "offset_m": 40.0,
+        "trigger_s": 4.0,
+        "duration_s": 18.0,
+        "name": "follow_dev",
+        "kind": "follow",
+        "split": "development",
+        "step_s": 0.05,
+        "seed": 42
+      },
+      "mode": "acc",
+      "metrics": {
+        "valid": true,
+        "invalid_reasons": [],
+        "verdict": "pass",
+        "event_observed_s": 4.05,
+        "first_lead_selected_s": 0.0,
+        "resumed_cruise": null,
+        "collided": false,
+        "collision_callbacks": 0,
+        "first_collision_s": null,
+        "first_aeb_s": null,
+        "aeb_interventions": 0,
+        "peak_deceleration_mps2": 3.274078369140625,
+        "braked_before_contact": null,
+        "pre_contact_speed_kmh": null,
+        "min_projected_gap_m": 26.338028761315233,
+        "steady_gap_rmse_m": 0.852315337138402,
+        "steady_speed_rmse_mps": 0.12815113906018927,
+        "jerk_rms_mps3": 81.23820100857394,
+        "final_speed_mps": 9.962666511535645,
+        "aeb_for_other_target": false
+      },
+      "collisions": []
+    },
+    "slowdown_dev_baseline": {
+      "config": {
+        "ego_speed_mps": 12.0,
+        "lead_speed_mps": 12.0,
+        "offset_m": 45.0,
+        "trigger_s": 4.0,
+        "duration_s": 18.0,
+        "name": "slowdown_dev",
+        "kind": "slowdown",
+        "split": "development",
+        "slow_speed_mps": 8.0,
+        "step_s": 0.05,
+        "seed": 42
+      },
+      "mode": "baseline",
+      "metrics": {
+        "valid": true,
+        "invalid_reasons": [],
+        "verdict": "fail",
+        "event_observed_s": 4.8,
+        "first_lead_selected_s": 0.0,
+        "resumed_cruise": null,
+        "collided": false,
+        "collision_callbacks": 0,
+        "first_collision_s": null,
+        "first_aeb_s": 13.9,
+        "aeb_interventions": 1,
+        "peak_deceleration_mps2": 26.861143112182617,
+        "braked_before_contact": null,
+        "pre_contact_speed_kmh": null,
+        "min_projected_gap_m": 8.264502105132058,
+        "steady_gap_rmse_m": 14.299004071007019,
+        "steady_speed_rmse_mps": 5.950584471862633,
+        "jerk_rms_mps3": 37.88684240156369,
+        "final_speed_mps": 1.134921717493853e-06,
+        "aeb_for_other_target": false
+      },
+      "collisions": []
+    },
+    "slowdown_dev_acc": {
+      "config": {
+        "ego_speed_mps": 12.0,
+        "lead_speed_mps": 12.0,
+        "offset_m": 45.0,
+        "trigger_s": 4.0,
+        "duration_s": 18.0,
+        "name": "slowdown_dev",
+        "kind": "slowdown",
+        "split": "development",
+        "slow_speed_mps": 8.0,
+        "step_s": 0.05,
+        "seed": 42
+      },
+      "mode": "acc",
+      "metrics": {
+        "valid": true,
+        "invalid_reasons": [],
+        "verdict": "pass",
+        "event_observed_s": 4.8,
+        "first_lead_selected_s": 0.0,
+        "resumed_cruise": null,
+        "collided": false,
+        "collision_callbacks": 0,
+        "first_collision_s": null,
+        "first_aeb_s": null,
+        "aeb_interventions": 0,
+        "peak_deceleration_mps2": 4.41375732421875,
+        "braked_before_contact": null,
+        "pre_contact_speed_kmh": null,
+        "min_projected_gap_m": 22.874290969958608,
+        "steady_gap_rmse_m": 0.6111390543932874,
+        "steady_speed_rmse_mps": 0.3576579622825693,
+        "jerk_rms_mps3": 26.137408652781723,
+        "final_speed_mps": 8.08407211303711,
+        "aeb_for_other_target": false
+      },
+      "collisions": []
+    },
+    "follow_holdout_baseline": {
+      "config": {
+        "ego_speed_mps": 14.0,
+        "lead_speed_mps": 11.0,
+        "offset_m": 44.0,
+        "trigger_s": 4.0,
+        "duration_s": 18.0,
+        "name": "follow_holdout",
+        "kind": "follow",
+        "split": "holdout",
+        "step_s": 0.05,
+        "seed": 42
+      },
+      "mode": "baseline",
+      "metrics": {
+        "valid": true,
+        "invalid_reasons": [],
+        "verdict": "fail",
+        "event_observed_s": 4.05,
+        "first_lead_selected_s": 0.0,
+        "resumed_cruise": null,
+        "collided": false,
+        "collision_callbacks": 0,
+        "first_collision_s": null,
+        "first_aeb_s": 9.95,
+        "aeb_interventions": 1,
+        "peak_deceleration_mps2": 27.012481689453125,
+        "braked_before_contact": null,
+        "pre_contact_speed_kmh": null,
+        "min_projected_gap_m": 9.120921096904464,
+        "steady_gap_rmse_m": 27.866882082249766,
+        "steady_speed_rmse_mps": 10.823002216742015,
+        "jerk_rms_mps3": 28.82391811197071,
+        "final_speed_mps": 1.0491336155382669e-07,
+        "aeb_for_other_target": false
+      },
+      "collisions": []
+    },
+    "follow_holdout_acc": {
+      "config": {
+        "ego_speed_mps": 14.0,
+        "lead_speed_mps": 11.0,
+        "offset_m": 44.0,
+        "trigger_s": 4.0,
+        "duration_s": 18.0,
+        "name": "follow_holdout",
+        "kind": "follow",
+        "split": "holdout",
+        "step_s": 0.05,
+        "seed": 42
+      },
+      "mode": "acc",
+      "metrics": {
+        "valid": true,
+        "invalid_reasons": [],
+        "verdict": "pass",
+        "event_observed_s": 4.05,
+        "first_lead_selected_s": 0.0,
+        "resumed_cruise": null,
+        "collided": false,
+        "collision_callbacks": 0,
+        "first_collision_s": null,
+        "first_aeb_s": null,
+        "aeb_interventions": 0,
+        "peak_deceleration_mps2": 2.3743438720703125,
+        "braked_before_contact": null,
+        "pre_contact_speed_kmh": null,
+        "min_projected_gap_m": 28.244781341052832,
+        "steady_gap_rmse_m": 1.1427320501188682,
+        "steady_speed_rmse_mps": 0.12262144052824132,
+        "jerk_rms_mps3": 8.626558321381246,
+        "final_speed_mps": 10.946348190307617,
+        "aeb_for_other_target": false
+      },
+      "collisions": []
+    },
+    "slowdown_holdout_baseline": {
+      "config": {
+        "ego_speed_mps": 14.0,
+        "lead_speed_mps": 14.0,
+        "offset_m": 50.0,
+        "trigger_s": 4.0,
+        "duration_s": 18.0,
+        "name": "slowdown_holdout",
+        "kind": "slowdown",
+        "split": "holdout",
+        "slow_speed_mps": 9.0,
+        "step_s": 0.05,
+        "seed": 42
+      },
+      "mode": "baseline",
+      "metrics": {
+        "valid": true,
+        "invalid_reasons": [],
+        "verdict": "fail",
+        "event_observed_s": 4.8,
+        "first_lead_selected_s": 0.1,
+        "resumed_cruise": null,
+        "collided": false,
+        "collision_callbacks": 0,
+        "first_collision_s": null,
+        "first_aeb_s": 13.95,
+        "aeb_interventions": 1,
+        "peak_deceleration_mps2": 27.012505531311035,
+        "braked_before_contact": null,
+        "pre_contact_speed_kmh": null,
+        "min_projected_gap_m": 7.675200428074477,
+        "steady_gap_rmse_m": 15.890626436449779,
+        "steady_speed_rmse_mps": 6.404180910751586,
+        "jerk_rms_mps3": 28.848193440497216,
+        "final_speed_mps": 9.357086128147785e-07,
+        "aeb_for_other_target": false
+      },
+      "collisions": []
+    },
+    "slowdown_holdout_acc": {
+      "config": {
+        "ego_speed_mps": 14.0,
+        "lead_speed_mps": 14.0,
+        "offset_m": 50.0,
+        "trigger_s": 4.0,
+        "duration_s": 18.0,
+        "name": "slowdown_holdout",
+        "kind": "slowdown",
+        "split": "holdout",
+        "slow_speed_mps": 9.0,
+        "step_s": 0.05,
+        "seed": 42
+      },
+      "mode": "acc",
+      "metrics": {
+        "valid": true,
+        "invalid_reasons": [],
+        "verdict": "pass",
+        "event_observed_s": 4.8,
+        "first_lead_selected_s": 0.1,
+        "resumed_cruise": null,
+        "collided": false,
+        "collision_callbacks": 0,
+        "first_collision_s": null,
+        "first_aeb_s": null,
+        "aeb_interventions": 0,
+        "peak_deceleration_mps2": 6.545810699462891,
+        "braked_before_contact": null,
+        "pre_contact_speed_kmh": null,
+        "min_projected_gap_m": 24.887213813477935,
+        "steady_gap_rmse_m": 0.9086535147710304,
+        "steady_speed_rmse_mps": 0.49057080852574514,
+        "jerk_rms_mps3": 11.388397224876982,
+        "final_speed_mps": 9.091565132141113,
+        "aeb_for_other_target": false
+      },
+      "collisions": []
+    },
+    "cutout_holdout_baseline": {
+      "config": {
+        "ego_speed_mps": 12.0,
+        "lead_speed_mps": 8.0,
+        "offset_m": 40.0,
+        "trigger_s": 6.0,
+        "duration_s": 14.0,
+        "name": "cutout_holdout",
+        "kind": "cutout",
+        "split": "holdout",
+        "step_s": 0.05,
+        "seed": 42
+      },
+      "mode": "baseline",
+      "metrics": {
+        "valid": true,
+        "invalid_reasons": [],
+        "verdict": "fail",
+        "event_observed_s": 7.35,
+        "first_lead_selected_s": 0.0,
+        "resumed_cruise": false,
+        "collided": false,
+        "collision_callbacks": 0,
+        "first_collision_s": null,
+        "first_aeb_s": 6.9,
+        "aeb_interventions": 1,
+        "peak_deceleration_mps2": 26.860885620117188,
+        "braked_before_contact": null,
+        "pre_contact_speed_kmh": null,
+        "min_projected_gap_m": 8.732055790763143,
+        "steady_gap_rmse_m": null,
+        "steady_speed_rmse_mps": null,
+        "jerk_rms_mps3": 42.99582804890185,
+        "final_speed_mps": 1.909214297768358e-08,
+        "aeb_for_other_target": false
+      },
+      "collisions": []
+    },
+    "cutout_holdout_acc": {
+      "config": {
+        "ego_speed_mps": 12.0,
+        "lead_speed_mps": 8.0,
+        "offset_m": 40.0,
+        "trigger_s": 6.0,
+        "duration_s": 14.0,
+        "name": "cutout_holdout",
+        "kind": "cutout",
+        "split": "holdout",
+        "step_s": 0.05,
+        "seed": 42
+      },
+      "mode": "acc",
+      "metrics": {
+        "valid": true,
+        "invalid_reasons": [],
+        "verdict": "pass",
+        "event_observed_s": 7.35,
+        "first_lead_selected_s": 0.0,
+        "resumed_cruise": true,
+        "collided": false,
+        "collision_callbacks": 0,
+        "first_collision_s": null,
+        "first_aeb_s": null,
+        "aeb_interventions": 0,
+        "peak_deceleration_mps2": 4.014701843261719,
+        "braked_before_contact": null,
+        "pre_contact_speed_kmh": null,
+        "min_projected_gap_m": 23.798850898589237,
+        "steady_gap_rmse_m": null,
+        "steady_speed_rmse_mps": null,
+        "jerk_rms_mps3": 99.98741027418845,
+        "final_speed_mps": 11.7526273727417,
+        "aeb_for_other_target": false
+      },
+      "collisions": []
+    },
+    "cutin_holdout_baseline": {
+      "config": {
+        "ego_speed_mps": 12.0,
+        "lead_speed_mps": 8.0,
+        "offset_m": 12.0,
+        "trigger_s": 1.0,
+        "duration_s": 6.0,
+        "name": "cutin_holdout",
+        "kind": "cutin",
+        "split": "holdout",
+        "step_s": 0.05,
+        "seed": 42
+      },
+      "mode": "baseline",
+      "metrics": {
+        "valid": true,
+        "invalid_reasons": [],
+        "verdict": "pass",
+        "event_observed_s": 1.85,
+        "first_lead_selected_s": 1.1,
+        "resumed_cruise": null,
+        "collided": false,
+        "collision_callbacks": 0,
+        "first_collision_s": null,
+        "first_aeb_s": 1.1,
+        "aeb_interventions": 1,
+        "peak_deceleration_mps2": 26.879758834838867,
+        "braked_before_contact": null,
+        "pre_contact_speed_kmh": null,
+        "min_projected_gap_m": 0.6047865823694774,
+        "steady_gap_rmse_m": null,
+        "steady_speed_rmse_mps": null,
+        "jerk_rms_mps3": 101.94296547871784,
+        "final_speed_mps": 7.629396350239404e-07,
+        "aeb_for_other_target": false
+      },
+      "collisions": []
+    },
+    "cutin_holdout_acc": {
+      "config": {
+        "ego_speed_mps": 12.0,
+        "lead_speed_mps": 8.0,
+        "offset_m": 12.0,
+        "trigger_s": 1.0,
+        "duration_s": 6.0,
+        "name": "cutin_holdout",
+        "kind": "cutin",
+        "split": "holdout",
+        "step_s": 0.05,
+        "seed": 42
+      },
+      "mode": "acc",
+      "metrics": {
+        "valid": true,
+        "invalid_reasons": [],
+        "verdict": "pass",
+        "event_observed_s": 1.85,
+        "first_lead_selected_s": 1.1,
+        "resumed_cruise": null,
+        "collided": false,
+        "collision_callbacks": 0,
+        "first_collision_s": null,
+        "first_aeb_s": 1.1,
+        "aeb_interventions": 1,
+        "peak_deceleration_mps2": 26.879758834838867,
+        "braked_before_contact": null,
+        "pre_contact_speed_kmh": null,
+        "min_projected_gap_m": 0.6047865823694774,
+        "steady_gap_rmse_m": null,
+        "steady_speed_rmse_mps": null,
+        "jerk_rms_mps3": 101.94296547871784,
+        "final_speed_mps": 7.629396350239404e-07,
+        "aeb_for_other_target": false
+      },
+      "collisions": []
+    },
+    "hard_brake_holdout_baseline": {
+      "config": {
+        "ego_speed_mps": 12.0,
+        "lead_speed_mps": 12.0,
+        "offset_m": 22.0,
+        "trigger_s": 1.0,
+        "duration_s": 6.0,
+        "name": "hard_brake_holdout",
+        "kind": "hard_brake",
+        "split": "holdout",
+        "step_s": 0.05,
+        "seed": 42
+      },
+      "mode": "baseline",
+      "metrics": {
+        "valid": true,
+        "invalid_reasons": [],
+        "verdict": "pass",
+        "event_observed_s": 2.7,
+        "first_lead_selected_s": 0.0,
+        "resumed_cruise": null,
+        "collided": false,
+        "collision_callbacks": 0,
+        "first_collision_s": null,
+        "first_aeb_s": 2.7,
+        "aeb_interventions": 1,
+        "peak_deceleration_mps2": 26.985340118408203,
+        "braked_before_contact": null,
+        "pre_contact_speed_kmh": null,
+        "min_projected_gap_m": 1.3296702390056985,
+        "steady_gap_rmse_m": null,
+        "steady_speed_rmse_mps": null,
+        "jerk_rms_mps3": 68.40073863978971,
+        "final_speed_mps": 4.034365588267974e-07,
+        "aeb_for_other_target": false
+      },
+      "collisions": []
+    },
+    "hard_brake_holdout_acc": {
+      "config": {
+        "ego_speed_mps": 12.0,
+        "lead_speed_mps": 12.0,
+        "offset_m": 22.0,
+        "trigger_s": 1.0,
+        "duration_s": 6.0,
+        "name": "hard_brake_holdout",
+        "kind": "hard_brake",
+        "split": "holdout",
+        "step_s": 0.05,
+        "seed": 42
+      },
+      "mode": "acc",
+      "metrics": {
+        "valid": true,
+        "invalid_reasons": [],
+        "verdict": "fail",
+        "event_observed_s": 2.7,
+        "first_lead_selected_s": 0.0,
+        "resumed_cruise": null,
+        "collided": false,
+        "collision_callbacks": 0,
+        "first_collision_s": null,
+        "first_aeb_s": null,
+        "aeb_interventions": 0,
+        "peak_deceleration_mps2": 26.91108226776123,
+        "braked_before_contact": null,
+        "pre_contact_speed_kmh": null,
+        "min_projected_gap_m": 12.59325682785494,
+        "steady_gap_rmse_m": null,
+        "steady_speed_rmse_mps": null,
+        "jerk_rms_mps3": 119.8775237992038,
+        "final_speed_mps": 1.2151708602905273,
+        "aeb_for_other_target": false
+      },
+      "collisions": []
+    },
+    "adjacent_holdout_baseline": {
+      "config": {
+        "ego_speed_mps": 12.0,
+        "lead_speed_mps": 12.0,
+        "offset_m": 6.0,
+        "trigger_s": 1.0,
+        "duration_s": 6.0,
+        "name": "adjacent_holdout",
+        "kind": "adjacent",
+        "split": "holdout",
+        "step_s": 0.05,
+        "seed": 42
+      },
+      "mode": "baseline",
+      "metrics": {
+        "valid": true,
+        "invalid_reasons": [],
+        "verdict": "pass",
+        "event_observed_s": 2.7,
+        "first_lead_selected_s": null,
+        "resumed_cruise": null,
+        "collided": false,
+        "collision_callbacks": 0,
+        "first_collision_s": null,
+        "first_aeb_s": null,
+        "aeb_interventions": 0,
+        "peak_deceleration_mps2": 4.41375732421875,
+        "braked_before_contact": null,
+        "pre_contact_speed_kmh": null,
+        "min_projected_gap_m": null,
+        "steady_gap_rmse_m": null,
+        "steady_speed_rmse_mps": null,
+        "jerk_rms_mps3": 44.63532527056752,
+        "final_speed_mps": 11.698885917663574,
+        "aeb_for_other_target": false
+      },
+      "collisions": []
+    },
+    "adjacent_holdout_acc": {
+      "config": {
+        "ego_speed_mps": 12.0,
+        "lead_speed_mps": 12.0,
+        "offset_m": 6.0,
+        "trigger_s": 1.0,
+        "duration_s": 6.0,
+        "name": "adjacent_holdout",
+        "kind": "adjacent",
+        "split": "holdout",
+        "step_s": 0.05,
+        "seed": 42
+      },
+      "mode": "acc",
+      "metrics": {
+        "valid": true,
+        "invalid_reasons": [],
+        "verdict": "pass",
+        "event_observed_s": 2.7,
+        "first_lead_selected_s": null,
+        "resumed_cruise": null,
+        "collided": false,
+        "collision_callbacks": 0,
+        "first_collision_s": null,
+        "first_aeb_s": null,
+        "aeb_interventions": 0,
+        "peak_deceleration_mps2": 4.41375732421875,
+        "braked_before_contact": null,
+        "pre_contact_speed_kmh": null,
+        "min_projected_gap_m": null,
+        "steady_gap_rmse_m": null,
+        "steady_speed_rmse_mps": null,
+        "jerk_rms_mps3": 44.63532527056752,
+        "final_speed_mps": 11.698885917663574,
+        "aeb_for_other_target": false
+      },
+      "collisions": []
+    },
+    "short_cutin_failure_baseline": {
+      "config": {
+        "ego_speed_mps": 12.0,
+        "lead_speed_mps": 8.0,
+        "offset_m": 6.0,
+        "trigger_s": 1.0,
+        "duration_s": 6.0,
+        "name": "short_cutin_failure",
+        "kind": "cutin",
+        "split": "holdout",
+        "step_s": 0.05,
+        "seed": 42
+      },
+      "mode": "baseline",
+      "metrics": {
+        "valid": true,
+        "invalid_reasons": [],
+        "verdict": "fail",
+        "event_observed_s": 1.85,
+        "first_lead_selected_s": 1.1,
+        "resumed_cruise": null,
+        "collided": true,
+        "collision_callbacks": 29,
+        "first_collision_s": 2.0,
+        "first_aeb_s": 1.1,
+        "aeb_interventions": 1,
+        "peak_deceleration_mps2": 7.796039581298828,
+        "braked_before_contact": true,
+        "pre_contact_speed_kmh": 31.11939926147461,
+        "min_projected_gap_m": null,
+        "steady_gap_rmse_m": null,
+        "steady_speed_rmse_mps": null,
+        "jerk_rms_mps3": 115.51494115510248,
+        "final_speed_mps": 1.3353036365515436e-07,
+        "aeb_for_other_target": false
+      },
+      "collisions": [
+        {
+          "time_s": 2.0,
+          "other_id": 418
+        },
+        {
+          "time_s": 2.1,
+          "other_id": 418
+        },
+        {
+          "time_s": 2.15,
+          "other_id": 418
+        },
+        {
+          "time_s": 2.15,
+          "other_id": 418
+        },
+        {
+          "time_s": 2.15,
+          "other_id": 418
+        },
+        {
+          "time_s": 2.2,
+          "other_id": 418
+        },
+        {
+          "time_s": 2.2,
+          "other_id": 418
+        },
+        {
+          "time_s": 2.2,
+          "other_id": 418
+        },
+        {
+          "time_s": 2.25,
+          "other_id": 418
+        },
+        {
+          "time_s": 2.25,
+          "other_id": 418
+        },
+        {
+          "time_s": 2.25,
+          "other_id": 418
+        },
+        {
+          "time_s": 2.3,
+          "other_id": 418
+        },
+        {
+          "time_s": 2.3,
+          "other_id": 418
+        },
+        {
+          "time_s": 2.3,
+          "other_id": 418
+        },
+        {
+          "time_s": 2.35,
+          "other_id": 418
+        },
+        {
+          "time_s": 2.35,
+          "other_id": 418
+        },
+        {
+          "time_s": 2.4,
+          "other_id": 418
+        },
+        {
+          "time_s": 2.4,
+          "other_id": 418
+        },
+        {
+          "time_s": 2.4,
+          "other_id": 418
+        },
+        {
+          "time_s": 2.4,
+          "other_id": 418
+        },
+        {
+          "time_s": 2.4,
+          "other_id": 418
+        },
+        {
+          "time_s": 2.45,
+          "other_id": 418
+        },
+        {
+          "time_s": 2.45,
+          "other_id": 418
+        },
+        {
+          "time_s": 2.5,
+          "other_id": 418
+        },
+        {
+          "time_s": 2.55,
+          "other_id": 418
+        },
+        {
+          "time_s": 2.55,
+          "other_id": 418
+        },
+        {
+          "time_s": 2.55,
+          "other_id": 418
+        },
+        {
+          "time_s": 2.55,
+          "other_id": 418
+        },
+        {
+          "time_s": 2.55,
+          "other_id": 418
+        }
+      ]
+    },
+    "short_cutin_failure_acc": {
+      "config": {
+        "ego_speed_mps": 12.0,
+        "lead_speed_mps": 8.0,
+        "offset_m": 6.0,
+        "trigger_s": 1.0,
+        "duration_s": 6.0,
+        "name": "short_cutin_failure",
+        "kind": "cutin",
+        "split": "holdout",
+        "step_s": 0.05,
+        "seed": 42
+      },
+      "mode": "acc",
+      "metrics": {
+        "valid": true,
+        "invalid_reasons": [],
+        "verdict": "fail",
+        "event_observed_s": 1.85,
+        "first_lead_selected_s": 1.1,
+        "resumed_cruise": null,
+        "collided": true,
+        "collision_callbacks": 29,
+        "first_collision_s": 2.0,
+        "first_aeb_s": 1.1,
+        "aeb_interventions": 1,
+        "peak_deceleration_mps2": 7.796039581298828,
+        "braked_before_contact": true,
+        "pre_contact_speed_kmh": 31.11939926147461,
+        "min_projected_gap_m": null,
+        "steady_gap_rmse_m": null,
+        "steady_speed_rmse_mps": null,
+        "jerk_rms_mps3": 115.51494115510248,
+        "final_speed_mps": 1.3353036365515436e-07,
+        "aeb_for_other_target": false
+      },
+      "collisions": [
+        {
+          "time_s": 2.0,
+          "other_id": 428
+        },
+        {
+          "time_s": 2.1,
+          "other_id": 428
+        },
+        {
+          "time_s": 2.15,
+          "other_id": 428
+        },
+        {
+          "time_s": 2.15,
+          "other_id": 428
+        },
+        {
+          "time_s": 2.15,
+          "other_id": 428
+        },
+        {
+          "time_s": 2.2,
+          "other_id": 428
+        },
+        {
+          "time_s": 2.2,
+          "other_id": 428
+        },
+        {
+          "time_s": 2.2,
+          "other_id": 428
+        },
+        {
+          "time_s": 2.25,
+          "other_id": 428
+        },
+        {
+          "time_s": 2.25,
+          "other_id": 428
+        },
+        {
+          "time_s": 2.25,
+          "other_id": 428
+        },
+        {
+          "time_s": 2.3,
+          "other_id": 428
+        },
+        {
+          "time_s": 2.3,
+          "other_id": 428
+        },
+        {
+          "time_s": 2.3,
+          "other_id": 428
+        },
+        {
+          "time_s": 2.35,
+          "other_id": 428
+        },
+        {
+          "time_s": 2.35,
+          "other_id": 428
+        },
+        {
+          "time_s": 2.4,
+          "other_id": 428
+        },
+        {
+          "time_s": 2.4,
+          "other_id": 428
+        },
+        {
+          "time_s": 2.4,
+          "other_id": 428
+        },
+        {
+          "time_s": 2.4,
+          "other_id": 428
+        },
+        {
+          "time_s": 2.4,
+          "other_id": 428
+        },
+        {
+          "time_s": 2.45,
+          "other_id": 428
+        },
+        {
+          "time_s": 2.45,
+          "other_id": 428
+        },
+        {
+          "time_s": 2.5,
+          "other_id": 428
+        },
+        {
+          "time_s": 2.55,
+          "other_id": 428
+        },
+        {
+          "time_s": 2.55,
+          "other_id": 428
+        },
+        {
+          "time_s": 2.55,
+          "other_id": 428
+        },
+        {
+          "time_s": 2.55,
+          "other_id": 428
+        },
+        {
+          "time_s": 2.55,
+          "other_id": 428
+        }
+      ]
+    },
+    "fast_cutin_failure_baseline": {
+      "config": {
+        "ego_speed_mps": 14.0,
+        "lead_speed_mps": 8.0,
+        "offset_m": 12.0,
+        "trigger_s": 1.0,
+        "duration_s": 6.0,
+        "name": "fast_cutin_failure",
+        "kind": "cutin",
+        "split": "holdout",
+        "step_s": 0.05,
+        "seed": 42
+      },
+      "mode": "baseline",
+      "metrics": {
+        "valid": true,
+        "invalid_reasons": [],
+        "verdict": "fail",
+        "event_observed_s": 1.85,
+        "first_lead_selected_s": 1.1,
+        "resumed_cruise": null,
+        "collided": true,
+        "collision_callbacks": 12,
+        "first_collision_s": 2.0,
+        "first_aeb_s": 1.1,
+        "aeb_interventions": 1,
+        "peak_deceleration_mps2": 6.815948486328125,
+        "braked_before_contact": true,
+        "pre_contact_speed_kmh": 38.00211753845215,
+        "min_projected_gap_m": -3.2583739229500113,
+        "steady_gap_rmse_m": null,
+        "steady_speed_rmse_mps": null,
+        "jerk_rms_mps3": 61.65151022638518,
+        "final_speed_mps": 6.676455654996971e-08,
+        "aeb_for_other_target": false
+      },
+      "collisions": [
+        {
+          "time_s": 2.0,
+          "other_id": 438
+        },
+        {
+          "time_s": 2.05,
+          "other_id": 438
+        },
+        {
+          "time_s": 2.1,
+          "other_id": 438
+        },
+        {
+          "time_s": 2.15,
+          "other_id": 438
+        },
+        {
+          "time_s": 2.2,
+          "other_id": 438
+        },
+        {
+          "time_s": 2.25,
+          "other_id": 438
+        },
+        {
+          "time_s": 2.25,
+          "other_id": 438
+        },
+        {
+          "time_s": 2.25,
+          "other_id": 438
+        },
+        {
+          "time_s": 2.25,
+          "other_id": 438
+        },
+        {
+          "time_s": 2.3,
+          "other_id": 438
+        },
+        {
+          "time_s": 2.3,
+          "other_id": 438
+        },
+        {
+          "time_s": 2.35,
+          "other_id": 438
+        }
+      ]
+    },
+    "fast_cutin_failure_acc": {
+      "config": {
+        "ego_speed_mps": 14.0,
+        "lead_speed_mps": 8.0,
+        "offset_m": 12.0,
+        "trigger_s": 1.0,
+        "duration_s": 6.0,
+        "name": "fast_cutin_failure",
+        "kind": "cutin",
+        "split": "holdout",
+        "step_s": 0.05,
+        "seed": 42
+      },
+      "mode": "acc",
+      "metrics": {
+        "valid": true,
+        "invalid_reasons": [],
+        "verdict": "fail",
+        "event_observed_s": 1.85,
+        "first_lead_selected_s": 1.1,
+        "resumed_cruise": null,
+        "collided": true,
+        "collision_callbacks": 12,
+        "first_collision_s": 2.0,
+        "first_aeb_s": 1.1,
+        "aeb_interventions": 1,
+        "peak_deceleration_mps2": 6.815948486328125,
+        "braked_before_contact": true,
+        "pre_contact_speed_kmh": 38.00211753845215,
+        "min_projected_gap_m": -3.2583739229500113,
+        "steady_gap_rmse_m": null,
+        "steady_speed_rmse_mps": null,
+        "jerk_rms_mps3": 61.65151022638518,
+        "final_speed_mps": 1.9073732460128667e-07,
+        "aeb_for_other_target": false
+      },
+      "collisions": [
+        {
+          "time_s": 2.0,
+          "other_id": 448
+        },
+        {
+          "time_s": 2.05,
+          "other_id": 448
+        },
+        {
+          "time_s": 2.1,
+          "other_id": 448
+        },
+        {
+          "time_s": 2.15,
+          "other_id": 448
+        },
+        {
+          "time_s": 2.2,
+          "other_id": 448
+        },
+        {
+          "time_s": 2.25,
+          "other_id": 448
+        },
+        {
+          "time_s": 2.25,
+          "other_id": 448
+        },
+        {
+          "time_s": 2.25,
+          "other_id": 448
+        },
+        {
+          "time_s": 2.25,
+          "other_id": 448
+        },
+        {
+          "time_s": 2.3,
+          "other_id": 448
+        },
+        {
+          "time_s": 2.3,
+          "other_id": 448
+        },
+        {
+          "time_s": 2.35,
+          "other_id": 448
+        }
+      ]
+    }
+  },
+  "verification": {
+    "repeated_runs": 20,
+    "max_event_time_shift_s": 0,
+    "carla_version": "0.9.13",
+    "sumo_version": "1.18.0"
+  },
+  "development_grid": [
+    {
+      "gap_gain": 0.1,
+      "relative_gain": 0.4,
+      "rank": [
+        0,
+        5.783127057024869,
+        108.27014070709566,
+        0.1,
+        0.4
+      ]
+    },
+    {
+      "gap_gain": 0.1,
+      "relative_gain": 0.8,
+      "rank": [
+        0,
+        9.184982217142402,
+        93.53457041645507,
+        0.1,
+        0.8
+      ]
+    },
+    {
+      "gap_gain": 0.1,
+      "relative_gain": 1.2,
+      "rank": [
+        0,
+        12.14403806420465,
+        89.21323094538751,
+        0.1,
+        1.2
+      ]
+    },
+    {
+      "gap_gain": 0.2,
+      "relative_gain": 0.4,
+      "rank": [
+        0,
+        2.523637188667797,
+        109.63147250294762,
+        0.2,
+        0.4
+      ]
+    },
+    {
+      "gap_gain": 0.2,
+      "relative_gain": 0.8,
+      "rank": [
+        0,
+        4.098136391517611,
+        97.2250565437736,
+        0.2,
+        0.8
+      ]
+    },
+    {
+      "gap_gain": 0.2,
+      "relative_gain": 1.2,
+      "rank": [
+        0,
+        6.086052193415307,
+        88.40556107349627,
+        0.2,
+        1.2
+      ]
+    },
+    {
+      "gap_gain": 0.3,
+      "relative_gain": 0.4,
+      "rank": [
+        0,
+        1.4634543915316893,
+        107.37560966135567,
+        0.3,
+        0.4
+      ]
+    },
+    {
+      "gap_gain": 0.3,
+      "relative_gain": 0.8,
+      "rank": [
+        0,
+        2.3960651563725706,
+        100.6223448495285,
+        0.3,
+        0.8
+      ]
+    },
+    {
+      "gap_gain": 0.3,
+      "relative_gain": 1.2,
+      "rank": [
+        0,
+        3.630719775690447,
+        90.94560361247605,
+        0.3,
+        1.2
+      ]
+    }
+  ]
+}

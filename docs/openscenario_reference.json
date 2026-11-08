@@ -1,0 +1,30 @@
+{
+  "openscenario": {
+    "returncode": 0,
+    "scenario_success": true,
+    "parameters": {
+      "initial_speed": 10.0,
+      "trigger": 4.0,
+      "output": "output\\openscenario"
+    },
+    "samples": 124,
+    "max_speed_mps": 10.187752723693848,
+    "final_speed_mps": 4.032289505004883,
+    "speed_drop_after_first_sample_s": 4.500000067055225,
+    "observed_near_4_mps": 4.183032989501953
+  },
+  "openscenario-variant": {
+    "returncode": 0,
+    "scenario_success": true,
+    "parameters": {
+      "initial_speed": 12.0,
+      "trigger": 6.0,
+      "output": "output\\openscenario-variant"
+    },
+    "samples": 164,
+    "max_speed_mps": 12.155373573303223,
+    "final_speed_mps": 2.5028250217437744,
+    "speed_drop_after_first_sample_s": 6.600000098347664,
+    "observed_near_4_mps": 4.15708065032959
+  }
+}

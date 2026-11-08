@@ -4,6 +4,11 @@
 
 Autonomous driving simulation project based on CARLA 0.9.13, featuring lateral control (Stanley), longitudinal control (PID), and AEB (Automatic Emergency Braking) system validation.
 
+The [longitudinal benchmark](docs/longitudinal.md) compares constant-speed
+control with time-headway ACC under the same AEB policy. It includes JSON
+scenarios, frame logs, development/holdout splits, and a separate runnable
+OpenSCENARIO example.
+
 ## Tech Stack
 
 - **Simulation**: CARLA 0.9.13
