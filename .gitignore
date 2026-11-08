@@ -25,6 +25,7 @@ results/
 
 # Videos (too large for GitHub)
 *.mp4
+!docs/cosim_aeb_12m.mp4
 *.avi
 *.mov
 

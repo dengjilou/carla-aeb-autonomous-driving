@@ -12,7 +12,7 @@ Autonomous driving simulation project based on CARLA 0.9.13, featuring lateral c
 - **Longitudinal Control**: PID (Python simple_pid + C++ extension, 1.7x speedup)
 - **Safety System**: AEB 4-state FSM (Normal -> Warning -> Partial Brake -> Full Brake)
 - **AI Integration**: ZhipuAI JSON scene -> CARLA auto-configuration
-- **Testing**: pytest (54 test cases: 35 AEB + 19 C++ PID)
+- **Testing**: pytest (42 AEB cases and a separate C++ PID suite)
 
 ## Project Structure
 
@@ -26,9 +26,10 @@ carla-aeb-autonomous-driving/
 |   +-- aeb_validation_test.py      # AEB CCRb + Cut-in validation
 |   +-- aeb_ccrb_headless.py        # AEB headless mode
 |   +-- run_aeb_ccrb.py             # AEB subprocess wrapper
+|   +-- run_cosim_aeb.py            # CARLA–SUMO AEB regression
 |   +-- run_kml_demo.py             # KML mountain road driving
 +-- tests/                # Unit tests
-|   +-- test_aeb.py                 # AEB tests (35/35)
+|   +-- test_aeb.py                 # AEB tests (42 cases)
 |   +-- test_pid_cpp.py             # C++ PID tests (19/19)
 +-- ai_integration/       # AI scene generation
 |   +-- carla_ai_scene.py           # ZhipuAI JSON -> CARLA config
@@ -69,6 +70,49 @@ python setup_pid_cpp.py build_ext --inplace
 python scenarios/aeb_validation_test.py
 ```
 
+### Reproduce the CARLA–SUMO AEB comparison
+
+Use the Windows precompiled CARLA 0.9.13 package, SUMO 1.18.0, and 64-bit
+Python 3.7. The runner uses the Town04 network and bridge shipped with CARLA.
+From the repository root in PowerShell, substitute your installation paths:
+
+```powershell
+$env:CARLA_HOME = 'D:\Carla_0.9.13'
+$env:SUMO_HOME = 'D:\DLR\SUMO'
+$env:PYTHONPATH = "$env:CARLA_HOME\PythonAPI\carla\dist\carla-0.9.13-py3.7-win-amd64.egg"
+py -3.7 -m pip install numpy pygame opencv-python simple-pid lxml
+
+# Start CARLA and wait for port 2000 to be ready.
+Start-Process -FilePath "$env:CARLA_HOME\CarlaUE4.exe" -WorkingDirectory $env:CARLA_HOME -WindowStyle Hidden -ArgumentList '-RenderOffScreen','-quality-level=Low','-nosound'
+py -3.7 "$env:CARLA_HOME\PythonAPI\util\config.py" --map Town04
+py -3.7 scenarios/run_cosim_aeb.py
+```
+
+Run on an idle Town04 session. The script starts SUMO for each case, runs both
+simulators at 50 ms per step, and restores the CARLA world settings afterward.
+It writes a JSON summary and nine per-frame CSV files to `output/cosim-aeb/`.
+The [reference run](docs/cosim_aeb_reference.json) was recorded with CARLA
+0.9.13 and SUMO 1.18.0.
+
+The two detection modes use the same AEB thresholds, initial ego speed of
+12 m/s, scripted cut-in trajectory, and bridge seed of 42. The baseline
+selects the target after its body overlaps the ego vehicle's travel corridor.
+The predictive mode can select it earlier and keep tracking while the bodies
+can still overlap.
+
+| Initial cut-in offset | First brake, overlap only → predictive | Collision, overlap only → predictive |
+| --- | --- | --- |
+| 6 m | 2.45 s → 1.10 s | Yes → Yes |
+| 12 m | 1.85 s → 1.10 s | Yes → No |
+| 18 m | 1.85 s → 1.10 s | No → No |
+
+In the 6 m case, both runs collided at 2.00 s. Ego speed in the last frame
+before contact fell from 39.46 to 31.12 km/h with predictive detection.
+In the same-lane brake check, the enabled run avoided collision with a
+minimum estimated gap of 2.14 m. The adjacent-lane brake check triggered no
+AEB command. The cut-in results apply to a kinematic target moving along the
+scripted trajectory.
+
 ## Core Features
 
 ### Stanley Lateral Controller
@@ -85,7 +129,11 @@ python scenarios/aeb_validation_test.py
 - 4 states: Normal -> Warning -> Partial Brake -> Full Brake
 - One-way lock (can only escalate, not de-escalate)
 - TTC + distance dual protection
-- Distance emergency protection (<10m forces full brake)
+- Distance protection (<10m forces full brake, 10m to <15m requires at least partial brake)
+- The stronger demand from TTC and distance wins
+- Vehicle body overlap with the ego's straight travel corridor filters out adjacent traffic
+- Relative lateral motion can flag a vehicle predicted to enter that corridor within one second
+- A tracked target stays eligible while its body can still overlap the ego vehicle, even after its center passes behind the ego's center
 
 ### Self-Monitoring and Adaptive Repair
 - 7 monitoring items: collision, drift, stagnation, AEB failure, pygame, vehicle spawn, target behavior
@@ -99,9 +147,27 @@ cd tests
 pytest -v
 ```
 
-Expected: 54 test cases (35 AEB + 19 C++ PID)
+Run `python -m pytest tests/test_aeb.py` from the project root to run the 42 AEB cases by themselves.
 
 ## Demo
+
+### CARLA–SUMO 12 m Cut-in Comparison
+
+[Watch the side-by-side MP4](docs/cosim_aeb_12m.mp4)
+
+![Town04 comparison at the baseline collision frame](docs/images/cosim_aeb_12m.jpg)
+
+The third-person RGB cameras follow the ego vehicles in two live runs. The
+overlay pairs each camera frame with the matching control log and marks the
+collision using CARLA's collision sensor. The replay runs at quarter speed.
+To record it again, use the co-simulation setup above with rendering enabled:
+
+```powershell
+py -3.7 -m pip install imageio-ffmpeg==0.5.1
+py -3.7 scenarios/record_cosim_aeb.py
+```
+
+The recording and its measured results are saved under `output/cosim-aeb/`.
 
 ### AEB CCRb (Front Vehicle Emergency Brake)
 ![aeb_ccrb_demo](docs/images/aeb_ccrb_demo.gif)

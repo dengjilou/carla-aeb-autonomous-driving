@@ -152,7 +152,8 @@ def spawn_vehicles(world, num_vehicles):
 class AEBController:
     """AEB自动紧急制动控制器"""
     
-    def __init__(self, ttc_warning=2.5, ttc_partial=1.6, ttc_full=0.6, detection_range=50.0):
+    def __init__(self, ttc_warning=2.5, ttc_partial=1.6, ttc_full=0.6, detection_range=50.0, *,
+                 predict_cutin=True):
         # 状态机状态：0-正常 1-预警 2-部分制动 3-全力制动
         self.NORMAL = 0
         self.WARNING = 1
@@ -164,6 +165,9 @@ class AEBController:
         self.ttc_partial = ttc_partial  # 部分制动TTC阈值（秒）
         self.ttc_full = ttc_full  # 全力制动TTC阈值（秒）
         self.detection_range = detection_range  # 检测范围（米）
+        self.predict_cutin = predict_cutin
+        self.last_target_id = None
+        self.last_target_entry_s = None
         
         # 制动输出参数
         self.warning_brake = 0.0  # 预警时不制动
@@ -186,7 +190,8 @@ class AEBController:
         
         return distance / relative_speed
     
-    def detect_front_vehicle(self, hero_vehicle, world, detection_range=None, target_velocity=None):
+    def detect_front_vehicle(self, hero_vehicle, world, detection_range=None, target_velocity=None,
+                             velocity_overrides=None):
         """
         检测前方车辆，返回最近车辆的距离和相对速度
         
@@ -195,11 +200,15 @@ class AEBController:
         - world: CARLA世界对象
         - detection_range: 检测范围（米），使用实例默认值
         - target_velocity: 外部注入的目标车速度（m/s），用于物理关闭时的虚拟速度
+        - velocity_overrides: 仿真对象ID到世界坐标速度的映射，用于运动学场景
         
         返回:
         - distance: 前方最近车辆距离（米），未检测到返回None
         - relative_speed: 相对速度（m/s），未检测到返回0
         """
+        previous_target_id = self.last_target_id
+        self.last_target_id = None
+        self.last_target_entry_s = None
         try:
             if detection_range is None:
                 detection_range = self.detection_range
@@ -208,12 +217,20 @@ class AEBController:
             hero_transform = hero_vehicle.get_transform()
             hero_location = hero_transform.location
             hero_heading = math.radians(hero_transform.rotation.yaw)
+            sin_heading = math.sin(hero_heading)
+            cos_heading = math.cos(hero_heading)
+            hero_extent = hero_vehicle.bounding_box.extent
+            hero_velocity = hero_vehicle.get_velocity()
+            hero_speed = hero_velocity.x * cos_heading + hero_velocity.y * sin_heading
+            hero_lateral = -hero_velocity.x * sin_heading + hero_velocity.y * cos_heading
             
             # 获取世界中的所有车辆
             vehicle_list = world.get_actors().filter('vehicle.*')
             
             closest_distance = None
             closest_vehicle = None
+            closest_speed = 0.0
+            closest_entry_s = 0.0
             
             for vehicle in vehicle_list:
                 if vehicle.id == hero_vehicle.id:
@@ -222,7 +239,6 @@ class AEBController:
                 # 获取目标车辆位置和速度
                 vehicle_transform = vehicle.get_transform()
                 vehicle_location = vehicle_transform.location
-                vehicle_velocity = vehicle.get_velocity()
                 
                 # 计算相对位置
                 dx = vehicle_location.x - hero_location.x
@@ -235,15 +251,40 @@ class AEBController:
                 if distance > detection_range:
                     continue
                 
-                # 检查是否在本车前方（点积大于0表示在前方）
-                dot_product = dx * math.cos(hero_heading) + dy * math.sin(hero_heading)
-                if dot_product < 0:
-                    continue  # 在后方，跳过
-                
-                # 检查是否在同一车道附近（横向偏移小）
-                cross_product = dx * (-math.sin(hero_heading)) + dy * math.cos(hero_heading)
-                if abs(cross_product) > 10.0:  # 放宽到10m以覆盖Cut-in场景（目标车从相邻车道切入）
+                dot_product = dx * cos_heading + dy * sin_heading
+                was_target = self.predict_cutin and vehicle.id == previous_target_id
+                if dot_product < 0 and not was_target:
                     continue
+                
+                cross_product = -dx * sin_heading + dy * cos_heading
+                relative_yaw = math.radians(vehicle_transform.rotation.yaw) - hero_heading
+                extent = vehicle.bounding_box.extent
+                target_half_width = (abs(math.sin(relative_yaw)) * extent.x
+                                     + abs(math.cos(relative_yaw)) * extent.y)
+                target_half_length = (abs(math.cos(relative_yaw)) * extent.x
+                                      + abs(math.sin(relative_yaw)) * extent.y)
+                overlap_length = hero_extent.x + target_half_length
+                # 目标中心略过本车时，车身仍可能重叠。
+                if dot_product < -overlap_length:
+                    continue
+                velocity = velocity_overrides.get(vehicle.id) if velocity_overrides else None
+                if velocity is None:
+                    velocity = vehicle.get_velocity()
+                forward_speed = velocity.x * cos_heading + velocity.y * sin_heading
+                lateral_gap = abs(cross_product) - hero_extent.y - target_half_width
+                entry_s = 0.0
+                if lateral_gap > 0.0:
+                    if not self.predict_cutin:
+                        continue
+                    lateral_speed = -velocity.x * sin_heading + velocity.y * cos_heading
+                    inward_speed = (hero_lateral - lateral_speed) * math.copysign(1.0, cross_product)
+                    forward_closing = hero_speed - forward_speed
+                    if inward_speed < 0.3 or (not was_target and forward_closing <= 0.1):
+                        continue
+                    entry_s = lateral_gap / inward_speed
+                    # 预测一秒内侵入直线行驶走廊，且相交时目标尚未完全落到本车后方。
+                    if entry_s > 1.0 or dot_product - forward_closing * entry_s < -overlap_length:
+                        continue
                 
                 # 调试日志：打印候选车辆信息
                 # print(f"  [AEB调试] 候选车辆ID={vehicle.id}, 距离={distance:.1f}m, 横向={abs(cross_product):.1f}m")
@@ -252,25 +293,16 @@ class AEBController:
                 if closest_distance is None or distance < closest_distance:
                     closest_distance = distance
                     closest_vehicle = vehicle
+                    closest_speed = forward_speed
+                    closest_entry_s = entry_s
             
             if closest_vehicle is None:
                 return None, 0
             
-            # 计算相对速度
-            hero_velocity = hero_vehicle.get_velocity()
-            hero_speed = math.sqrt(hero_velocity.x**2 + hero_velocity.y**2)
-            
-            # 目标车辆速度在本车前进方向的分量
-            if target_velocity is not None:
-                # 使用外部注入的目标车速度（物理关闭期间）
-                vehicle_speed_forward = target_velocity
-            else:
-                vehicle_speed_forward = (vehicle_velocity.x * math.cos(hero_heading) + 
-                                         vehicle_velocity.y * math.sin(hero_heading))
-            
-            # 相对速度（本车速度 - 前车速度，正数表示接近）
+            vehicle_speed_forward = closest_speed if target_velocity is None else target_velocity
             relative_speed = hero_speed - vehicle_speed_forward
-            
+            self.last_target_id = closest_vehicle.id
+            self.last_target_entry_s = closest_entry_s
             return closest_distance, relative_speed
             
         except Exception as e:
@@ -307,10 +339,10 @@ class AEBController:
             target_state = self.NORMAL
         
         # 距离紧急保护：当距离过近时强制升级（防止相对速度=0时TTC=∞导致无法升级）
-        if distance < 10.0 and self.state < self.FULL_BRAKE:
+        if distance < 10.0:
             target_state = self.FULL_BRAKE
-        elif distance < 15.0 and self.state < self.PARTIAL_BRAKE:
-            target_state = self.PARTIAL_BRAKE
+        elif distance < 15.0:
+            target_state = max(target_state, self.PARTIAL_BRAKE)
         
         # 单向锁定：只允许状态升级，不允许降级
         if target_state > self.state:

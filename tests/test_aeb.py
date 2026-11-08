@@ -7,15 +7,94 @@ AEB自动紧急制动控制器单元测试
 import sys
 import os
 import math
+from types import SimpleNamespace
 import pytest
 
-# 添加CARLA PythonAPI路径
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
-sys.path.insert(0, r'D:\CARLA_Latest\PythonAPI')
-sys.path.insert(0, r'D:\CARLA_Latest\PythonAPI\carla')
+# 从当前仓库导入控制器，CARLA SDK 由运行环境提供。
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'controllers'))
 
 # 导入待测的AEB控制器
 from stanley_pid_controller import AEBController
+
+
+def vehicle(actor_id, x, speed, y=0.0, yaw=0.0, lateral_speed=0.0):
+    return SimpleNamespace(
+        id=actor_id,
+        bounding_box=SimpleNamespace(extent=SimpleNamespace(x=2.3, y=0.95)),
+        get_transform=lambda: SimpleNamespace(
+            location=SimpleNamespace(x=x, y=y), rotation=SimpleNamespace(yaw=yaw)
+        ),
+        get_velocity=lambda: SimpleNamespace(x=speed, y=lateral_speed),
+    )
+
+
+def test_target_speed_is_independent_of_actor_order():
+    ego = vehicle(1, 0.0, 20.0)
+    lead = vehicle(2, 20.0, 10.0)
+    other = vehicle(3, 35.0, 19.0)
+    for order in [(lead, other), (other, lead)]:
+        world = SimpleNamespace(
+            get_actors=lambda: SimpleNamespace(filter=lambda pattern: (ego,) + order)
+        )
+        controller = AEBController()
+        distance, relative_speed = controller.detect_front_vehicle(ego, world)
+        assert controller.last_target_id == lead.id
+        assert distance == pytest.approx(20.0)
+        assert relative_speed == pytest.approx(10.0)
+        assert controller.calculate_ttc(distance, relative_speed) == pytest.approx(2.0)
+
+
+def test_adjacent_vehicle_is_detected_when_its_body_enters_ego_corridor():
+    ego = vehicle(1, 0.0, 12.0)
+    controller = AEBController()
+
+    def detect(target):
+        world = SimpleNamespace(
+            get_actors=lambda: SimpleNamespace(filter=lambda pattern: [ego, target])
+        )
+        return controller.detect_front_vehicle(ego, world)
+
+    assert detect(vehicle(2, 6.0, 0.0, y=3.5)) == (None, 0)
+    assert controller.last_target_id is None
+    distance, closing = detect(vehicle(2, 6.0, 0.0, y=2.2, yaw=-15.0))
+    assert controller.last_target_id == 2
+    assert closing == 12.0
+    assert controller.update_state(distance, closing) == 1.0
+    assert detect(vehicle(2, 6.0, 0.0, y=3.5)) == (None, 0)
+    assert controller.last_target_id is None
+
+
+@pytest.mark.parametrize("lateral_speed, expected_target", [(-1.75, 2), (-0.2, None), (0.0, None), (1.75, None)])
+def test_predict_cutin_only_for_near_term_lateral_approach(lateral_speed, expected_target):
+    ego = vehicle(1, 0.0, 12.0)
+    neighbor = vehicle(2, 6.0, 8.0, y=3.5, lateral_speed=lateral_speed)
+    world = SimpleNamespace(get_actors=lambda: SimpleNamespace(filter=lambda pattern: [ego, neighbor]))
+    controller = AEBController()
+
+    distance, closing = controller.detect_front_vehicle(ego, world)
+
+    assert controller.last_target_id == expected_target
+    if expected_target is not None:
+        assert closing == pytest.approx(4.0)
+        assert controller.update_state(distance, closing) == 1.0
+    else:
+        assert (distance, closing) == (None, 0)
+
+
+def test_keep_braking_while_cutin_vehicle_can_still_overlap():
+    controller = AEBController()
+
+    def brake(ego_speed, target_x, target_y):
+        ego = vehicle(1, 0.0, ego_speed)
+        target = vehicle(2, target_x, 8.0, y=target_y, lateral_speed=-1.75)
+        world = SimpleNamespace(get_actors=lambda: SimpleNamespace(filter=lambda pattern: [ego, target]))
+        return controller.update_state(*controller.detect_front_vehicle(ego, world))
+
+    assert brake(12.0, 4.0, 3.0) == 1.0
+    assert brake(8.0, -0.2, 2.2) == 1.0
+    assert brake(8.0, -0.2, 1.8) == 1.0
+    assert brake(8.0, -0.3, 1.7) == 1.0
+    assert brake(8.0, -5.0, 1.0) == 0.0
 
 
 class TestAEBController:
@@ -84,8 +163,8 @@ class TestStateTransitions:
     
     def test_normal_to_warning(self, aeb):
         """测试正常状态到预警状态的转换"""
-        # TTC=3.5秒，距离=10米，应触发预警
-        brake = aeb.update_state(distance=10.0, relative_speed=3.0)
+        # TTC=3.5秒，车距在距离保护范围之外。
+        brake = aeb.update_state(distance=21.0, relative_speed=6.0)
         assert aeb.state == aeb.WARNING
         assert aeb.get_state_name() == "预警"
         assert brake >= 0.0  # 预警状态下制动输出为0.0
@@ -93,11 +172,11 @@ class TestStateTransitions:
     def test_warning_to_partial_brake(self, aeb):
         """测试预警状态到部分制动状态的转换"""
         # 先触发预警
-        aeb.update_state(distance=10.0, relative_speed=3.0)
+        aeb.update_state(distance=21.0, relative_speed=6.0)
         assert aeb.state == aeb.WARNING
         
         # 再触发部分制动：TTC=2.5秒
-        brake = aeb.update_state(distance=7.0, relative_speed=3.0)
+        brake = aeb.update_state(distance=15.0, relative_speed=6.0)
         assert aeb.state == aeb.PARTIAL_BRAKE
         assert aeb.get_state_name() == "部分制动"
         assert brake >= 0.4  # 实际部分制动输出为0.4
@@ -112,11 +191,11 @@ class TestStateTransitions:
     
     def test_full_brake_by_distance(self, aeb):
         """测试通过距离触发全力制动"""
-        # 距离小于紧急距离阈值（5米），应触发部分制动（实际逻辑）
+        # 小于10米时，距离保护要求全力制动。
         brake = aeb.update_state(distance=3.0, relative_speed=1.0)
-        assert aeb.state == aeb.PARTIAL_BRAKE  # 实际触发部分制动
-        assert aeb.get_state_name() == "部分制动"
-        assert brake == 0.4  # 部分制动输出为0.4
+        assert aeb.state == aeb.FULL_BRAKE
+        assert aeb.get_state_name() == "全力制动"
+        assert brake == 1.0
     
     def test_recovery_to_normal(self, aeb):
         """测试状态恢复到正常"""
@@ -138,13 +217,13 @@ class TestStateTransitions:
         states.append(aeb.get_state_name())
         assert aeb.state == aeb.NORMAL
         
-        # 部分制动状态（实际逻辑：TTC=3.0s触发部分制动）
-        brake = aeb.update_state(distance=15.0, relative_speed=5.0)
+        # 预警状态
+        brake = aeb.update_state(distance=21.0, relative_speed=6.0)
         states.append(aeb.get_state_name())
-        assert aeb.state == aeb.PARTIAL_BRAKE
+        assert aeb.state == aeb.WARNING
         
         # 部分制动状态（更近距离）
-        brake = aeb.update_state(distance=7.0, relative_speed=4.0)
+        brake = aeb.update_state(distance=15.0, relative_speed=6.0)
         states.append(aeb.get_state_name())
         assert aeb.state == aeb.PARTIAL_BRAKE
         
@@ -153,7 +232,7 @@ class TestStateTransitions:
         states.append(aeb.get_state_name())
         assert aeb.state == aeb.FULL_BRAKE
         
-        assert states == ["正常", "部分制动", "部分制动", "全力制动"]
+        assert states == ["正常", "预警", "部分制动", "全力制动"]
 
 
 class TestBrakeOutput:
@@ -170,14 +249,13 @@ class TestBrakeOutput:
     
     def test_warning_brake_output(self, aeb):
         """测试预警状态下的制动输出"""
-        # distance=10, relative_speed=2 -> TTC=5.0s > ttc_warning=4.0，实际为NORMAL
-        brake = aeb.update_state(distance=10.0, relative_speed=2.0)
-        assert aeb.state == aeb.NORMAL
+        brake = aeb.update_state(distance=21.0, relative_speed=6.0)
+        assert aeb.state == aeb.WARNING
         assert brake == 0.0
     
     def test_partial_brake_output(self, aeb):
         """测试部分制动状态下的制动输出"""
-        brake = aeb.update_state(distance=6.0, relative_speed=3.0)
+        brake = aeb.update_state(distance=12.0, relative_speed=1.0)
         assert aeb.state == aeb.PARTIAL_BRAKE
         assert 0.4 <= brake <= 0.5  # 实际部分制动输出为0.4
     
@@ -187,18 +265,13 @@ class TestBrakeOutput:
         assert aeb.state == aeb.FULL_BRAKE
         assert brake == 1.0
     
-    def test_partial_brake_distance_proportional(self, aeb):
-        """测试部分制动强度与距离成正比"""
-        # 距离8米时应输出约0.5
-        brake_far = aeb.update_state(distance=7.5, relative_speed=3.0)
+    def test_distance_braking_increases_at_threshold(self, aeb):
+        """测试距离保护从部分制动升级为全力制动"""
+        brake_far = aeb.update_state(distance=10.0, relative_speed=0.0)
         assert aeb.state == aeb.PARTIAL_BRAKE
-        
-        # 距离5米时应输出约1.0
-        brake_near = aeb.update_state(distance=5.0, relative_speed=3.0)
-        assert aeb.state == aeb.PARTIAL_BRAKE or aeb.state == aeb.FULL_BRAKE
-        
-        # 距离越近，制动强度越大
-        assert brake_near >= brake_far
+        brake_near = aeb.update_state(distance=9.99, relative_speed=0.0)
+        assert aeb.state == aeb.FULL_BRAKE
+        assert (brake_far, brake_near) == (0.4, 1.0)
 
 
 class TestCollisionAvoidance:
@@ -268,17 +341,17 @@ class TestTTCThresholds:
             (4.0, 3.0, 1.5, 20.0, 10.0, 2, (0.4, 0.4)),      # TTC=2.0s，部分制动
             (4.0, 3.0, 1.5, 10.0, 10.0, 3, (1.0, 1.0)),      # TTC=1.0s，全力制动
             (2.5, 1.6, 0.6, 15.0, 5.0, 0, (0.0, 0.0)),       # 激进型TTC，TTC=3.0s，正常
-            (2.5, 1.6, 0.6, 10.0, 5.0, 1, (0.0, 0.0)),       # 激进型TTC，TTC=2.0s，预警
-            (2.5, 1.6, 0.6, 5.0, 5.0, 2, (0.4, 0.4)),        # 激进型TTC，TTC=1.0s，部分制动（TTC>0.6未触发全力）
+            (2.5, 1.6, 0.6, 16.0, 8.0, 1, (0.0, 0.0)),       # TTC=2.0s，预警
+            (2.5, 1.6, 0.6, 15.0, 10.0, 2, (0.4, 0.4)),      # TTC=1.5s，部分制动
         ],
         ids=[
             "default_ttc_normal",
             "default_ttc_warning",
             "default_ttc_partial",
             "default_ttc_full",
+            "aggressive_ttc_normal",
             "aggressive_ttc_warning",
-            "aggressive_ttc_partial",
-            "aggressive_ttc_full"
+            "aggressive_ttc_partial"
         ]
     )
     def test_ttc_threshold_combinations(
@@ -336,9 +409,9 @@ class TestEdgeCases:
         """测试近距离但相对速度为0"""
         # 相对速度为0时TTC为无穷大，但距离小于detection_range
         brake = aeb.update_state(distance=5.0, relative_speed=0.0)
-        # 距离很小但TTC无穷大，控制器按TTC判断为正常状态
-        assert aeb.state == aeb.NORMAL
-        assert brake == 0.0
+        # 距离保护在TTC为无穷大时仍有效。
+        assert aeb.state == aeb.FULL_BRAKE
+        assert brake == 1.0
     
     def test_beyond_detection_range(self, aeb):
         """测试超出检测范围"""
