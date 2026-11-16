@@ -15,6 +15,9 @@ The [Stanley correction study](docs/stanley_correction.md) includes controlled
 ablations, frozen-gain validation on new routes and an actual before/after video.
 The [LQR comparison](docs/lqr.md) adds a discrete kinematic model, curvature
 feedforward and three-controller validation with raw traces and a camera video.
+The [LQR diagnosis and recovery study](docs/lqr_refinement.md) investigates
+oscillation, fixes reference-start and command/tick ordering, and evaluates
+frozen parameters with lateral and heading offsets.
 
 ## Tech Stack
 
