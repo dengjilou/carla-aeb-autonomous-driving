@@ -1,0 +1,530 @@
+{
+  "stanley-ablation": [
+    {
+      "case": "straight",
+      "mode": "stanley",
+      "frames": 209,
+      "rmse_m": 0.0,
+      "p95_m": 0.0,
+      "peak_m": 0.0,
+      "center_exits": 0,
+      "steer_rate_rms": 1.4250378070222094e-06,
+      "mean_speed_mps": 7.849825078790838
+    },
+    {
+      "case": "straight",
+      "mode": "stanley_angle",
+      "frames": 209,
+      "rmse_m": 0.0,
+      "p95_m": 0.0,
+      "peak_m": 0.0,
+      "center_exits": 0,
+      "steer_rate_rms": 1.1766780292594444e-06,
+      "mean_speed_mps": 7.849938089197332
+    },
+    {
+      "case": "straight",
+      "mode": "stanley_geometry",
+      "frames": 209,
+      "rmse_m": 0.0,
+      "p95_m": 0.0,
+      "peak_m": 0.0,
+      "center_exits": 0,
+      "steer_rate_rms": 1.1599414838620582e-06,
+      "mean_speed_mps": 7.849938061819122
+    },
+    {
+      "case": "straight",
+      "mode": "stanley_fixed",
+      "frames": 209,
+      "rmse_m": 0.0,
+      "p95_m": 0.0,
+      "peak_m": 0.0,
+      "center_exits": 0,
+      "steer_rate_rms": 1.0787324184376988e-06,
+      "mean_speed_mps": 7.8499379956551145
+    },
+    {
+      "case": "arc",
+      "mode": "stanley",
+      "frames": 211,
+      "rmse_m": 1.1620512347889298,
+      "p95_m": 1.5818819247437172,
+      "peak_m": 1.5984938195179839,
+      "center_exits": 0,
+      "steer_rate_rms": 0.031525474513326567,
+      "mean_speed_mps": 7.850307740306402
+    },
+    {
+      "case": "arc",
+      "mode": "stanley_angle",
+      "frames": 211,
+      "rmse_m": 1.012683816818718,
+      "p95_m": 1.3769245305511084,
+      "peak_m": 1.391417223372302,
+      "center_exits": 0,
+      "steer_rate_rms": 0.0271510723645557,
+      "mean_speed_mps": 7.850302983234279
+    },
+    {
+      "case": "arc",
+      "mode": "stanley_geometry",
+      "frames": 213,
+      "rmse_m": 0.08448726160501745,
+      "p95_m": 0.11901212756752062,
+      "peak_m": 0.12404734744768735,
+      "center_exits": 0,
+      "steer_rate_rms": 0.03056167529361166,
+      "mean_speed_mps": 7.851103019266621
+    },
+    {
+      "case": "arc",
+      "mode": "stanley_fixed",
+      "frames": 214,
+      "rmse_m": 0.24617862000126228,
+      "p95_m": 0.33839478818251184,
+      "peak_m": 0.34433466777690147,
+      "center_exits": 0,
+      "steer_rate_rms": 0.026383474577590667,
+      "mean_speed_mps": 7.851728474982431
+    },
+    {
+      "case": "s_bend",
+      "mode": "stanley",
+      "frames": 208,
+      "rmse_m": 0.7650481595818528,
+      "p95_m": 1.3220829517883743,
+      "peak_m": 1.3666069406011376,
+      "center_exits": 0,
+      "steer_rate_rms": 0.0540089161721235,
+      "mean_speed_mps": 7.848840908362315
+    },
+    {
+      "case": "s_bend",
+      "mode": "stanley_angle",
+      "frames": 208,
+      "rmse_m": 0.6683906844047769,
+      "p95_m": 1.1563906631417362,
+      "peak_m": 1.1956289066140462,
+      "center_exits": 0,
+      "steer_rate_rms": 0.04671157590276731,
+      "mean_speed_mps": 7.848635400717075
+    },
+    {
+      "case": "s_bend",
+      "mode": "stanley_geometry",
+      "frames": 209,
+      "rmse_m": 0.06270731137532319,
+      "p95_m": 0.09978805395484958,
+      "peak_m": 0.11281237162408454,
+      "center_exits": 0,
+      "steer_rate_rms": 0.05520284756327496,
+      "mean_speed_mps": 7.848809427051453
+    },
+    {
+      "case": "s_bend",
+      "mode": "stanley_fixed",
+      "frames": 209,
+      "rmse_m": 0.1831383268030041,
+      "p95_m": 0.29808763271018557,
+      "peak_m": 0.3176907427103701,
+      "center_exits": 0,
+      "steer_rate_rms": 0.04910582595168426,
+      "mean_speed_mps": 7.848894555032539
+    }
+  ],
+  "stanley-gain-1": [
+    {
+      "case": "straight",
+      "mode": "stanley_fixed",
+      "frames": 209,
+      "rmse_m": 0.0,
+      "p95_m": 0.0,
+      "peak_m": 0.0,
+      "center_exits": 0,
+      "steer_rate_rms": 1.0784168878020388e-06,
+      "mean_speed_mps": 7.8499325816140795
+    },
+    {
+      "case": "arc",
+      "mode": "stanley_fixed",
+      "frames": 213,
+      "rmse_m": 0.07045408178132292,
+      "p95_m": 0.08777055900944317,
+      "peak_m": 0.09040239126645924,
+      "center_exits": 0,
+      "steer_rate_rms": 0.02792205268915739,
+      "mean_speed_mps": 7.851100572398011
+    },
+    {
+      "case": "s_bend",
+      "mode": "stanley_fixed",
+      "frames": 209,
+      "rmse_m": 0.07550031684932838,
+      "p95_m": 0.10538570273243539,
+      "peak_m": 0.10931396484375,
+      "center_exits": 0,
+      "steer_rate_rms": 0.05267749979050539,
+      "mean_speed_mps": 7.848918618197646
+    }
+  ],
+  "stanley-gain-2": [
+    {
+      "case": "straight",
+      "mode": "stanley_fixed",
+      "frames": 209,
+      "rmse_m": 0.0,
+      "p95_m": 0.0,
+      "peak_m": 0.0,
+      "center_exits": 0,
+      "steer_rate_rms": 1.0787324184376988e-06,
+      "mean_speed_mps": 7.8499379956551145
+    },
+    {
+      "case": "arc",
+      "mode": "stanley_fixed",
+      "frames": 213,
+      "rmse_m": 0.020210913915854563,
+      "p95_m": 0.02519885262739207,
+      "peak_m": 0.027890410964321367,
+      "center_exits": 0,
+      "steer_rate_rms": 0.029491830765864136,
+      "mean_speed_mps": 7.851101895453224
+    },
+    {
+      "case": "s_bend",
+      "mode": "stanley_fixed",
+      "frames": 209,
+      "rmse_m": 0.024094462822249037,
+      "p95_m": 0.032659458728473555,
+      "peak_m": 0.03472900390625,
+      "center_exits": 0,
+      "steer_rate_rms": 0.05590547047622011,
+      "mean_speed_mps": 7.848515994240793
+    }
+  ],
+  "stanley-known": [
+    {
+      "case": "straight",
+      "mode": "stanley",
+      "frames": 209,
+      "rmse_m": 0.0,
+      "p95_m": 0.0,
+      "peak_m": 0.0,
+      "center_exits": 0,
+      "steer_rate_rms": 1.4313857113778982e-06,
+      "mean_speed_mps": 7.84993825574811
+    },
+    {
+      "case": "straight",
+      "mode": "stanley_fixed",
+      "frames": 209,
+      "rmse_m": 0.0,
+      "p95_m": 0.0,
+      "peak_m": 0.0,
+      "center_exits": 0,
+      "steer_rate_rms": 1.0787324184376988e-06,
+      "mean_speed_mps": 7.8499379956551145
+    },
+    {
+      "case": "straight",
+      "mode": "pursuit",
+      "frames": 209,
+      "rmse_m": 0.0,
+      "p95_m": 0.0,
+      "peak_m": 0.0,
+      "center_exits": 0,
+      "steer_rate_rms": 9.852829093363153e-07,
+      "mean_speed_mps": 7.8499382101177595
+    },
+    {
+      "case": "arc",
+      "mode": "stanley",
+      "frames": 211,
+      "rmse_m": 1.1622181191205325,
+      "p95_m": 1.5819196897171843,
+      "peak_m": 1.5985857643043702,
+      "center_exits": 0,
+      "steer_rate_rms": 0.031548561535389735,
+      "mean_speed_mps": 7.850395137099858
+    },
+    {
+      "case": "arc",
+      "mode": "stanley_fixed",
+      "frames": 213,
+      "rmse_m": 0.020196504925783343,
+      "p95_m": 0.025190962751962864,
+      "peak_m": 0.027851066475399477,
+      "center_exits": 0,
+      "steer_rate_rms": 0.029491667271199618,
+      "mean_speed_mps": 7.851037811225568
+    },
+    {
+      "case": "arc",
+      "mode": "pursuit",
+      "frames": 214,
+      "rmse_m": 0.11182424453050208,
+      "p95_m": 0.14299532718669564,
+      "peak_m": 0.14979718275697396,
+      "center_exits": 0,
+      "steer_rate_rms": 0.01596785448744999,
+      "mean_speed_mps": 7.851630014793895
+    },
+    {
+      "case": "s_bend",
+      "mode": "stanley",
+      "frames": 208,
+      "rmse_m": 0.7650481595818528,
+      "p95_m": 1.3220829517883743,
+      "peak_m": 1.3666069406011376,
+      "center_exits": 0,
+      "steer_rate_rms": 0.0540089161721235,
+      "mean_speed_mps": 7.848840908362315
+    },
+    {
+      "case": "s_bend",
+      "mode": "stanley_fixed",
+      "frames": 209,
+      "rmse_m": 0.02417272552187703,
+      "p95_m": 0.032526238224789325,
+      "peak_m": 0.03472900390625,
+      "center_exits": 0,
+      "steer_rate_rms": 0.05589078209563255,
+      "mean_speed_mps": 7.8488558787478215
+    },
+    {
+      "case": "s_bend",
+      "mode": "pursuit",
+      "frames": 209,
+      "rmse_m": 0.13751009813681447,
+      "p95_m": 0.1967205823913473,
+      "peak_m": 0.20104659930384633,
+      "center_exits": 0,
+      "steer_rate_rms": 0.03408865813390163,
+      "mean_speed_mps": 7.848942526219564
+    },
+    {
+      "case": "holdout_arc",
+      "mode": "stanley",
+      "frames": 160,
+      "rmse_m": 1.7903233621878119,
+      "p95_m": 2.4756678219033046,
+      "peak_m": 2.4993925235154495,
+      "center_exits": 1,
+      "steer_rate_rms": 0.038004052066926745,
+      "mean_speed_mps": 9.753054189682008
+    },
+    {
+      "case": "holdout_arc",
+      "mode": "stanley_fixed",
+      "frames": 164,
+      "rmse_m": 0.07818559030734264,
+      "p95_m": 0.10131481461076665,
+      "peak_m": 0.10397132878234071,
+      "center_exits": 0,
+      "steer_rate_rms": 0.04642875650646794,
+      "mean_speed_mps": 9.75518841859771
+    },
+    {
+      "case": "holdout_arc",
+      "mode": "pursuit",
+      "frames": 165,
+      "rmse_m": 0.21152793083514687,
+      "p95_m": 0.2778184081588617,
+      "peak_m": 0.28102965523168316,
+      "center_exits": 0,
+      "steer_rate_rms": 0.025647799617061994,
+      "mean_speed_mps": 9.756044566992557
+    },
+    {
+      "case": "holdout_s",
+      "mode": "stanley",
+      "frames": 167,
+      "rmse_m": 1.1214992912258286,
+      "p95_m": 1.6995573512883229,
+      "peak_m": 1.7648239269526758,
+      "center_exits": 1,
+      "steer_rate_rms": 0.07710905161462078,
+      "mean_speed_mps": 9.757373667048837
+    },
+    {
+      "case": "holdout_s",
+      "mode": "stanley_fixed",
+      "frames": 169,
+      "rmse_m": 0.08244612001142106,
+      "p95_m": 0.10419460910786231,
+      "peak_m": 0.10529674114389367,
+      "center_exits": 0,
+      "steer_rate_rms": 0.08804571330888798,
+      "mean_speed_mps": 9.757454285254845
+    },
+    {
+      "case": "holdout_s",
+      "mode": "pursuit",
+      "frames": 170,
+      "rmse_m": 0.2578276752899875,
+      "p95_m": 0.39615155379824357,
+      "peak_m": 0.4045237196208707,
+      "center_exits": 0,
+      "steer_rate_rms": 0.04891902036230592,
+      "mean_speed_mps": 9.758286212472354
+    }
+  ],
+  "stanley-new": [
+    {
+      "case": "validation_arc_slow",
+      "mode": "stanley",
+      "frames": 279,
+      "rmse_m": 0.762467028674882,
+      "p95_m": 1.0166535119643945,
+      "peak_m": 1.0250548065552214,
+      "center_exits": 0,
+      "steer_rate_rms": 0.023673905538742993,
+      "mean_speed_mps": 5.926132499530751
+    },
+    {
+      "case": "validation_arc_slow",
+      "mode": "stanley_fixed",
+      "frames": 281,
+      "rmse_m": 0.006444183516557753,
+      "p95_m": 0.00861578486733421,
+      "peak_m": 0.009043903850654705,
+      "center_exits": 0,
+      "steer_rate_rms": 0.0193198408511351,
+      "mean_speed_mps": 5.926614101247007
+    },
+    {
+      "case": "validation_arc_slow",
+      "mode": "pursuit",
+      "frames": 281,
+      "rmse_m": 0.06431666377667777,
+      "p95_m": 0.08169990852251002,
+      "peak_m": 0.0924168140306116,
+      "center_exits": 0,
+      "steer_rate_rms": 0.009746144661239435,
+      "mean_speed_mps": 5.926600337452736
+    },
+    {
+      "case": "validation_s_fast",
+      "mode": "stanley",
+      "frames": 138,
+      "rmse_m": 1.1269896613346528,
+      "p95_m": 1.6750317551454659,
+      "peak_m": 1.7351227535724485,
+      "center_exits": 0,
+      "steer_rate_rms": 0.0940890080077732,
+      "mean_speed_mps": 11.666853814885236
+    },
+    {
+      "case": "validation_s_fast",
+      "mode": "stanley_fixed",
+      "frames": 140,
+      "rmse_m": 0.14072848451475517,
+      "p95_m": 0.21433566916347868,
+      "peak_m": 0.22054286147440583,
+      "center_exits": 0,
+      "steer_rate_rms": 0.10866820411970439,
+      "mean_speed_mps": 11.665692683628627
+    },
+    {
+      "case": "validation_s_fast",
+      "mode": "pursuit",
+      "frames": 140,
+      "rmse_m": 0.32701870108453,
+      "p95_m": 0.5626684604515151,
+      "peak_m": 0.5746215788817812,
+      "center_exits": 0,
+      "steer_rate_rms": 0.06226152758360713,
+      "mean_speed_mps": 11.666484137943813
+    }
+  ],
+  "stanley-new-repeat": [
+    {
+      "case": "validation_arc_slow",
+      "mode": "stanley",
+      "frames": 279,
+      "rmse_m": 0.762467028674882,
+      "p95_m": 1.0166535119643945,
+      "peak_m": 1.0250548065552214,
+      "center_exits": 0,
+      "steer_rate_rms": 0.023673905538742993,
+      "mean_speed_mps": 5.926132499530751
+    },
+    {
+      "case": "validation_arc_slow",
+      "mode": "stanley_fixed",
+      "frames": 281,
+      "rmse_m": 0.006469255653440033,
+      "p95_m": 0.00861578486733421,
+      "peak_m": 0.009043903850654705,
+      "center_exits": 0,
+      "steer_rate_rms": 0.01931818033543186,
+      "mean_speed_mps": 5.9266034496212345
+    },
+    {
+      "case": "validation_arc_slow",
+      "mode": "pursuit",
+      "frames": 281,
+      "rmse_m": 0.06430538968602685,
+      "p95_m": 0.08168601405510899,
+      "peak_m": 0.09239291439957299,
+      "center_exits": 0,
+      "steer_rate_rms": 0.009745648713575175,
+      "mean_speed_mps": 5.926607751337235
+    },
+    {
+      "case": "validation_s_fast",
+      "mode": "stanley",
+      "frames": 138,
+      "rmse_m": 1.1269896613346528,
+      "p95_m": 1.6750317551454659,
+      "peak_m": 1.7351227535724485,
+      "center_exits": 0,
+      "steer_rate_rms": 0.0940890080077732,
+      "mean_speed_mps": 11.666853814885236
+    },
+    {
+      "case": "validation_s_fast",
+      "mode": "stanley_fixed",
+      "frames": 140,
+      "rmse_m": 0.14033283753973066,
+      "p95_m": 0.2137640599575997,
+      "peak_m": 0.2201562187670366,
+      "center_exits": 0,
+      "steer_rate_rms": 0.10857517243970882,
+      "mean_speed_mps": 11.666130576814924
+    },
+    {
+      "case": "validation_s_fast",
+      "mode": "pursuit",
+      "frames": 140,
+      "rmse_m": 0.32701870108453,
+      "p95_m": 0.5626684604515151,
+      "peak_m": 0.5746215788817812,
+      "center_exits": 0,
+      "steer_rate_rms": 0.06226152758360713,
+      "mean_speed_mps": 11.666484137943813
+    }
+  ],
+  "selection": [
+    {
+      "gain": 0.3,
+      "exits": 0,
+      "rmse_sum": 0.42931694680426635,
+      "steer_rate_sum": 0.07549037926169336
+    },
+    {
+      "gain": 1,
+      "exits": 0,
+      "rmse_sum": 0.1459543986306513,
+      "steer_rate_sum": 0.08060063089655059
+    },
+    {
+      "gain": 2,
+      "exits": 0,
+      "rmse_sum": 0.0443053767381036,
+      "steer_rate_sum": 0.08539837997450268
+    }
+  ],
+  "validation_max_rmse_shift_m": 0.0003956469750245051
+}

@@ -1,5 +1,6 @@
 """Record real CARLA RGB frames with synchronized lateral-error telemetry."""
 import json
+import argparse
 import queue
 from pathlib import Path
 
@@ -11,7 +12,11 @@ from run_lateral import CASES, DT, run, test_map
 
 
 def main():
-    output = Path('output/lateral-camera')
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--fixed', action='store_true')
+    parser.add_argument('--output', type=Path, default=Path('output/lateral-camera'))
+    args = parser.parse_args()
+    output = args.output
     output.mkdir(parents=True, exist_ok=False)
     client = carla.Client('localhost', 2000)
     client.set_timeout(90)
@@ -37,7 +42,8 @@ def main():
                 a = first.location + first.get_right_vector()*offset + carla.Location(z=0.08)
                 b = second.location + second.get_right_vector()*offset + carla.Location(z=0.08)
                 world.debug.draw_line(a,b,thickness=0.05,color=color,life_time=45)
-        for mode in ('stanley','pursuit'):
+        modes = ('stanley','stanley_fixed') if args.fixed else ('stanley','pursuit')
+        for mode in modes:
             frames = []
             def attach(world, vehicle):
                 incoming = queue.Queue()
@@ -57,7 +63,7 @@ def main():
                         if number > frame_id:
                             raise RuntimeError('Skipped camera frame')
                 return cam, collect
-            summaries.append(run(world, road, CASES[-1], len(CASES), mode, output, attach))
+            summaries.append(run(world, road, CASES[-1], len(CASES), mode, output, attach, gain=2))
             captures.append(frames)
     finally:
         client.load_world(name.rsplit('/',1)[-1])
@@ -74,7 +80,8 @@ def main():
     try:
         for tick in range(count):
             display.fill((17,25,36))
-            for x, label, frames in zip((0,640),('Stanley','Geometric Pure Pursuit'),captures):
+            labels = ('Original Stanley','Corrected Stanley (k=2)') if args.fixed else ('Stanley','Geometric Pure Pursuit')
+            for x, label, frames in zip((0,640),labels,captures):
                 data, row = frames[tick]
                 display.blit(pygame.image.frombuffer(data,(640,360),'BGRA'), (x,42))
                 for y, text in [(10,label+' | target 10 m/s'),
