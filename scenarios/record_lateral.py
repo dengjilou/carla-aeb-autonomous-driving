@@ -13,7 +13,9 @@ from run_lateral import CASES, DT, run, test_map
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('--fixed', action='store_true')
+    comparison = parser.add_mutually_exclusive_group()
+    comparison.add_argument('--fixed', action='store_true')
+    comparison.add_argument('--lqr', action='store_true')
     parser.add_argument('--output', type=Path, default=Path('output/lateral-camera'))
     args = parser.parse_args()
     output = args.output
@@ -42,7 +44,7 @@ def main():
                 a = first.location + first.get_right_vector()*offset + carla.Location(z=0.08)
                 b = second.location + second.get_right_vector()*offset + carla.Location(z=0.08)
                 world.debug.draw_line(a,b,thickness=0.05,color=color,life_time=45)
-        modes = ('stanley','stanley_fixed') if args.fixed else ('stanley','pursuit')
+        modes = ('stanley_fixed','pursuit','lqr') if args.lqr else ('stanley','stanley_fixed') if args.fixed else ('stanley','pursuit')
         for mode in modes:
             frames = []
             def attach(world, vehicle):
@@ -63,12 +65,12 @@ def main():
                         if number > frame_id:
                             raise RuntimeError('Skipped camera frame')
                 return cam, collect
-            summaries.append(run(world, road, CASES[-1], len(CASES), mode, output, attach, gain=2))
+            summaries.append(run(world, road, CASES[-1], len(CASES), mode, output, attach, gain=2, lqr_weight=1))
             captures.append(frames)
     finally:
         client.load_world(name.rsplit('/',1)[-1])
     pygame.init()
-    size = (1280, 480)
+    size = (640*len(captures), 480)
     display = pygame.display.set_mode(size)
     pygame.display.set_caption('CARLA lateral comparison | actual camera recording')
     font = pygame.font.Font(None, 28)
@@ -80,8 +82,8 @@ def main():
     try:
         for tick in range(count):
             display.fill((17,25,36))
-            labels = ('Original Stanley','Corrected Stanley (k=2)') if args.fixed else ('Stanley','Geometric Pure Pursuit')
-            for x, label, frames in zip((0,640),labels,captures):
+            labels = ('Stanley k=2','Pure Pursuit','LQR Q=diag(1,1), R=1') if args.lqr else ('Original Stanley','Corrected Stanley (k=2)') if args.fixed else ('Stanley','Geometric Pure Pursuit')
+            for x, label, frames in zip(range(0,size[0],640),labels,captures):
                 data, row = frames[tick]
                 display.blit(pygame.image.frombuffer(data,(640,360),'BGRA'), (x,42))
                 for y, text in [(10,label+' | target 10 m/s'),

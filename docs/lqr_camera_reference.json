@@ -1,0 +1,45 @@
+{
+  "frames": 247,
+  "step_s": 0.05,
+  "results": [
+    {
+      "case": "holdout_s",
+      "mode": "stanley_fixed",
+      "frames": 169,
+      "rmse_m": 0.08244612001142106,
+      "p95_m": 0.10419460910786231,
+      "peak_m": 0.10529674114389367,
+      "center_exits": 0,
+      "steer_rate_rms": 0.08804571330888798,
+      "compute_p95_us": 100.23999999972942,
+      "setup_us": 0.8000000004670937,
+      "mean_speed_mps": 9.757454285254845
+    },
+    {
+      "case": "holdout_s",
+      "mode": "pursuit",
+      "frames": 170,
+      "rmse_m": 0.2578276752899875,
+      "p95_m": 0.39615155379824357,
+      "peak_m": 0.4045237196208707,
+      "center_exits": 0,
+      "steer_rate_rms": 0.04891902036230592,
+      "compute_p95_us": 36.11000000001141,
+      "setup_us": 0.5000000005139782,
+      "mean_speed_mps": 9.758286212472354
+    },
+    {
+      "case": "holdout_s",
+      "mode": "lqr",
+      "frames": 168,
+      "rmse_m": 0.08503004412119991,
+      "p95_m": 0.1659288768746846,
+      "peak_m": 0.23692468752334264,
+      "center_exits": 0,
+      "steer_rate_rms": 0.29526872653390784,
+      "compute_p95_us": 146.1099999998439,
+      "setup_us": 2880.4999999998417,
+      "mean_speed_mps": 9.762622617539906
+    }
+  ]
+}
