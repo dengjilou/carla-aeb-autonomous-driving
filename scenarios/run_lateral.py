@@ -30,6 +30,10 @@ LQR_VALIDATION = [
     ("lqr_new_arc", -1/70, -1/70, 7),
     ("lqr_new_s", -1/55, 1/38, 11),
 ]
+REFINEMENT_VALIDATION = [
+    ("refine_arc", 1/75, 1/75, 9),
+    ("refine_s", 1/48, -1/42, 12),
+]
 
 
 def test_map(cases=CASES):
@@ -62,9 +66,10 @@ def project(xy, starts, vectors, lengths2):
     return index, t[index], signed_distance
 
 
-def run(world, road, case, road_id, mode, folder, camera_hook=None, gain=0.3, lqr_weight=0.2):
+def run(world, road, case, road_id, mode, folder, camera_hook=None, gain=0.3, lqr_weight=0.2,
+        steer_alpha=0.4, ff_scale=1.0, initial_offset=0.0, initial_yaw=0.0, synchronous_control=True):
     name, _, _, target_speed = case
-    stations = np.arange(1., 133., 0.5)
+    stations = np.arange(0., 133., 0.5)
     path = [road.get_waypoint_xodr(road_id, -1, float(s)) for s in stations]
     if any(w is None for w in path):
         raise RuntimeError("Missing reference lane waypoint")
@@ -73,9 +78,14 @@ def run(world, road, case, road_id, mode, folder, camera_hook=None, gain=0.3, lq
                delimiter=",", header="station_m,x,y", comments="")
     vectors = np.diff(points, axis=0)
     lengths2 = np.sum(vectors**2, axis=1)
-    initial = path[2].transform
+    initial = path[4].transform
     initial.location += carla.Location(z=0.35)
+    initial.location += initial.get_right_vector()*initial_offset
+    initial.rotation.yaw += initial_yaw
     vehicle = world.spawn_actor(world.get_blueprint_library().find("vehicle.tesla.model3"), initial)
+    control_client = carla.Client("127.0.0.1", 2000)
+    control_client.set_timeout(30)
+    control_client.get_world()
     camera = None
     try:
         capture = None
@@ -87,15 +97,16 @@ def run(world, road, case, road_id, mode, folder, camera_hook=None, gain=0.3, lq
         pid, stanley = SpeedPID(), StanleyController(k=0.3, max_steer=0.7)
         physics = vehicle.get_physics_control().wheels
         # 0.9.13 returns wheel positions in world centimetres. All starts face +x.
-        rear_x = physics[2].position.x/100. - vehicle.get_location().x
-        front_x = physics[0].position.x/100. - vehicle.get_location().x
-        wheelbase = abs(physics[0].position.x - physics[2].position.x)/100.
+        inverse = np.array(vehicle.get_transform().get_inverse_matrix())
+        local = [inverse@np.array([w.position.x/100.,w.position.y/100.,w.position.z/100.,1.]) for w in physics]
+        rear_x, front_x = local[2][0], local[0][0]
+        wheelbase = abs(front_x-rear_x)
         max_angle = math.radians(physics[0].max_steer_angle)
         if not 1 < wheelbase < 5 or not -3 < rear_x < 0 or max_angle <= 0:
             raise RuntimeError("Invalid vehicle geometry")
         stanley.steer_alpha = 1.0
         setup_start = time.perf_counter()
-        lqr = LQR(target_speed, wheelbase, DT, lqr_weight) if mode == "lqr" else None
+        lqr = LQR(target_speed, wheelbase, DT, 0.2 if mode == "lqr_smooth" else lqr_weight) if mode in ("lqr","lqr_smooth") else None
         setup_us = (time.perf_counter()-setup_start)*1e6
         previous = 0.0
         rows = []
@@ -107,7 +118,8 @@ def run(world, road, case, road_id, mode, folder, camera_hook=None, gain=0.3, lq
             station = stations[idx] + fraction*0.5
             compute_start = time.perf_counter()
             target = min(len(path)-1, idx + round((3 + 0.4*speed)/0.5))
-            if mode == "lqr":
+            curvature = heading_error = rear_error = forward = feedback = 0.
+            if mode in ("lqr","lqr_smooth"):
                 axle = transform.transform(carla.Location(x=rear_x))
                 rear_idx, _, rear_error = project(np.array([axle.x, axle.y]), points[:-1], vectors, lengths2)
                 tangent = vectors[rear_idx]
@@ -115,8 +127,10 @@ def run(world, road, case, road_id, mode, folder, camera_hook=None, gain=0.3, lq
                 lo, hi = max(0,rear_idx-2), min(len(vectors)-1,rear_idx+2)
                 angle = math.atan2(vectors[hi,1],vectors[hi,0])-math.atan2(vectors[lo,1],vectors[lo,0])
                 curvature = math.atan2(math.sin(angle),math.cos(angle))/np.sqrt(lengths2[lo:hi]).sum()
-                steer = lqr.steering(rear_error, math.radians(transform.rotation.yaw)-path_heading,
-                                     curvature, max_angle)
+                heading_error = math.atan2(math.sin(math.radians(transform.rotation.yaw)-path_heading),
+                                           math.cos(math.radians(transform.rotation.yaw)-path_heading))
+                forward, feedback = lqr.terms(rear_error, heading_error, curvature)
+                steer = (ff_scale*forward+feedback)/max_angle
             elif mode in ("stanley", "stanley_angle"):
                 steer = stanley.compute_steering_angle(vehicle, path[target])[0]
                 if mode == "stanley_angle":
@@ -137,28 +151,48 @@ def run(world, road, case, road_id, mode, folder, camera_hook=None, gain=0.3, lq
                 right = transform.get_right_vector()
                 lateral = dx*right.x + dy*right.y
                 steer = math.atan2(2*wheelbase*lateral, dx*dx + dy*dy)/max_angle
-            steer = 0.4 * max(-0.7, min(0.7, steer)) + 0.6 * previous
+            raw_steer = steer
+            steer = steer_alpha * max(-0.7, min(0.7, steer)) + (1-steer_alpha) * previous
             previous = steer
             compute_us = (time.perf_counter()-compute_start)*1e6
             throttle, brake = pid.update(target_speed, speed, DT)
             ref = points[idx] + fraction*vectors[idx]
-            rows.append((tick*DT, station, pos.x, pos.y, *ref, error, speed, steer, compute_us))
+            body_angle = math.radians(transform.rotation.yaw)-math.atan2(vectors[idx,1],vectors[idx,0])
+            body_error = math.atan2(math.sin(body_angle),math.cos(body_angle))
+            wheel_angle = math.radians(vehicle.get_wheel_steer_angle(carla.VehicleWheelLocation.FL_Wheel))
+            rows.append((tick*DT, station, pos.x, pos.y, *ref, error, speed, steer, compute_us,
+                         curvature,heading_error,rear_error,ff_scale*forward,feedback,raw_steer,
+                         body_error,wheel_angle))
             if capture:
                 capture(world.get_snapshot().frame, rows[-1])
             if station >= 121:
                 break
-            vehicle.apply_control(carla.VehicleControl(throttle=throttle, brake=brake, steer=steer))
-            world.tick()
+            command = carla.VehicleControl(throttle=throttle, brake=brake, steer=steer)
+            if synchronous_control:
+                applied = control_client.apply_batch_sync([
+                    carla.command.ApplyVehicleControl(vehicle.id, command)], True)
+                if applied[0].error:
+                    raise RuntimeError(applied[0].error)
+            else:
+                vehicle.apply_control(command)
+                world.tick()
         with (folder / (name+'_'+mode+'.csv')).open('w', newline='') as f:
             writer = csv.writer(f)
-            writer.writerow('time_s station_m x y ref_x ref_y error_m speed_mps steer compute_us'.split())
+            writer.writerow('time_s station_m x y ref_x ref_y error_m speed_mps steer compute_us curvature heading_error rear_error ff_rad feedback_rad raw_steer body_heading_error wheel_angle_rad'.split())
             writer.writerows(rows)
         if station < 121:
             raise RuntimeError(name + " did not finish the route")
         active = np.array([r for r in rows if 35 <= r[1] <= 117])
         error, commands = active[:, 6], active[:, 8]
         outside = abs(error) > 1.75
+        approach = np.array([r for r in rows if r[1] < 35])
+        settled = (abs(approach[:,6]) <= 0.1) & (abs(approach[:,16]) <= math.radians(2))
+        windows = np.convolve(settled.astype(int),np.ones(21,dtype=int),mode='valid')
+        recovery = np.flatnonzero(windows==21)
         return dict(case=name, mode=mode, frames=len(active), rmse_m=float(np.sqrt(np.mean(error**2))),
+                    recovery_s=float(approach[recovery[0],0]) if len(recovery) else None,
+                    recovery_peak_m=float(max(abs(approach[:,6]))),
+                    recovery_exits=int(abs(approach[0,6])>1.75)+int(np.sum((abs(approach[1:,6])>1.75)&(abs(approach[:-1,6])<=1.75))),
                     p95_m=float(np.percentile(abs(error), 95)), peak_m=float(max(abs(error))),
                     center_exits=int(outside[0])+int(np.sum(outside[1:] & ~outside[:-1])),
                     steer_rate_rms=float(np.sqrt(np.mean((np.diff(commands)/DT)**2))),
@@ -175,12 +209,19 @@ def run(world, road, case, road_id, mode, folder, camera_hook=None, gain=0.3, lq
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--output', type=Path, required=True)
-    parser.add_argument('--suite', choices=('development','known','validation','lqr_validation'), default='known')
-    parser.add_argument('--modes', nargs='+', choices=('stanley','pursuit','stanley_angle','stanley_geometry','stanley_fixed','lqr'),
+    parser.add_argument('--suite', choices=('development','known','validation','lqr_validation','refinement_validation'), default='known')
+    parser.add_argument('--modes', nargs='+', choices=('stanley','pursuit','stanley_angle','stanley_geometry','stanley_fixed','lqr','lqr_smooth'),
                         default=['stanley','pursuit'])
     parser.add_argument('--gain', type=float, default=2.0)
     parser.add_argument('--lqr-weight', type=float, default=1.0)
+    parser.add_argument('--steer-alpha', type=float, default=0.4)
+    parser.add_argument('--ff-scale', type=float, choices=(0.,1.), default=1.)
+    parser.add_argument('--initial-offset', type=float, default=0.)
+    parser.add_argument('--initial-yaw', type=float, default=0.)
+    parser.add_argument('--async-control', action='store_true', help='Diagnostic comparison with separate control/tick calls')
     args = parser.parse_args()
+    if not 0 < args.steer_alpha <= 1 or not math.isfinite(args.lqr_weight) or args.lqr_weight <= 0:
+        parser.error("Require 0 < steer-alpha <= 1 and positive finite lqr-weight")
     folder = args.output
     folder.mkdir(parents=True, exist_ok=False)
     client = carla.Client('127.0.0.1', 2000)
@@ -191,7 +232,7 @@ def main():
     if (original.get_settings().synchronous_mode or 'OpenDriveMap' in original_map
             or any(actors.filter(pattern) for pattern in ('vehicle.*', 'walker.*', 'sensor.*'))):
         raise RuntimeError("Requires an idle, asynchronous stock map")
-    cases = LQR_VALIDATION if args.suite == 'lqr_validation' else VALIDATION if args.suite == 'validation' else CASES[:3] if args.suite == 'development' else CASES
+    cases = REFINEMENT_VALIDATION if args.suite == 'refinement_validation' else LQR_VALIDATION if args.suite == 'lqr_validation' else VALIDATION if args.suite == 'validation' else CASES[:3] if args.suite == 'development' else CASES
     xml = test_map(cases)
     (folder/'lateral.xodr').write_text(xml)
     try:
@@ -202,10 +243,13 @@ def main():
         world.apply_settings(settings)
         road = world.get_map()
         results = []
-        (folder/'config.json').write_text(json.dumps(dict(cases=cases, modes=args.modes, gain=args.gain, step_s=DT, lqr_weight=args.lqr_weight),indent=2))
+        (folder/'config.json').write_text(json.dumps(dict(vars(args),output=str(folder),cases=cases,step_s=DT),indent=2))
         for i, case in enumerate(cases, 1):
             for mode in args.modes:
-                result = run(world, road, case, i, mode, folder, gain=args.gain, lqr_weight=args.lqr_weight)
+                result = run(world, road, case, i, mode, folder, gain=args.gain, lqr_weight=args.lqr_weight,
+                             steer_alpha=args.steer_alpha, ff_scale=args.ff_scale,
+                             initial_offset=args.initial_offset,initial_yaw=args.initial_yaw,
+                             synchronous_control=not args.async_control)
                 results.append(result)
                 print(result, flush=True)
         (folder/'summary.json').write_text(json.dumps(results, indent=2))

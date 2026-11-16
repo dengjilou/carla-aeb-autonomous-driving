@@ -23,7 +23,11 @@ class LQR:
         else:
             raise RuntimeError("Discrete Riccati iteration did not converge")
 
-    def steering(self, lateral_error, heading_error, curvature, max_angle):
+    def terms(self, lateral_error, heading_error, curvature):
         wrapped = math.atan2(math.sin(heading_error), math.cos(heading_error))
         feedback = float((self.k@np.array([lateral_error, wrapped]))[0])
-        return (math.atan(self.wheelbase*curvature)-feedback)/max_angle
+        return math.atan(self.wheelbase*curvature), -feedback
+
+    def steering(self, lateral_error, heading_error, curvature, max_angle):
+        forward, feedback = self.terms(lateral_error, heading_error, curvature)
+        return (forward+feedback)/max_angle

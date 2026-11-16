@@ -8,7 +8,7 @@ import carla
 import imageio_ffmpeg
 import pygame
 
-from run_lateral import CASES, DT, run, test_map
+from run_lateral import CASES, REFINEMENT_VALIDATION, DT, run, test_map
 
 
 def main():
@@ -16,6 +16,7 @@ def main():
     comparison = parser.add_mutually_exclusive_group()
     comparison.add_argument('--fixed', action='store_true')
     comparison.add_argument('--lqr', action='store_true')
+    comparison.add_argument('--refined', action='store_true')
     parser.add_argument('--output', type=Path, default=Path('output/lateral-camera'))
     args = parser.parse_args()
     output = args.output
@@ -28,15 +29,16 @@ def main():
         raise RuntimeError('Requires an idle stock map')
     captures = []
     summaries = []
+    cases = REFINEMENT_VALIDATION if args.refined else CASES
     try:
-        world = client.generate_opendrive_world(test_map())
+        world = client.generate_opendrive_world(test_map(cases))
         settings = world.get_settings()
         settings.synchronous_mode = True
         settings.fixed_delta_seconds = DT
         world.apply_settings(settings)
         world.set_weather(carla.WeatherParameters.ClearNoon)
         road = world.get_map()
-        points = [road.get_waypoint_xodr(len(CASES), -1, float(s)).transform
+        points = [road.get_waypoint_xodr(len(cases), -1, float(s)).transform
                   for s in range(1, 133)]
         for offset, color in ((0, carla.Color(0,230,200)), (-1.75, carla.Color(255,210,30)),
                               (1.75, carla.Color(255,210,30))):
@@ -44,7 +46,7 @@ def main():
                 a = first.location + first.get_right_vector()*offset + carla.Location(z=0.08)
                 b = second.location + second.get_right_vector()*offset + carla.Location(z=0.08)
                 world.debug.draw_line(a,b,thickness=0.05,color=color,life_time=45)
-        modes = ('stanley_fixed','pursuit','lqr') if args.lqr else ('stanley','stanley_fixed') if args.fixed else ('stanley','pursuit')
+        modes = ('lqr','lqr_smooth') if args.refined else ('stanley_fixed','pursuit','lqr') if args.lqr else ('stanley','stanley_fixed') if args.fixed else ('stanley','pursuit')
         for mode in modes:
             frames = []
             def attach(world, vehicle):
@@ -65,7 +67,7 @@ def main():
                         if number > frame_id:
                             raise RuntimeError('Skipped camera frame')
                 return cam, collect
-            summaries.append(run(world, road, CASES[-1], len(CASES), mode, output, attach, gain=2, lqr_weight=1))
+            summaries.append(run(world, road, cases[-1], len(cases), mode, output, attach, gain=2, lqr_weight=1))
             captures.append(frames)
     finally:
         client.load_world(name.rsplit('/',1)[-1])
@@ -82,11 +84,11 @@ def main():
     try:
         for tick in range(count):
             display.fill((17,25,36))
-            labels = ('Stanley k=2','Pure Pursuit','LQR Q=diag(1,1), R=1') if args.lqr else ('Original Stanley','Corrected Stanley (k=2)') if args.fixed else ('Stanley','Geometric Pure Pursuit')
+            labels = ('LQR q=1','LQR q=0.2 (frozen)') if args.refined else ('Stanley k=2','Pure Pursuit','LQR Q=diag(1,1), R=1') if args.lqr else ('Original Stanley','Corrected Stanley (k=2)') if args.fixed else ('Stanley','Geometric Pure Pursuit')
             for x, label, frames in zip(range(0,size[0],640),labels,captures):
                 data, row = frames[tick]
                 display.blit(pygame.image.frombuffer(data,(640,360),'BGRA'), (x,42))
-                for y, text in [(10,label+' | target 10 m/s'),
+                for y, text in [(10,label+' | target {} m/s'.format(cases[-1][-1])),
                                 (410,'t={:.2f}s   speed={:.2f}m/s   error={:+.3f}m'.format(row[0],row[7],row[6])),
                                 (442,'steer={:+.3f}   center outside lane: {}'.format(row[8],abs(row[6])>1.75))]:
                     display.blit(font.render(text,True,(235,240,245)), (x+12,y))
