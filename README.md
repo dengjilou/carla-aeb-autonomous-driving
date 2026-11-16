@@ -11,6 +11,8 @@ OpenSCENARIO example.
 
 The [lateral tracking comparison](docs/lateral.md) measures Stanley and geometric
 Pure Pursuit on matched straight, circular and S-bend routes in CARLA.
+The [Stanley correction study](docs/stanley_correction.md) includes controlled
+ablations, frozen-gain validation on new routes and an actual before/after video.
 
 ## Tech Stack
 

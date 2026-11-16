@@ -12,6 +12,7 @@ import numpy as np
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "controllers"))
 from acc import SpeedPID
 from stanley_pid_controller import StanleyController
+from stanley_tracking import steering as stanley_steering
 
 DT = 0.05
 # name, signed curvature (1/m) of the two 32 m segments, requested speed (m/s)
@@ -19,11 +20,15 @@ CASES = [
     ("straight", 0, 0, 8), ("arc", 1/65, 1/65, 8), ("s_bend", 1/55, -1/55, 8),
     ("holdout_arc", -1/52, -1/52, 10), ("holdout_s", -1/50, 1/42, 10),
 ]
+VALIDATION = [
+    ("validation_arc_slow", 1/80, 1/80, 6),
+    ("validation_s_fast", 1/60, -1/40, 12),
+]
 
 
-def test_map():
+def test_map(cases=CASES):
     roads = []
-    for i, (_, first, second, _) in enumerate(CASES, 1):
+    for i, (_, first, second, _) in enumerate(cases, 1):
         x, y, heading, s = 0., i * 180., 0., 0.
         geoms = []
         for length, k in [(40, 0), (32, first), (32, second), (30, 0)]:
@@ -51,16 +56,15 @@ def project(xy, starts, vectors, lengths2):
     return index, t[index], signed_distance
 
 
-def run(world, road, case, road_id, mode, folder, camera_hook=None):
+def run(world, road, case, road_id, mode, folder, camera_hook=None, gain=0.3):
     name, _, _, target_speed = case
     stations = np.arange(1., 133., 0.5)
     path = [road.get_waypoint_xodr(road_id, -1, float(s)) for s in stations]
     if any(w is None for w in path):
         raise RuntimeError("Missing reference lane waypoint")
     points = np.array([(w.transform.location.x, w.transform.location.y) for w in path])
-    if mode == "stanley":
-        np.savetxt(folder / (name + "_reference.csv"), np.column_stack((stations, points)),
-                   delimiter=",", header="station_m,x,y", comments="")
+    np.savetxt(folder / (name + "_reference.csv"), np.column_stack((stations, points)),
+               delimiter=",", header="station_m,x,y", comments="")
     vectors = np.diff(points, axis=0)
     lengths2 = np.sum(vectors**2, axis=1)
     initial = path[2].transform
@@ -78,6 +82,7 @@ def run(world, road, case, road_id, mode, folder, camera_hook=None):
         physics = vehicle.get_physics_control().wheels
         # 0.9.13 returns wheel positions in world centimetres. All starts face +x.
         rear_x = physics[2].position.x/100. - vehicle.get_location().x
+        front_x = physics[0].position.x/100. - vehicle.get_location().x
         wheelbase = abs(physics[0].position.x - physics[2].position.x)/100.
         max_angle = math.radians(physics[0].max_steer_angle)
         if not 1 < wheelbase < 5 or not -3 < rear_x < 0 or max_angle <= 0:
@@ -92,8 +97,19 @@ def run(world, road, case, road_id, mode, folder, camera_hook=None):
             idx, fraction, error = project(np.array([pos.x, pos.y]), points[:-1], vectors, lengths2)
             station = stations[idx] + fraction*0.5
             target = min(len(path)-1, idx + round((3 + 0.4*speed)/0.5))
-            if mode == "stanley":
+            if mode in ("stanley", "stanley_angle"):
                 steer = stanley.compute_steering_angle(vehicle, path[target])[0]
+                if mode == "stanley_angle":
+                    steer /= max_angle
+            elif mode in ("stanley_geometry", "stanley_fixed"):
+                axle = transform.transform(carla.Location(x=front_x))
+                front_idx, _, front_error = project(np.array([axle.x, axle.y]), points[:-1], vectors, lengths2)
+                tangent = vectors[front_idx]
+                steer = stanley_steering(math.radians(transform.rotation.yaw),
+                                        math.atan2(tangent[1], tangent[0]), front_error,
+                                        speed, max_angle, gain)
+                if mode == "stanley_geometry":
+                    steer *= max_angle
             else:
                 # Geometric pure pursuit in a rear-axle frame; CARLA +y is right.
                 axle = transform.transform(carla.Location(x=rear_x))
@@ -137,6 +153,10 @@ def run(world, road, case, road_id, mode, folder, camera_hook=None):
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--output', type=Path, required=True)
+    parser.add_argument('--suite', choices=('development','known','validation'), default='known')
+    parser.add_argument('--modes', nargs='+', choices=('stanley','pursuit','stanley_angle','stanley_geometry','stanley_fixed'),
+                        default=['stanley','pursuit'])
+    parser.add_argument('--gain', type=float, default=2.0)
     args = parser.parse_args()
     folder = args.output
     folder.mkdir(parents=True, exist_ok=False)
@@ -148,7 +168,8 @@ def main():
     if (original.get_settings().synchronous_mode or 'OpenDriveMap' in original_map
             or any(actors.filter(pattern) for pattern in ('vehicle.*', 'walker.*', 'sensor.*'))):
         raise RuntimeError("Requires an idle, asynchronous stock map")
-    xml = test_map()
+    cases = VALIDATION if args.suite == 'validation' else CASES[:3] if args.suite == 'development' else CASES
+    xml = test_map(cases)
     (folder/'lateral.xodr').write_text(xml)
     try:
         world = client.generate_opendrive_world(xml)
@@ -158,9 +179,10 @@ def main():
         world.apply_settings(settings)
         road = world.get_map()
         results = []
-        for i, case in enumerate(CASES, 1):
-            for mode in ('stanley', 'pursuit'):
-                result = run(world, road, case, i, mode, folder)
+        (folder/'config.json').write_text(json.dumps(dict(cases=cases, modes=args.modes, gain=args.gain, step_s=DT),indent=2))
+        for i, case in enumerate(cases, 1):
+            for mode in args.modes:
+                result = run(world, road, case, i, mode, folder, gain=args.gain)
                 results.append(result)
                 print(result, flush=True)
         (folder/'summary.json').write_text(json.dumps(results, indent=2))
