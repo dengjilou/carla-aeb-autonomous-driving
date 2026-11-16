@@ -27,6 +27,7 @@ results/
 *.mp4
 !docs/cosim_aeb_12m.mp4
 !docs/acc_follow_holdout.mp4
+!docs/lateral_comparison.mp4
 *.avi
 *.mov
 

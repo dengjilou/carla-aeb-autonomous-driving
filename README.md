@@ -9,6 +9,9 @@ control with time-headway ACC under the same AEB policy. It includes JSON
 scenarios, frame logs, development/holdout splits, and a separate runnable
 OpenSCENARIO example.
 
+The [lateral tracking comparison](docs/lateral.md) measures Stanley and geometric
+Pure Pursuit on matched straight, circular and S-bend routes in CARLA.
+
 ## Tech Stack
 
 - **Simulation**: CARLA 0.9.13

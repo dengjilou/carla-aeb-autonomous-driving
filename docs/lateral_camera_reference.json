@@ -1,0 +1,28 @@
+{
+  "frames": 245,
+  "step_s": 0.05,
+  "results": [
+    {
+      "case": "holdout_s",
+      "mode": "stanley",
+      "frames": 167,
+      "rmse_m": 1.1214995988368173,
+      "p95_m": 1.6995573512883229,
+      "peak_m": 1.7648239269526758,
+      "center_exits": 1,
+      "steer_rate_rms": 0.0771090318529002,
+      "mean_speed_mps": 9.757214066511143
+    },
+    {
+      "case": "holdout_s",
+      "mode": "pursuit",
+      "frames": 170,
+      "rmse_m": 0.2578276752899875,
+      "p95_m": 0.39615155379824357,
+      "peak_m": 0.4045237196208707,
+      "center_exits": 0,
+      "steer_rate_rms": 0.04891902036230592,
+      "mean_speed_mps": 9.758286212472354
+    }
+  ]
+}
