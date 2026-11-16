@@ -187,8 +187,8 @@ def run(world, road, case, road_id, mode, folder, camera_hook=None, gain=0.3, lq
         outside = abs(error) > 1.75
         approach = np.array([r for r in rows if r[1] < 35])
         settled = (abs(approach[:,6]) <= 0.1) & (abs(approach[:,16]) <= math.radians(2))
-        windows = np.convolve(settled.astype(int),np.ones(20,dtype=int),mode='valid')
-        recovery = np.flatnonzero(windows==20)
+        windows = np.convolve(settled.astype(int),np.ones(21,dtype=int),mode='valid')
+        recovery = np.flatnonzero(windows==21)
         return dict(case=name, mode=mode, frames=len(active), rmse_m=float(np.sqrt(np.mean(error**2))),
                     recovery_s=float(approach[recovery[0],0]) if len(recovery) else None,
                     recovery_peak_m=float(max(abs(approach[:,6]))),

@@ -27,7 +27,7 @@ def main():
             np.testing.assert_allclose(raw['steer'],expected,atol=1e-9)
             straight=raw[raw['station_m']<35]
             good=(abs(straight['error_m'])<=.1)&(abs(straight['body_heading_error'])<=math.radians(2))
-            starts=[i for i in range(len(good)-19) if all(good[i:i+20])]
+            starts=[i for i in range(len(good)-20) if all(good[i:i+21])]
             recovered=float(straight['time_s'][starts[0]]) if starts else None
             assert recovered==row['recovery_s']
             np.testing.assert_allclose(max(abs(straight['error_m'])),row['recovery_peak_m'])
