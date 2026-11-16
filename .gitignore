@@ -29,6 +29,7 @@ results/
 !docs/acc_follow_holdout.mp4
 !docs/lateral_comparison.mp4
 !docs/stanley_correction.mp4
+!docs/lqr_comparison.mp4
 *.avi
 *.mov
 

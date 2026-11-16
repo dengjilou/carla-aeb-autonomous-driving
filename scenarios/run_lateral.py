@@ -4,6 +4,7 @@ import csv
 import json
 import math
 import sys
+import time
 from pathlib import Path
 
 import carla
@@ -13,6 +14,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "controllers"))
 from acc import SpeedPID
 from stanley_pid_controller import StanleyController
 from stanley_tracking import steering as stanley_steering
+from lqr_tracking import LQR
 
 DT = 0.05
 # name, signed curvature (1/m) of the two 32 m segments, requested speed (m/s)
@@ -23,6 +25,10 @@ CASES = [
 VALIDATION = [
     ("validation_arc_slow", 1/80, 1/80, 6),
     ("validation_s_fast", 1/60, -1/40, 12),
+]
+LQR_VALIDATION = [
+    ("lqr_new_arc", -1/70, -1/70, 7),
+    ("lqr_new_s", -1/55, 1/38, 11),
 ]
 
 
@@ -56,7 +62,7 @@ def project(xy, starts, vectors, lengths2):
     return index, t[index], signed_distance
 
 
-def run(world, road, case, road_id, mode, folder, camera_hook=None, gain=0.3):
+def run(world, road, case, road_id, mode, folder, camera_hook=None, gain=0.3, lqr_weight=0.2):
     name, _, _, target_speed = case
     stations = np.arange(1., 133., 0.5)
     path = [road.get_waypoint_xodr(road_id, -1, float(s)) for s in stations]
@@ -88,6 +94,9 @@ def run(world, road, case, road_id, mode, folder, camera_hook=None, gain=0.3):
         if not 1 < wheelbase < 5 or not -3 < rear_x < 0 or max_angle <= 0:
             raise RuntimeError("Invalid vehicle geometry")
         stanley.steer_alpha = 1.0
+        setup_start = time.perf_counter()
+        lqr = LQR(target_speed, wheelbase, DT, lqr_weight) if mode == "lqr" else None
+        setup_us = (time.perf_counter()-setup_start)*1e6
         previous = 0.0
         rows = []
         for tick in range(int(32/DT)):
@@ -96,8 +105,19 @@ def run(world, road, case, road_id, mode, folder, camera_hook=None, gain=0.3):
             speed = vehicle.get_velocity().length()
             idx, fraction, error = project(np.array([pos.x, pos.y]), points[:-1], vectors, lengths2)
             station = stations[idx] + fraction*0.5
+            compute_start = time.perf_counter()
             target = min(len(path)-1, idx + round((3 + 0.4*speed)/0.5))
-            if mode in ("stanley", "stanley_angle"):
+            if mode == "lqr":
+                axle = transform.transform(carla.Location(x=rear_x))
+                rear_idx, _, rear_error = project(np.array([axle.x, axle.y]), points[:-1], vectors, lengths2)
+                tangent = vectors[rear_idx]
+                path_heading = math.atan2(tangent[1], tangent[0])
+                lo, hi = max(0,rear_idx-2), min(len(vectors)-1,rear_idx+2)
+                angle = math.atan2(vectors[hi,1],vectors[hi,0])-math.atan2(vectors[lo,1],vectors[lo,0])
+                curvature = math.atan2(math.sin(angle),math.cos(angle))/np.sqrt(lengths2[lo:hi]).sum()
+                steer = lqr.steering(rear_error, math.radians(transform.rotation.yaw)-path_heading,
+                                     curvature, max_angle)
+            elif mode in ("stanley", "stanley_angle"):
                 steer = stanley.compute_steering_angle(vehicle, path[target])[0]
                 if mode == "stanley_angle":
                     steer /= max_angle
@@ -119,9 +139,10 @@ def run(world, road, case, road_id, mode, folder, camera_hook=None, gain=0.3):
                 steer = math.atan2(2*wheelbase*lateral, dx*dx + dy*dy)/max_angle
             steer = 0.4 * max(-0.7, min(0.7, steer)) + 0.6 * previous
             previous = steer
+            compute_us = (time.perf_counter()-compute_start)*1e6
             throttle, brake = pid.update(target_speed, speed, DT)
             ref = points[idx] + fraction*vectors[idx]
-            rows.append((tick*DT, station, pos.x, pos.y, *ref, error, speed, steer))
+            rows.append((tick*DT, station, pos.x, pos.y, *ref, error, speed, steer, compute_us))
             if capture:
                 capture(world.get_snapshot().frame, rows[-1])
             if station >= 121:
@@ -130,7 +151,7 @@ def run(world, road, case, road_id, mode, folder, camera_hook=None, gain=0.3):
             world.tick()
         with (folder / (name+'_'+mode+'.csv')).open('w', newline='') as f:
             writer = csv.writer(f)
-            writer.writerow('time_s station_m x y ref_x ref_y error_m speed_mps steer'.split())
+            writer.writerow('time_s station_m x y ref_x ref_y error_m speed_mps steer compute_us'.split())
             writer.writerows(rows)
         if station < 121:
             raise RuntimeError(name + " did not finish the route")
@@ -141,6 +162,7 @@ def run(world, road, case, road_id, mode, folder, camera_hook=None, gain=0.3):
                     p95_m=float(np.percentile(abs(error), 95)), peak_m=float(max(abs(error))),
                     center_exits=int(outside[0])+int(np.sum(outside[1:] & ~outside[:-1])),
                     steer_rate_rms=float(np.sqrt(np.mean((np.diff(commands)/DT)**2))),
+                    compute_p95_us=float(np.percentile(active[:,9],95)), setup_us=setup_us,
                     mean_speed_mps=float(active[:, 7].mean()))
     finally:
         if camera:
@@ -153,10 +175,11 @@ def run(world, road, case, road_id, mode, folder, camera_hook=None, gain=0.3):
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--output', type=Path, required=True)
-    parser.add_argument('--suite', choices=('development','known','validation'), default='known')
-    parser.add_argument('--modes', nargs='+', choices=('stanley','pursuit','stanley_angle','stanley_geometry','stanley_fixed'),
+    parser.add_argument('--suite', choices=('development','known','validation','lqr_validation'), default='known')
+    parser.add_argument('--modes', nargs='+', choices=('stanley','pursuit','stanley_angle','stanley_geometry','stanley_fixed','lqr'),
                         default=['stanley','pursuit'])
     parser.add_argument('--gain', type=float, default=2.0)
+    parser.add_argument('--lqr-weight', type=float, default=1.0)
     args = parser.parse_args()
     folder = args.output
     folder.mkdir(parents=True, exist_ok=False)
@@ -168,7 +191,7 @@ def main():
     if (original.get_settings().synchronous_mode or 'OpenDriveMap' in original_map
             or any(actors.filter(pattern) for pattern in ('vehicle.*', 'walker.*', 'sensor.*'))):
         raise RuntimeError("Requires an idle, asynchronous stock map")
-    cases = VALIDATION if args.suite == 'validation' else CASES[:3] if args.suite == 'development' else CASES
+    cases = LQR_VALIDATION if args.suite == 'lqr_validation' else VALIDATION if args.suite == 'validation' else CASES[:3] if args.suite == 'development' else CASES
     xml = test_map(cases)
     (folder/'lateral.xodr').write_text(xml)
     try:
@@ -179,10 +202,10 @@ def main():
         world.apply_settings(settings)
         road = world.get_map()
         results = []
-        (folder/'config.json').write_text(json.dumps(dict(cases=cases, modes=args.modes, gain=args.gain, step_s=DT),indent=2))
+        (folder/'config.json').write_text(json.dumps(dict(cases=cases, modes=args.modes, gain=args.gain, step_s=DT, lqr_weight=args.lqr_weight),indent=2))
         for i, case in enumerate(cases, 1):
             for mode in args.modes:
-                result = run(world, road, case, i, mode, folder, gain=args.gain)
+                result = run(world, road, case, i, mode, folder, gain=args.gain, lqr_weight=args.lqr_weight)
                 results.append(result)
                 print(result, flush=True)
         (folder/'summary.json').write_text(json.dumps(results, indent=2))
