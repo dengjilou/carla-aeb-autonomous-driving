@@ -92,8 +92,23 @@ def metrics(hota, clear):
             **{k: int(clear[k]) for k in ("IDSW", "CLR_FP", "CLR_FN", "CLR_TP")}}
 
 
-def main():
+def evaluate_tracks(root):
     import trackeval
+    dataset = trackeval.datasets.Kitti2DBox(dict(GT_FOLDER=str(root / "gt"), TRACKERS_FOLDER=str(root),
+        TRACKERS_TO_EVAL=list(METHODS), CLASSES_TO_EVAL=["car"], PRINT_CONFIG=False))
+    hota, clear = trackeval.metrics.HOTA(), trackeval.metrics.CLEAR(dict(PRINT_CONFIG=False))
+    result = {}
+    for method in METHODS:
+        hs, cs = {}, {}
+        for seq in dataset.seq_list:
+            data = dataset.get_preprocessed_seq_data(dataset.get_raw_seq_data(method, seq), "car")
+            hs[seq], cs[seq] = hota.eval_sequence(data), clear.eval_sequence(data)
+        result[method] = {seq: metrics(hs[seq], cs[seq]) for seq in dataset.seq_list}
+        result[method]["combined"] = metrics(hota.combine_sequences(hs), clear.combine_sequences(cs))
+    return result
+
+
+def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("data", type=Path, help="folder containing labels.zip and regionlets.zip")
     parser.add_argument("output", type=Path)
@@ -120,17 +135,7 @@ def main():
                 track(frames, LENGTHS[seq], method, folder / name)
     (gt / "evaluate_tracking.seqmap.training").write_text(
         "".join(f"{i:04} empty 0 {LENGTHS[i]}\n" for i in ids), encoding="ascii")
-    dataset = trackeval.datasets.Kitti2DBox(dict(GT_FOLDER=str(gt), TRACKERS_FOLDER=str(root),
-        TRACKERS_TO_EVAL=list(METHODS), CLASSES_TO_EVAL=["car"], PRINT_CONFIG=False))
-    hota, clear = trackeval.metrics.HOTA(), trackeval.metrics.CLEAR(dict(PRINT_CONFIG=False))
-    result = {}
-    for method in METHODS:
-        hs, cs = {}, {}
-        for seq in dataset.seq_list:
-            data = dataset.get_preprocessed_seq_data(dataset.get_raw_seq_data(method, seq), "car")
-            hs[seq], cs[seq] = hota.eval_sequence(data), clear.eval_sequence(data)
-        result[method] = {seq: metrics(hs[seq], cs[seq]) for seq in dataset.seq_list}
-        result[method]["combined"] = metrics(hota.combine_sequences(hs), clear.combine_sequences(cs))
+    result = evaluate_tracks(root)
     (root / "metrics.json").write_text(json.dumps(result, indent=2) + "\n", encoding="utf-8")
     print({m: result[m]["combined"] for m in METHODS})
 

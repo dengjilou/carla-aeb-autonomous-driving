@@ -13,6 +13,8 @@
 
 ## Project Overview
 
+[KITTI 车辆跟踪与感知评测](experiments/kitti_tracking/README.md)使用固定检测框比较三种 ID 分配策略，提供 6 段留出序列的 HOTA、身份切换和两段原始相机案例回放。
+
 独立数据分析项目使用公开 CarSim 轨迹，按整段记录留出测试横摆角速度预测误差。[模型、数据来源与复现](experiments/carsim_yaw/README.md)
 
 The [integrated showcase](docs/integrated.md) connects fixed-route Stanley,
