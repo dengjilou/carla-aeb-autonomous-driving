@@ -121,6 +121,10 @@ def run_case(cfg, mode, gains, camera=None, trace_path=None):
             native=RosController(runtime_gains)
         acc = ACC(**gains)
         aeb = AEBController(closing_guard=cfg.get('aeb_closing_guard',False))
+        if cfg.get('full_brake_at_onset',False):
+            aeb.partial_brake_strength = aeb.full_brake_strength
+        if cfg.get('full_brake_at_warning',False):
+            aeb.ttc_full = aeb.ttc_warning
         latched = 0.0
         previous_location = None
         initial_frame = world.get_snapshot().frame

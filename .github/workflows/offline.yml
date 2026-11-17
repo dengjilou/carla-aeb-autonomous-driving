@@ -24,4 +24,6 @@ jobs:
       - run: python scenarios/report_aeb_gap.py --input output/aeb-gap-ci --output output/aeb-gap-ci-report
       - run: python -c "import zipfile; zipfile.ZipFile('docs/aeb_closing_traces.zip').extractall('output/aeb-closing-ci')"
       - run: python scenarios/report_aeb_closing.py --input output/aeb-closing-ci --output output/aeb-closing-ci-report
+      - run: python -m zipfile -e docs/brake_onset_traces.zip output/brake-onset
+      - run: python scenarios/audit_brake_onset.py output/brake-onset/staged --warning-folder output/brake-onset/warning
       - run: python scenarios/report_longitudinal.py --input docs/longitudinal_reference.json --output output/reference-report

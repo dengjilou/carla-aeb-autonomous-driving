@@ -19,7 +19,8 @@ def audit_run(folder,name,run):
             distance,closing=float(r['aeb_distance_m']),float(r['aeb_closing_mps'])
             ttc=distance/closing if closing>.1 else math.inf
             assert math.isclose(float(r['aeb_ttc_s']),ttc,abs_tol=1e-12)
-            target=3 if ttc<=.6 else 2 if ttc<=1.6 else 1 if ttc<=2.5 else 0
+            full_threshold = 2.5 if run['config'].get('full_brake_at_warning',False) else .6
+            target=3 if ttc<=full_threshold else 2 if ttc<=1.6 else 1 if ttc<=2.5 else 0
             allow_distance=(not run['config'].get('aeb_closing_guard',False) or distance<=0
                             or (closing>.1 and distance/closing<=5.))
             if allow_distance:
@@ -29,7 +30,8 @@ def audit_run(folder,name,run):
                     target=max(target,2)
             level=max(level,target)
         assert level==int(r['aeb_level'])
-        assert float(r['aeb_brake'])==(0.,0.,.4,1.)[level]
+        partial_request = 1. if run['config'].get('full_brake_at_onset',False) else .4
+        assert float(r['aeb_brake'])==(0.,0.,partial_request,1.)[level]
         if float(r['latched_brake'])>0:
             assert float(r['throttle'])==0 and float(r['brake'])>=float(r['latched_brake'])
     def first(predicate):

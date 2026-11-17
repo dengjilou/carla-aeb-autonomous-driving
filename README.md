@@ -22,6 +22,8 @@ false-braking counterexample. Both experimental options remain opt-in.
 The [closing-window follow-up](docs/aeb_closing.md) tests a bounded-distance guard
 against low-speed false braking, retaining unchanged acceptance rules and any
 functional verdict regression separately from collision outcomes.
+The [paired braking experiment](docs/brake_onset.md) reproduces the four remaining
+rear-end contacts and measures what full braking at the original onset changes.
 
 Autonomous driving simulation project based on CARLA 0.9.13, featuring lateral control (Stanley), longitudinal control (PID), and AEB (Automatic Emergency Braking) system validation.
 
