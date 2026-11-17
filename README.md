@@ -24,6 +24,8 @@ against low-speed false braking, retaining unchanged acceptance rules and any
 functional verdict regression separately from collision outcomes.
 The [paired braking experiment](docs/brake_onset.md) reproduces the four remaining
 rear-end contacts and measures what full braking at the original onset changes.
+The [frozen independent validation](docs/independent_aeb.md) evaluates new scenario
+combinations under predeclared criteria and compares comfort on matched windows.
 
 Autonomous driving simulation project based on CARLA 0.9.13, featuring lateral control (Stanley), longitudinal control (PID), and AEB (Automatic Emergency Braking) system validation.
 
