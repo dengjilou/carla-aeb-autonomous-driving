@@ -1,0 +1,517 @@
+{
+  "unseen_18_34_body_guard": {
+    "staged": {
+      "verdict": "fail",
+      "valid": true,
+      "collision": true,
+      "contact_s": 3.95,
+      "first_brake": {
+        "time_s": 2.5,
+        "ego_speed_mps": 17.153610229492188,
+        "lead_speed_mps": 6.85716438293457,
+        "aeb_distance_m": 16.03020590296997,
+        "aeb_center_distance_m": 20.824006413448927,
+        "aeb_body_gap_m": 16.03020590296997,
+        "aeb_closing_mps": 10.296593469779484,
+        "aeb_ttc_s": 1.5568455674217543
+      },
+      "first_full_request": {
+        "time_s": 3.05,
+        "ego_speed_mps": 14.076163291931152,
+        "lead_speed_mps": 0.0007612485787831247,
+        "aeb_distance_m": 9.421654083547313,
+        "aeb_center_distance_m": 14.224603700827899,
+        "aeb_body_gap_m": 9.421654083547313,
+        "aeb_closing_mps": 14.0765897171673,
+        "aeb_ttc_s": 0.6693136812858163
+      },
+      "approx_precontact_closing_mps": 7.895968311496835,
+      "min_gap_m": 0.2538270332068322,
+      "precontact_kmh": 28.425496673583986
+    },
+    "immediate": {
+      "verdict": "fail",
+      "valid": true,
+      "collision": true,
+      "contact_s": 4.1,
+      "first_brake": {
+        "time_s": 2.5,
+        "ego_speed_mps": 17.153610229492188,
+        "lead_speed_mps": 6.85716438293457,
+        "aeb_distance_m": 16.03020590296997,
+        "aeb_center_distance_m": 20.824006413448927,
+        "aeb_body_gap_m": 16.03020590296997,
+        "aeb_closing_mps": 10.296593469779484,
+        "aeb_ttc_s": 1.5568455674217543
+      },
+      "first_full_request": {
+        "time_s": 2.5,
+        "ego_speed_mps": 17.153610229492188,
+        "lead_speed_mps": 6.85716438293457,
+        "aeb_distance_m": 16.03020590296997,
+        "aeb_center_distance_m": 20.824006413448927,
+        "aeb_body_gap_m": 16.03020590296997,
+        "aeb_closing_mps": 10.296593469779484,
+        "aeb_ttc_s": 1.5568455674217543
+      },
+      "approx_precontact_closing_mps": 6.466799958489903,
+      "min_gap_m": -0.04728300616734771,
+      "precontact_kmh": 23.280475616455078
+    },
+    "warning": {
+      "verdict": "pass",
+      "valid": true,
+      "collision": false,
+      "contact_s": null,
+      "first_brake": {
+        "time_s": 2.1,
+        "ego_speed_mps": 16.64664649963379,
+        "lead_speed_mps": 8.482816696166992,
+        "aeb_distance_m": 19.759254691396468,
+        "aeb_center_distance_m": 24.556436833285495,
+        "aeb_body_gap_m": 19.759254691396468,
+        "aeb_closing_mps": 8.163832795769812,
+        "aeb_ttc_s": 2.4203404437233162
+      },
+      "first_full_request": {
+        "time_s": 2.1,
+        "ego_speed_mps": 16.64664649963379,
+        "lead_speed_mps": 8.482816696166992,
+        "aeb_distance_m": 19.759254691396468,
+        "aeb_center_distance_m": 24.556436833285495,
+        "aeb_body_gap_m": 19.759254691396468,
+        "aeb_closing_mps": 8.163832795769812,
+        "aeb_ttc_s": 2.4203404437233162
+      },
+      "approx_precontact_closing_mps": null,
+      "min_gap_m": 6.0638295050288775,
+      "precontact_kmh": null
+    }
+  },
+  "unseen_22_34_body_guard": {
+    "staged": {
+      "verdict": "fail",
+      "valid": true,
+      "collision": true,
+      "contact_s": 4.35,
+      "first_brake": {
+        "time_s": 2.55,
+        "ego_speed_mps": 20.951725006103516,
+        "lead_speed_mps": 10.430425643920898,
+        "aeb_distance_m": 16.42499580302735,
+        "aeb_center_distance_m": 21.224042790972753,
+        "aeb_body_gap_m": 16.42499580302735,
+        "aeb_closing_mps": 10.521029537451337,
+        "aeb_ttc_s": 1.561158605682065
+      },
+      "first_full_request": {
+        "time_s": 3.2,
+        "ego_speed_mps": 16.75731086730957,
+        "lead_speed_mps": 7.963037967681885,
+        "aeb_distance_m": 9.899995000278613,
+        "aeb_center_distance_m": 14.711149492708714,
+        "aeb_body_gap_m": 9.899995000278613,
+        "aeb_closing_mps": 8.793386152948464,
+        "aeb_ttc_s": 1.1258455875907483
+      },
+      "approx_precontact_closing_mps": 8.118887064332986,
+      "min_gap_m": 0.27894495387434404,
+      "precontact_kmh": 29.22784538269043
+    },
+    "immediate": {
+      "verdict": "fail",
+      "valid": true,
+      "collision": true,
+      "contact_s": 4.55,
+      "first_brake": {
+        "time_s": 2.55,
+        "ego_speed_mps": 20.951725006103516,
+        "lead_speed_mps": 10.430425643920898,
+        "aeb_distance_m": 16.42499580302735,
+        "aeb_center_distance_m": 21.224042790972753,
+        "aeb_body_gap_m": 16.42499580302735,
+        "aeb_closing_mps": 10.521029537451337,
+        "aeb_ttc_s": 1.561158605682065
+      },
+      "first_full_request": {
+        "time_s": 2.55,
+        "ego_speed_mps": 20.951725006103516,
+        "lead_speed_mps": 10.430425643920898,
+        "aeb_distance_m": 16.42499580302735,
+        "aeb_center_distance_m": 21.224042790972753,
+        "aeb_body_gap_m": 16.42499580302735,
+        "aeb_closing_mps": 10.521029537451337,
+        "aeb_ttc_s": 1.561158605682065
+      },
+      "approx_precontact_closing_mps": 6.3673271592614995,
+      "min_gap_m": -0.039775417438832505,
+      "precontact_kmh": 22.922232055664065
+    },
+    "warning": {
+      "verdict": "pass",
+      "valid": true,
+      "collision": false,
+      "contact_s": null,
+      "first_brake": {
+        "time_s": 2.15,
+        "ego_speed_mps": 20.257230758666992,
+        "lead_speed_mps": 12.130989074707031,
+        "aeb_distance_m": 20.167366245426177,
+        "aeb_center_distance_m": 24.971221062337776,
+        "aeb_body_gap_m": 20.167366245426177,
+        "aeb_closing_mps": 8.12637372046848,
+        "aeb_ttc_s": 2.4817177918644306
+      },
+      "first_full_request": {
+        "time_s": 2.15,
+        "ego_speed_mps": 20.257230758666992,
+        "lead_speed_mps": 12.130989074707031,
+        "aeb_distance_m": 20.167366245426177,
+        "aeb_center_distance_m": 24.971221062337776,
+        "aeb_body_gap_m": 20.167366245426177,
+        "aeb_closing_mps": 8.12637372046848,
+        "aeb_ttc_s": 2.4817177918644306
+      },
+      "approx_precontact_closing_mps": null,
+      "min_gap_m": 8.265566334905415,
+      "precontact_kmh": null
+    }
+  },
+  "fresh_brake_20_30_body_guard": {
+    "staged": {
+      "verdict": "fail",
+      "valid": true,
+      "collision": true,
+      "contact_s": 3.95,
+      "first_brake": {
+        "time_s": 2.25,
+        "ego_speed_mps": 18.82719612121582,
+        "lead_speed_mps": 9.729191780090332,
+        "aeb_distance_m": 14.560140156438601,
+        "aeb_center_distance_m": 19.353655770883478,
+        "aeb_body_gap_m": 14.560140156438601,
+        "aeb_closing_mps": 9.09808629365696,
+        "aeb_ttc_s": 1.6003519516614937
+      },
+      "first_full_request": {
+        "time_s": 2.8,
+        "ego_speed_mps": 15.82744312286377,
+        "lead_speed_mps": 7.6820878982543945,
+        "aeb_distance_m": 9.606700872491615,
+        "aeb_center_distance_m": 14.40842651687501,
+        "aeb_body_gap_m": 9.606700872491615,
+        "aeb_closing_mps": 8.145370562227367,
+        "aeb_ttc_s": 1.179406240526477
+      },
+      "approx_precontact_closing_mps": 7.543716871707163,
+      "min_gap_m": 0.26112715311073487,
+      "precontact_kmh": 27.15710964202881
+    },
+    "immediate": {
+      "verdict": "fail",
+      "valid": true,
+      "collision": true,
+      "contact_s": 4.1,
+      "first_brake": {
+        "time_s": 2.25,
+        "ego_speed_mps": 18.82719612121582,
+        "lead_speed_mps": 9.729191780090332,
+        "aeb_distance_m": 14.560140156438601,
+        "aeb_center_distance_m": 19.353655770883478,
+        "aeb_body_gap_m": 14.560140156438601,
+        "aeb_closing_mps": 9.09808629365696,
+        "aeb_ttc_s": 1.6003519516614937
+      },
+      "first_full_request": {
+        "time_s": 2.25,
+        "ego_speed_mps": 18.82719612121582,
+        "lead_speed_mps": 9.729191780090332,
+        "aeb_distance_m": 14.560140156438601,
+        "aeb_center_distance_m": 19.353655770883478,
+        "aeb_body_gap_m": 14.560140156438601,
+        "aeb_closing_mps": 9.09808629365696,
+        "aeb_ttc_s": 1.6003519516614937
+      },
+      "approx_precontact_closing_mps": 5.849347617895981,
+      "min_gap_m": 0.13632187637136894,
+      "precontact_kmh": 21.057513999938966
+    },
+    "warning": {
+      "verdict": "pass",
+      "valid": true,
+      "collision": false,
+      "contact_s": null,
+      "first_brake": {
+        "time_s": 1.95,
+        "ego_speed_mps": 18.146699905395508,
+        "lead_speed_mps": 10.96850872039795,
+        "aeb_distance_m": 16.979044969741533,
+        "aeb_center_distance_m": 21.78430518585865,
+        "aeb_body_gap_m": 16.979044969741533,
+        "aeb_closing_mps": 7.177995944215075,
+        "aeb_ttc_s": 2.3654297246330107
+      },
+      "first_full_request": {
+        "time_s": 1.95,
+        "ego_speed_mps": 18.146699905395508,
+        "lead_speed_mps": 10.96850872039795,
+        "aeb_distance_m": 16.979044969741533,
+        "aeb_center_distance_m": 21.78430518585865,
+        "aeb_body_gap_m": 16.979044969741533,
+        "aeb_closing_mps": 7.177995944215075,
+        "aeb_ttc_s": 2.3654297246330107
+      },
+      "approx_precontact_closing_mps": null,
+      "min_gap_m": 6.221819346192575,
+      "precontact_kmh": null
+    }
+  },
+  "fresh_brake_24_38_body_guard": {
+    "staged": {
+      "verdict": "fail",
+      "valid": true,
+      "collision": true,
+      "contact_s": 4.75,
+      "first_brake": {
+        "time_s": 2.85,
+        "ego_speed_mps": 22.912450790405273,
+        "lead_speed_mps": 11.166155815124512,
+        "aeb_distance_m": 18.08693437991511,
+        "aeb_center_distance_m": 22.905322854617495,
+        "aeb_body_gap_m": 18.08693437991511,
+        "aeb_closing_mps": 11.746391639687593,
+        "aeb_ttc_s": 1.539786424181933
+      },
+      "first_full_request": {
+        "time_s": 3.6,
+        "ego_speed_mps": 17.631561279296875,
+        "lead_speed_mps": 8.229598045349121,
+        "aeb_distance_m": 9.862023557366502,
+        "aeb_center_distance_m": 14.654716218722598,
+        "aeb_body_gap_m": 9.862023557366502,
+        "aeb_closing_mps": 9.402053190816364,
+        "aeb_ttc_s": 1.0489223318795327
+      },
+      "approx_precontact_closing_mps": 8.65071682363707,
+      "min_gap_m": -0.007977264797631278,
+      "precontact_kmh": 31.142460250854494
+    },
+    "immediate": {
+      "verdict": "fail",
+      "valid": true,
+      "collision": true,
+      "contact_s": 4.9,
+      "first_brake": {
+        "time_s": 2.85,
+        "ego_speed_mps": 22.912450790405273,
+        "lead_speed_mps": 11.166155815124512,
+        "aeb_distance_m": 18.08693437991511,
+        "aeb_center_distance_m": 22.905322854617495,
+        "aeb_body_gap_m": 18.08693437991511,
+        "aeb_closing_mps": 11.746391639687593,
+        "aeb_ttc_s": 1.539786424181933
+      },
+      "first_full_request": {
+        "time_s": 2.85,
+        "ego_speed_mps": 22.912450790405273,
+        "lead_speed_mps": 11.166155815124512,
+        "aeb_distance_m": 18.08693437991511,
+        "aeb_center_distance_m": 22.905322854617495,
+        "aeb_body_gap_m": 18.08693437991511,
+        "aeb_closing_mps": 11.746391639687593,
+        "aeb_ttc_s": 1.539786424181933
+      },
+      "approx_precontact_closing_mps": 7.0682916334876795,
+      "min_gap_m": 0.14187764092196176,
+      "precontact_kmh": 25.44576072692871
+    },
+    "warning": {
+      "verdict": "pass",
+      "valid": true,
+      "collision": false,
+      "contact_s": null,
+      "first_brake": {
+        "time_s": 2.4,
+        "ego_speed_mps": 22.279685974121094,
+        "lead_speed_mps": 13.016007423400879,
+        "aeb_distance_m": 22.85710570024978,
+        "aeb_center_distance_m": 27.665516893423188,
+        "aeb_body_gap_m": 22.85710570024978,
+        "aeb_closing_mps": 9.262811535591911,
+        "aeb_ttc_s": 2.4676207231921365
+      },
+      "first_full_request": {
+        "time_s": 2.4,
+        "ego_speed_mps": 22.279685974121094,
+        "lead_speed_mps": 13.016007423400879,
+        "aeb_distance_m": 22.85710570024978,
+        "aeb_center_distance_m": 27.665516893423188,
+        "aeb_body_gap_m": 22.85710570024978,
+        "aeb_closing_mps": 9.262811535591911,
+        "aeb_ttc_s": 2.4676207231921365
+      },
+      "approx_precontact_closing_mps": null,
+      "min_gap_m": 9.514621305132252,
+      "precontact_kmh": null
+    }
+  },
+  "equal_4_body_guard": {
+    "staged": {
+      "verdict": "pass",
+      "valid": true,
+      "collision": false,
+      "contact_s": null,
+      "first_brake": null,
+      "first_full_request": null,
+      "approx_precontact_closing_mps": null,
+      "min_gap_m": 13.20822109158022,
+      "precontact_kmh": null
+    },
+    "immediate": {
+      "verdict": "pass",
+      "valid": true,
+      "collision": false,
+      "contact_s": null,
+      "first_brake": null,
+      "first_full_request": null,
+      "approx_precontact_closing_mps": null,
+      "min_gap_m": 13.20822109158022,
+      "precontact_kmh": null
+    },
+    "warning": {
+      "verdict": "pass",
+      "valid": true,
+      "collision": false,
+      "contact_s": null,
+      "first_brake": null,
+      "first_full_request": null,
+      "approx_precontact_closing_mps": null,
+      "min_gap_m": 13.20822109158022,
+      "precontact_kmh": null
+    }
+  },
+  "regression_holdout_extreme_brake_body_guard": {
+    "staged": {
+      "verdict": "fail",
+      "valid": true,
+      "collision": false,
+      "contact_s": null,
+      "first_brake": null,
+      "first_full_request": null,
+      "approx_precontact_closing_mps": null,
+      "min_gap_m": 9.885960964205623,
+      "precontact_kmh": null
+    },
+    "immediate": {
+      "verdict": "fail",
+      "valid": true,
+      "collision": false,
+      "contact_s": null,
+      "first_brake": null,
+      "first_full_request": null,
+      "approx_precontact_closing_mps": null,
+      "min_gap_m": 9.885960964205623,
+      "precontact_kmh": null
+    },
+    "warning": {
+      "verdict": "fail",
+      "valid": true,
+      "collision": false,
+      "contact_s": null,
+      "first_brake": null,
+      "first_full_request": null,
+      "approx_precontact_closing_mps": null,
+      "min_gap_m": 9.885960964205623,
+      "precontact_kmh": null
+    }
+  },
+  "diagnosis_stress_body_guard": {
+    "staged": {
+      "verdict": "pass",
+      "valid": true,
+      "collision": false,
+      "contact_s": null,
+      "first_brake": {
+        "time_s": 1.8,
+        "ego_speed_mps": 21.905427932739258,
+        "lead_speed_mps": 16.380130767822266,
+        "aeb_distance_m": 14.848428891503914,
+        "aeb_center_distance_m": 19.65831688595545,
+        "aeb_body_gap_m": 14.848428891503914,
+        "aeb_closing_mps": 5.522742716035104,
+        "aeb_ttc_s": 2.688596890163285
+      },
+      "first_full_request": {
+        "time_s": 2.9,
+        "ego_speed_mps": 14.341468811035156,
+        "lead_speed_mps": 11.856772422790527,
+        "aeb_distance_m": 9.98800765131358,
+        "aeb_center_distance_m": 14.793445733154002,
+        "aeb_body_gap_m": 9.98800765131358,
+        "aeb_closing_mps": 2.484819752445741,
+        "aeb_ttc_s": 4.019610533714832
+      },
+      "approx_precontact_closing_mps": null,
+      "min_gap_m": 9.20128741795105,
+      "precontact_kmh": null
+    },
+    "immediate": {
+      "verdict": "pass",
+      "valid": true,
+      "collision": false,
+      "contact_s": null,
+      "first_brake": {
+        "time_s": 1.8,
+        "ego_speed_mps": 21.905427932739258,
+        "lead_speed_mps": 16.380130767822266,
+        "aeb_distance_m": 14.848428891503914,
+        "aeb_center_distance_m": 19.65831688595545,
+        "aeb_body_gap_m": 14.848428891503914,
+        "aeb_closing_mps": 5.522742716035104,
+        "aeb_ttc_s": 2.688596890163285
+      },
+      "first_full_request": {
+        "time_s": 1.8,
+        "ego_speed_mps": 21.905427932739258,
+        "lead_speed_mps": 16.380130767822266,
+        "aeb_distance_m": 14.848428891503914,
+        "aeb_center_distance_m": 19.65831688595545,
+        "aeb_body_gap_m": 14.848428891503914,
+        "aeb_closing_mps": 5.522742716035104,
+        "aeb_ttc_s": 2.688596890163285
+      },
+      "approx_precontact_closing_mps": null,
+      "min_gap_m": 10.582365085607961,
+      "precontact_kmh": null
+    },
+    "warning": {
+      "verdict": "pass",
+      "valid": true,
+      "collision": false,
+      "contact_s": null,
+      "first_brake": {
+        "time_s": 1.8,
+        "ego_speed_mps": 21.905427932739258,
+        "lead_speed_mps": 16.380130767822266,
+        "aeb_distance_m": 14.848428891503914,
+        "aeb_center_distance_m": 19.65831688595545,
+        "aeb_body_gap_m": 14.848428891503914,
+        "aeb_closing_mps": 5.522742716035104,
+        "aeb_ttc_s": 2.688596890163285
+      },
+      "first_full_request": {
+        "time_s": 1.9,
+        "ego_speed_mps": 21.871536254882812,
+        "lead_speed_mps": 15.96566104888916,
+        "aeb_distance_m": 14.26928761741324,
+        "aeb_center_distance_m": 19.08159925344426,
+        "aeb_body_gap_m": 14.26928761741324,
+        "aeb_closing_mps": 5.905819704097077,
+        "aeb_ttc_s": 2.416140067315995
+      },
+      "approx_precontact_closing_mps": null,
+      "min_gap_m": 10.5257934227768,
+      "precontact_kmh": null
+    }
+  }
+}

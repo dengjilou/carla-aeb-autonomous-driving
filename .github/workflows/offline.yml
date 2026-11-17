@@ -11,9 +11,24 @@ jobs:
         with:
           python-version: '3.10'
       - run: python -m unittest discover -s tests -p test_longitudinal.py -v
+      - run: python -m unittest discover -s tests -p test_aeb_protection.py -v
+      - run: python -m unittest discover -s tests -p test_independent_manifest.py -v
       - run: python -m unittest discover -s tests -p test_curved_metrics.py -v
       - run: python -m unittest discover -s tests -p test_stanley_tracking.py -v
       - run: python -m pip install numpy
       - run: python -m unittest discover -s tests -p test_route_targeting.py -v
+      - run: python -m unittest discover -s tests -p test_aeb_gap_report.py -v
       - run: python -m unittest discover -s tests -p test_lqr_tracking.py -v
+      - run: python -c "import zipfile; zipfile.ZipFile('docs/lqr_speed_traces.zip').extractall('output/lqr-speed-ci')"
+      - run: python scenarios/report_lqr_speed.py --diagnosis output/lqr-speed-ci/diagnosis --validation output/lqr-speed-ci/validation --filter-validation output/lqr-speed-ci/filter_validation --output output/lqr-speed-ci-report
+      - run: python -c "import zipfile; zipfile.ZipFile('docs/aeb_gap_traces.zip').extractall('output/aeb-gap-ci')"
+      - run: python scenarios/report_aeb_gap.py --input output/aeb-gap-ci --output output/aeb-gap-ci-report
+      - run: python -c "import zipfile; zipfile.ZipFile('docs/aeb_closing_traces.zip').extractall('output/aeb-closing-ci')"
+      - run: python scenarios/report_aeb_closing.py --input output/aeb-closing-ci --output output/aeb-closing-ci-report
+      - run: python -m zipfile -e docs/brake_onset_traces.zip output/brake-onset
+      - run: python scenarios/audit_brake_onset.py output/brake-onset/staged --warning-folder output/brake-onset/warning
+      - run: python -m zipfile -e docs/independent_aeb_traces.zip output/independent-aeb
+      - run: python scenarios/report_independent_aeb.py --input output/independent-aeb --output output/independent-aeb-report
+      - run: python -m zipfile -e docs/offset_check_traces.zip output/offset-check
+      - run: python scenarios/audit_offset_check.py output/offset-check
       - run: python scenarios/report_longitudinal.py --input docs/longitudinal_reference.json --output output/reference-report

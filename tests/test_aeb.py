@@ -17,6 +17,22 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'controllers'))
 from stanley_pid_controller import AEBController
 
 
+def test_closing_window_suppresses_small_closing_but_preserves_ttc_and_overlap():
+    controller=AEBController(closing_guard=True)
+    assert controller.update_state(13.2,0)==0
+    assert controller.update_state(14.8,.11)==0
+    assert controller.update_state(.05,.2)==1
+    overlap=AEBController(closing_guard=True)
+    assert overlap.update_state(0,-1)==1
+
+
+def test_closing_window_does_not_release_an_existing_emergency():
+    controller=AEBController(closing_guard=True)
+    assert controller.update_state(9,5)==1
+    assert controller.update_state(13,0)==1
+    assert controller.update_state(None,0)==0
+
+
 def vehicle(actor_id, x, speed, y=0.0, yaw=0.0, lateral_speed=0.0):
     return SimpleNamespace(
         id=actor_id,

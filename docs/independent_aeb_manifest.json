@@ -1,0 +1,25 @@
+{
+  "config_sha256": "909afdcfa541769e112132a84e62bc6567d24d53d182dbbc2c10084c340fd32a",
+  "source_revision": "f53bf5d552d1a60962b15445f215c81d9effe318",
+  "scene_count": 16,
+  "policy_count": 2,
+  "repeats": 2,
+  "full_ttc_s": 2.5,
+  "closing_window_s": 5.0,
+  "acceptance": {
+    "hard_brake": "valid, no contact, lead selected and AEB intervention",
+    "follow": "valid, no contact and no AEB",
+    "slowdown": "valid, no contact and no AEB",
+    "adjacent": "valid, no contact and no AEB",
+    "cutout": "valid, no contact, resumed cruise and no AEB",
+    "cutin": "valid, no contact and lead selected"
+  },
+  "comfort": "Paired speed finite differences over the same pre-contact window; retain values and differences",
+  "personal_tasks": [
+    "Locate one failure in CSV",
+    "Modify one scenario and predict outcome",
+    "Explain or correct one small control function"
+  ],
+  "config_lf_sha256": "6705bbfad6edb57d5bc8704e0629becd2660bb31652301ab44cf226e7c52f744",
+  "hash_normalization": "CRLF to LF only, verified against pre-run commit c2da794"
+}

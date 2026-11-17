@@ -41,6 +41,22 @@ class RouteTargetingTests(unittest.TestCase):
     def test_adjacent_lane_is_excluded(self):
         self.assertIsNone(self.detect([actor(2,10,3.5)])[1])
 
+    def test_body_gap_preserves_target_and_closing(self):
+        actors=[actor(2,30,0),actor(3,20,0)]
+        world=NS(get_actors=lambda:NS(filter=lambda _:actors))
+        center=self.route.nearest_target(self.ego,world)
+        body=self.route.nearest_target(self.ego,world,body_gap=True)
+        self.assertEqual(center[1:],body[1:])
+        self.assertAlmostEqual(body[0],16)
+
+    def test_body_gap_projects_yaw_and_retains_negative_clearance(self):
+        other=actor(2,3,0,yaw=math.pi/6)
+        world=NS(get_actors=lambda:NS(filter=lambda _:[other]))
+        distance,number,_=self.route.nearest_target(self.ego,world,body_gap=True)
+        self.assertEqual(number,2)
+        self.assertAlmostEqual(distance,3-2-(2*math.cos(math.pi/6)+math.sin(math.pi/6)))
+        self.assertLess(distance,0)
+
     def test_behind_opposite_and_outside_range(self):
         for candidate in [actor(2,-10,0),actor(2,10,0,yaw=math.pi),actor(2,55,0)]:
             with self.subTest(candidate=candidate.id):

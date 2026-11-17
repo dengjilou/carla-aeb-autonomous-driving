@@ -1,5 +1,16 @@
 # CARLA AEB Autonomous Driving Simulation
 
+## CARLA–SUMO 自动驾驶控制与场景评测
+
+在 Town04 以 50 ms 固定步长推进 CARLA 和 SUMO，用仿真真值选择目标，并从逐帧日志复算控制介入与碰撞事件。[40 秒仿真对照录像](docs/independent_aeb_demo.mp4)
+
+| 想了解的问题 | 实验结果与证据 |
+|---|---|
+| 什么时候应提前全力制动？ | 冻结 16 个工况后，两种策略各跑两轮。原策略在 4 个急刹工况接触，提前全力策略在观测期内均无接触，4 个急刹的 jerk RMS 均上升。[评测报告、原始日志与复现命令](docs/independent_aeb.md) |
+| 增大初始车距如何改变介入时刻？ | 固定前后车初速，只将初始纵向偏移由 31 m 增至 39 m。原策略从发生接触变为最小投影间距约 0.17 m。[逐帧分析](docs/offset_check.md) |
+| 控制算法如何验证？ | 恒定时距 ACC 在留出的稳定跟车、缓减速工况中，稳态车距 RMSE 分别为 1.14 m、0.91 m。横向另有 Stanley、Pure Pursuit 与 LQR 轨迹对照。[纵向评测](docs/longitudinal.md) · [横向评测](docs/lqr.md) |
+| 控制代码怎样接入仿真？ | C++17 控制核心通过 ctypes 或 ROS 2 Jazzy 节点参与闭环；使用 rosbag2 回放并检查帧序、超时制动。前车减速另有可运行的 OpenSCENARIO 示例。[运行链路](docs/runtime.md) · [场景文件](scenarios/openscenario/lead_slowdown.xosc) |
+
 ## Project Overview
 
 The [integrated showcase](docs/integrated.md) connects fixed-route Stanley,
@@ -13,6 +24,19 @@ and checks frame identity, bag replay and timeout braking.
 The [Eigen LQR runtime study](docs/lqr_runtime.md) connects the existing fixed-gain
 rear-axle LQR to the same C++/ROS 2 path, with 90 closed-loop runs, numerical
 checks and an explicitly invalid high-speed lane-departure case.
+The [speed scheduling and steering-filter ablation](docs/lqr_speed.md) tests that
+failure directly, retaining both lane-departure and valid rear-end failures rather
+than treating an off-route non-contact run as a safety improvement.
+The [AEB distance-reference study](docs/aeb_gap.md) isolates center distance versus
+projected body gap, with 64 runs, held-out combinations and an explicit low-speed
+false-braking counterexample. Both experimental options remain opt-in.
+The [closing-window follow-up](docs/aeb_closing.md) tests a bounded-distance guard
+against low-speed false braking, retaining unchanged acceptance rules and any
+functional verdict regression separately from collision outcomes.
+The [paired braking experiment](docs/brake_onset.md) reproduces the four remaining
+rear-end contacts and measures what full braking at the original onset changes.
+The [frozen independent validation](docs/independent_aeb.md) evaluates new scenario
+combinations under predeclared criteria and compares comfort on matched windows.
 
 Autonomous driving simulation project based on CARLA 0.9.13, featuring lateral control (Stanley), longitudinal control (PID), and AEB (Automatic Emergency Braking) system validation.
 
@@ -40,7 +64,7 @@ frozen parameters with lateral and heading offsets.
 - **Longitudinal Control**: time-headway ACC, anti-windup speed PID and latched AEB arbitration
 - **Safety System**: AEB 4-state FSM (Normal -> Warning -> Partial Brake -> Full Brake)
 - **AI Integration**: ZhipuAI JSON scene -> CARLA auto-configuration
-- **Testing**: pytest (42 AEB cases and a separate C++ PID suite)
+- **Testing**: pytest (44 AEB cases and 19 C++ PID cases)
 
 ## Project Structure
 
@@ -57,7 +81,7 @@ carla-aeb-autonomous-driving/
 |   +-- run_cosim_aeb.py            # CARLA–SUMO AEB regression
 |   +-- run_kml_demo.py             # KML mountain road driving
 +-- tests/                # Unit tests
-|   +-- test_aeb.py                 # AEB tests (42 cases)
+|   +-- test_aeb.py                 # AEB tests (44 cases)
 |   +-- test_pid_cpp.py             # C++ PID tests (19/19)
 +-- ai_integration/       # AI scene generation
 |   +-- carla_ai_scene.py           # ZhipuAI JSON -> CARLA config
@@ -88,7 +112,8 @@ pip install -r requirements.txt
 
 ```bash
 cd controllers/pid_cpp
-python setup_pid_cpp.py build_ext --inplace
+python setup_pid_cpp.py build_ext --build-lib ..
+cd ../..
 ```
 
 ### Run AEB Validation Test
@@ -180,7 +205,7 @@ lane change. These results describe the scripted Town04 scenarios.
 
 ### PID Longitudinal Controller
 - Python `simple_pid` and C++ dual implementation
-- C++ extension provides 1.7x speedup
+- Optional CPython extension with a local timing comparison in the PID tests
 - Output clipping [-1.0, 1.0]
 
 ### AEB State Machine
@@ -205,7 +230,7 @@ cd tests
 pytest -v
 ```
 
-Run `python -m pytest tests/test_aeb.py` from the project root to run the 42 AEB cases by themselves.
+Run `python -m pytest tests/test_aeb.py` from the project root for the 44 AEB cases. After building the optional extension, run `python -m pytest tests/test_pid_cpp.py` for its 19 tests.
 
 ## Demo
 
@@ -228,19 +253,22 @@ py -3.7 scenarios/record_cosim_aeb.py
 The recording and its measured results are saved under `output/cosim-aeb/`.
 
 ### AEB CCRb (Front Vehicle Emergency Brake)
-![aeb_ccrb_demo](docs/images/aeb_ccrb_demo.gif)
+
+[Watch the matched braking runs](docs/independent_aeb_demo.mp4)
 
 ### AEB Cut-in
-![aeb_cutin_demo](docs/images/aeb_cutin_demo.gif)
+
+[Inspect all 18 paired cut-in results](docs/cutin_sweep_reference.json)
 
 ### KML Mountain Road Driving
-![kml_demo](docs/images/kml_demo.gif)
+
+[Route points](tools/screw_shell.kml) · [CARLA demo script](scenarios/run_kml_demo.py)
 
 ## TODO
 
-- [ ] Add unit tests for Stanley controller
+- [x] Add unit tests for Stanley controller
 - [ ] Refactor hardcoded paths to environment variables
-- [ ] Add CI/CD pipeline
+- [x] Add offline, native and ROS 2 CI checks
 - [ ] Add Docker support
 - [ ] Document AEB threshold tuning methodology
 

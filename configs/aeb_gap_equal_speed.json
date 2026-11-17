@@ -1,0 +1,78 @@
+{
+  "step_s": 0.05,
+  "seed": 42,
+  "gains": {
+    "gap_gain": 0.3,
+    "relative_gain": 0.4
+  },
+  "cases": [
+    {
+      "name": "equal_4_center",
+      "kind": "follow",
+      "split": "negative_control",
+      "spawn_index": 269,
+      "curved": false,
+      "target_policy": "route",
+      "ego_speed_mps": 4,
+      "lead_speed_mps": 4,
+      "offset_m": 18,
+      "trigger_s": 2,
+      "duration_s": 12,
+      "demo_mode": "acc",
+      "aeb_distance_reference": "center",
+      "steering_filter_alpha": 1.0,
+      "lqr_schedule": false
+    },
+    {
+      "name": "equal_4_body",
+      "kind": "follow",
+      "split": "negative_control",
+      "spawn_index": 269,
+      "curved": false,
+      "target_policy": "route",
+      "ego_speed_mps": 4,
+      "lead_speed_mps": 4,
+      "offset_m": 18,
+      "trigger_s": 2,
+      "duration_s": 12,
+      "demo_mode": "acc",
+      "aeb_distance_reference": "body",
+      "steering_filter_alpha": 1.0,
+      "lqr_schedule": false
+    },
+    {
+      "name": "equal_8_center",
+      "kind": "follow",
+      "split": "negative_control",
+      "spawn_index": 269,
+      "curved": false,
+      "target_policy": "route",
+      "ego_speed_mps": 8,
+      "lead_speed_mps": 8,
+      "offset_m": 28,
+      "trigger_s": 2,
+      "duration_s": 12,
+      "demo_mode": "acc",
+      "aeb_distance_reference": "center",
+      "steering_filter_alpha": 1.0,
+      "lqr_schedule": false
+    },
+    {
+      "name": "equal_8_body",
+      "kind": "follow",
+      "split": "negative_control",
+      "spawn_index": 269,
+      "curved": false,
+      "target_policy": "route",
+      "ego_speed_mps": 8,
+      "lead_speed_mps": 8,
+      "offset_m": 28,
+      "trigger_s": 2,
+      "duration_s": 12,
+      "demo_mode": "acc",
+      "aeb_distance_reference": "body",
+      "steering_filter_alpha": 1.0,
+      "lqr_schedule": false
+    }
+  ]
+}

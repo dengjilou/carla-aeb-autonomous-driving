@@ -1,0 +1,37 @@
+{
+  "policy_revision": "positive_closing_only",
+  "current_policy": false,
+  "minimum_closing_mps": 0.1,
+  "maximum_ttc_s": null,
+  "metrics": {
+    "valid": true,
+    "invalid_reasons": [],
+    "verdict": "fail",
+    "event_observed_s": 2.05,
+    "first_lead_selected_s": 0.0,
+    "resumed_cruise": null,
+    "collided": false,
+    "collision_callbacks": 0,
+    "first_collision_s": null,
+    "first_aeb_s": 4.6,
+    "aeb_interventions": 1,
+    "peak_deceleration_mps2": 21.93284511566162,
+    "braked_before_contact": null,
+    "pre_contact_speed_kmh": null,
+    "min_projected_gap_m": 13.20822109158022,
+    "steady_gap_rmse_m": 23.770969337792227,
+    "steady_speed_rmse_mps": 3.8468981719545003,
+    "jerk_rms_mps3": 40.86195601018712,
+    "final_speed_mps": 7.629692788668763e-08,
+    "aeb_for_other_target": false,
+    "path_rmse_m": 5.259290166287772e-06,
+    "path_peak_m": 1.4990072275882674e-05,
+    "heading_peak_rad": 4.779789306352811e-06
+  },
+  "first_brake": {
+    "time_s": 4.6,
+    "aeb_distance_m": 14.988220745327393,
+    "aeb_closing_mps": 0.3765140085026193,
+    "aeb_ttc_s": 39.80787011068972
+  }
+}

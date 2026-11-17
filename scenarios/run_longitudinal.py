@@ -20,6 +20,8 @@ def load_config(path):
         raise ValueError("This benchmark requires a 0.05 s step")
     names = set()
     for case in cfg["cases"]:
+        if case.get('demo_mode','acc') not in ('acc','baseline'):
+            raise ValueError('Scene mode must be acc or baseline')
         if case["name"] in names or not case["name"].replace("_", "").isalnum():
             raise ValueError("Case names must be unique alphanumeric identifiers")
         names.add(case["name"])
@@ -40,6 +42,15 @@ def load_config(path):
 
 
 def run_case(cfg, mode, gains, camera=None, trace_path=None):
+    distance_reference=cfg.get('aeb_distance_reference','center')
+    if distance_reference not in ('center','body'):
+        raise ValueError('Unknown AEB distance reference')
+    if distance_reference=='body' and cfg.get('target_policy')!='route':
+        raise ValueError('Body-gap experiment requires route target selection')
+    if cfg.get('aeb_closing_guard',False) and distance_reference!='body':
+        raise ValueError('Closing-guard experiment requires body-gap distance')
+    if cfg.get('backend','python')!='python' and (cfg.get('lqr_schedule') or cfg.get('steering_filter_alpha',.4)!=.4):
+        raise ValueError('Experimental scheduling/filter ablations require the Python backend')
     # Import CARLA only when executing a simulator experiment.
     from run_cosim_aeb import (carla, CarlaSimulation, SumoSimulation,
                                SimulationSynchronization, AEBController, bridge)
@@ -94,7 +105,8 @@ def run_case(cfg, mode, gains, camera=None, trace_path=None):
         pid, lead_pid = SpeedPID(), SpeedPID()
         steering, lead_steering = StanleyController(k=0.08), StanleyController(k=0.08)
         lateral_mode = cfg.get("lateral_controller","stanley")
-        route = RouteTracking(road,ego,"lqr" if lateral_mode=="lqr" else "stanley",cfg["ego_speed_mps"])
+        route = RouteTracking(road,ego,"lqr" if lateral_mode=="lqr" else "stanley",cfg["ego_speed_mps"],
+                              schedule=cfg.get('lqr_schedule',False),filter_alpha=cfg.get('steering_filter_alpha',.4))
         lead_route = RouteTracking(road,lead,"stanley",cfg["lead_speed_mps"]) if cfg.get("curved") else None
         runtime_gains=dict(gains,lateral_mode=int(lateral_mode=="lqr"),lqr_speed=max(cfg["ego_speed_mps"],1),
                            lqr_wheelbase=route.wheelbase,lqr_dt=cfg["step_s"])
@@ -108,7 +120,11 @@ def run_case(cfg, mode, gains, camera=None, trace_path=None):
             from control_ros import RosController
             native=RosController(runtime_gains)
         acc = ACC(**gains)
-        aeb = AEBController()
+        aeb = AEBController(closing_guard=cfg.get('aeb_closing_guard',False))
+        if cfg.get('full_brake_at_onset',False):
+            aeb.partial_brake_strength = aeb.full_brake_strength
+        if cfg.get('full_brake_at_warning',False):
+            aeb.ttc_full = aeb.ttc_warning
         latched = 0.0
         previous_location = None
         initial_frame = world.get_snapshot().frame
@@ -139,7 +155,8 @@ def run_case(cfg, mode, gains, camera=None, trace_path=None):
             previous_location = target_pose.location
             distance, closing = aeb.detect_front_vehicle(ego, world, velocity_overrides=overrides)
             if cfg.get("target_policy")=="route":
-                distance,actor_id,closing=route.nearest_target(ego,world,aeb.detection_range)
+                distance,actor_id,closing=route.nearest_target(ego,world,aeb.detection_range,
+                                                              body_gap=distance_reference=='body')
                 aeb.last_target_id=actor_id
             requested = aeb.update_state(distance, closing)
             target_id = aeb.last_target_id
@@ -222,6 +239,12 @@ def run_case(cfg, mode, gains, camera=None, trace_path=None):
                              path_distance_m=path_gap+ego.bounding_box.extent.x+lead.bounding_box.extent.x,
                              backend_error_max=backend_error,backend_compute_us=backend_us,
                              event_observed=observed, sumo_background=len(sync.sumo2carla_ids)))
+            rows[-1].update(aeb_distance_m=distance,aeb_closing_mps=closing,
+                            aeb_ttc_s=aeb.calculate_ttc(distance,closing) if distance is not None else None,
+                            aeb_level=aeb.state)
+            if cfg.get('target_policy')=='route':
+                rows[-1].update(aeb_center_distance_m=route.target_geometry['center_distance_m'],
+                                aeb_body_gap_m=route.target_geometry['body_gap_m'])
             if lateral_mode=="lqr":
                 rows[-1].update(control_cross_track_m=route.control_input['cross_track'],
                     control_path_heading_rad=route.control_input['path_heading'],
@@ -275,7 +298,7 @@ def main():
     parser.add_argument("--config", default=str(ROOT / "configs" / "longitudinal.json"))
     parser.add_argument("--case")
     parser.add_argument("--split", choices=("development", "holdout"))
-    parser.add_argument("--mode", choices=("acc", "baseline", "both"), default="both")
+    parser.add_argument("--mode", choices=("acc", "baseline", "both", "scene"), default="both")
     parser.add_argument("--output", type=Path, default=ROOT / "output" / "longitudinal")
     parser.add_argument("--gap-gain", type=float)
     parser.add_argument("--relative-gain", type=float)
@@ -300,7 +323,8 @@ def main():
     for case in cases:
         cfg = dict(case, step_s=config["step_s"], seed=config["seed"],lateral_controller=args.lateral,
                    target_policy=args.target_policy or case.get("target_policy","corridor"),backend=args.backend)
-        for mode in ("baseline", "acc") if args.mode == "both" else (args.mode,):
+        modes=(case.get('demo_mode','acc'),) if args.mode=='scene' else (('baseline','acc') if args.mode=='both' else (args.mode,))
+        for mode in modes:
             name = case["name"] + "_" + mode
             report["runs"][name] = dict(config=cfg, mode=mode, status="running")
             (args.output / "summary.json").write_text(json.dumps(report, indent=2) + "\n", encoding="utf-8")
