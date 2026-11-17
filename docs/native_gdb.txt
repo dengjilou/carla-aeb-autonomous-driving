@@ -1,0 +1,19 @@
+Temporary breakpoint 1 at 0x11f8: file /mnt/d/GitHub_Projects/carla-aeb-autonomous-driving/native/control_smoke.cpp, line 6.
+[Thread debugging using libthread_db enabled]
+Using host libthread_db library "/lib/x86_64-linux-gnu/libthread_db.so.1".
+
+Temporary breakpoint 1, main () at /mnt/d/GitHub_Projects/carla-aeb-autonomous-driving/native/control_smoke.cpp:6
+6	int main() {
+Breakpoint 2 at 0x7ffff7fb9812: file /mnt/d/GitHub_Projects/carla-aeb-autonomous-driving/native/control_core.cpp, line 45.
+
+Breakpoint 2, control_step (handle=0x55555556b2b0, input=0x7fffffffdd80, output=0x7fffffffdd10) at /mnt/d/GitHub_Projects/carla-aeb-autonomous-driving/native/control_core.cpp:45
+45	int control_step(void* handle, const ControlInput* input, ControlOutput* output) {
+$1 = 0
+#0  control_step (handle=0x55555556b2b0, input=0x7fffffffdd80, output=0x7fffffffdd10) at /mnt/d/GitHub_Projects/carla-aeb-autonomous-driving/native/control_core.cpp:45
+#1  0x00005555555554f6 in main () at /mnt/d/GitHub_Projects/carla-aeb-autonomous-driving/native/control_smoke.cpp:20
+0x00005555555554f6 in main () at /mnt/d/GitHub_Projects/carla-aeb-autonomous-driving/native/control_smoke.cpp:20
+20	    ok = ok && control_step(core,&input,&out)!=0;
+Value returned is $2 = 1
+$3 = 1
+Control smoke passed
+[Inferior 1 (process 923) exited normally]

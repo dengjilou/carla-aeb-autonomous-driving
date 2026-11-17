@@ -81,6 +81,7 @@ class RouteTracking:
             curvature = math.atan2(math.sin(delta),math.cos(delta))/np.sqrt(self.lengths2[lo:hi]).sum()
             command = self.lqr.steering(axle_error,heading-tangent,curvature,self.max_angle)
         else:
+            self.control_input=dict(heading=heading,path_heading=tangent,cross_track=axle_error,max_angle=self.max_angle)
             command = steering(heading,tangent,axle_error,speed,self.max_angle,2.)
         self.previous = .4*max(-.7,min(.7,command))+.6*self.previous
         return self.previous,error,body_heading

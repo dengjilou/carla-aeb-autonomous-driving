@@ -1,0 +1,9 @@
+uint64 session
+uint64 sequence
+builtin_interfaces/Time stamp
+int32 status
+float64 reference
+float64 throttle
+float64 brake
+float64 steer
+float64 latched_brake
