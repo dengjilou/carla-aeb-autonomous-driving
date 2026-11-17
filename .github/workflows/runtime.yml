@@ -1,0 +1,48 @@
+name: Native and ROS control checks
+on: [push, pull_request, workflow_dispatch]
+permissions:
+  contents: read
+jobs:
+  native:
+    strategy:
+      matrix:
+        include:
+          - os: ubuntu-24.04
+            build: native-linux
+          - os: windows-latest
+            build: native-win
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: cmake -S native -B output/${{ matrix.build }} -DCMAKE_BUILD_TYPE=Release
+      - run: cmake --build output/${{ matrix.build }} --config Release
+      - run: ctest --test-dir output/${{ matrix.build }} -C Release --output-on-failure
+      - run: python -m unittest discover -s tests -p test_control_native.py -v
+      - run: python -m unittest discover -s tests -p test_ros_transport.py -v
+  ros:
+    runs-on: ubuntu-24.04
+    container: ros:jazzy-ros-base-noble
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - uses: actions/checkout@v4
+      - run: |
+          apt-get update
+          apt-get install -y python3-colcon-common-extensions ros-jazzy-rosidl-default-generators ros-jazzy-nav-msgs ros-jazzy-rosgraph-msgs ros-jazzy-launch-ros ros-jazzy-tf2-ros
+      - run: |
+          source /opt/ros/jazzy/setup.bash
+          colcon --log-base output/ros-log build --base-paths ros2 --build-base output/ros-build --install-base output/ros-install
+          source output/ros-install/setup.bash
+          export ROS_DOMAIN_ID=53
+          ros2 launch control_runtime control.launch.py > output/ros-ci.log 2>&1 &
+          launch_pid=$!
+          trap 'kill -INT "$launch_pid"; wait "$launch_pid" || true' EXIT
+          for attempt in {1..30}; do
+            if ros2 topic info /control/state 2>/dev/null | grep -q 'Subscription count: 1'; then break; fi
+            sleep 1
+          done
+          ROS_LIVE_TEST=1 python3 -m unittest discover -s tests -p test_ros_live.py -v

@@ -1,0 +1,47 @@
+Panels:
+  - Class: rviz_common/Displays
+    Name: Displays
+Visualization Manager:
+  Class: ""
+  Global Options:
+    Fixed Frame: map
+    Background Color: 30; 30; 30
+  Displays:
+    - Class: rviz_default_plugins/Grid
+      Name: Grid
+      Enabled: true
+      Cell Size: 10
+      Plane Cell Count: 100
+    - Class: rviz_default_plugins/Path
+      Name: Reference
+      Enabled: true
+      Color: 255; 190; 40
+      Line Style: Lines
+      Line Width: 0.3
+      Topic:
+        Value: /reference_path
+        Depth: 1
+        Reliability Policy: Reliable
+        Durability Policy: Volatile
+    - Class: rviz_default_plugins/Path
+      Name: Actual
+      Enabled: true
+      Color: 40; 230; 220
+      Line Style: Lines
+      Line Width: 0.3
+      Topic:
+        Value: /actual_path
+        Depth: 1
+        Reliability Policy: Reliable
+        Durability Policy: Volatile
+  Views:
+    Current:
+      Class: rviz_default_plugins/TopDownOrtho
+      Name: Top Down
+      Scale: 1.3
+      Target Frame: <Fixed Frame>
+      X: 312.5
+      Y: 180.7
+Window Geometry:
+  Width: 1200
+  Height: 800

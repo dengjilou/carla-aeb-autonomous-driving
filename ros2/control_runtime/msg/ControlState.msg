@@ -1,0 +1,23 @@
+# Scalar controller inputs retain CARLA coordinates and SI units.
+uint64 session
+uint64 sequence
+builtin_interfaces/Time stamp
+float64 dt
+float64 speed
+float64 cruise
+float64 gap
+float64 closing
+float64 heading
+float64 path_heading
+float64 cross_track
+float64 max_angle
+float64 aeb_request
+bool has_target
+bool acc_enabled
+float64 gap_gain
+float64 relative_gain
+float64 standstill_gap
+float64 headway
+float64 stanley_gain
+float64 steer_limit
+float64 steer_alpha

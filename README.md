@@ -7,6 +7,9 @@ time-headway ACC, speed PID and AEB in CARLA-SUMO, with regression evidence
 and a complete six-scene camera video.
 The [curved-road joint validation](docs/curved.md) adds physical lead tracking
 on two bends, route-based truth targeting, repeats and an explicit emergency-braking failure.
+The [C++17 and ROS 2 runtime validation](docs/runtime.md) ports the deployed control
+core to Windows/Linux, drives the same CARLA-SUMO cases through ROS 2 Jazzy,
+and checks frame identity, bag replay and timeout braking.
 
 Autonomous driving simulation project based on CARLA 0.9.13, featuring lateral control (Stanley), longitudinal control (PID), and AEB (Automatic Emergency Braking) system validation.
 
@@ -28,9 +31,10 @@ frozen parameters with lateral and heading offsets.
 ## Tech Stack
 
 - **Simulation**: CARLA 0.9.13
-- **Language**: Python 3.7 + C++14
-- **Lateral Control**: Stanley Controller (K=0.3, lookahead 8m)
-- **Longitudinal Control**: PID (Python simple_pid + C++ extension, 1.7x speedup)
+- **Language**: Python 3.7 (CARLA), Python 3.12 (offline/ROS), C++17 (control core)
+- **Runtime**: CMake/CTest, MSVC/GCC/GDB, ROS 2 Jazzy, rosbag2, RViz2, WSL Ubuntu 24.04
+- **Lateral Control**: fixed-route Stanley, Pure Pursuit and discrete kinematic LQR comparisons
+- **Longitudinal Control**: time-headway ACC, anti-windup speed PID and latched AEB arbitration
 - **Safety System**: AEB 4-state FSM (Normal -> Warning -> Partial Brake -> Full Brake)
 - **AI Integration**: ZhipuAI JSON scene -> CARLA auto-configuration
 - **Testing**: pytest (42 AEB cases and a separate C++ PID suite)

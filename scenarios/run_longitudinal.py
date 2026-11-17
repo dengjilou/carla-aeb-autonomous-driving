@@ -5,6 +5,7 @@ import json
 import math
 import random
 import sys
+import time
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -54,6 +55,7 @@ def run_case(cfg, mode, gains, camera=None, trace_path=None):
     settings = world.get_settings()
     settings.no_rendering_mode = camera is None
     owned, contacts, rows = [], [], []
+    native = None
     sync = sumo = None
     trace = trace_path.open("w", newline="", encoding="utf-8") if trace_path else None
     writer = None
@@ -94,6 +96,12 @@ def run_case(cfg, mode, gains, camera=None, trace_path=None):
         lateral_mode = cfg.get("lateral_controller","stanley")
         route = RouteTracking(road,ego,"lqr" if lateral_mode=="lqr" else "stanley",cfg["ego_speed_mps"])
         lead_route = RouteTracking(road,lead,"stanley",cfg["lead_speed_mps"]) if cfg.get("curved") else None
+        if cfg.get("backend","python")=="cpp":
+            from control_native import NativeController
+            native=NativeController(gains)
+        elif cfg.get("backend")=="ros2":
+            from control_ros import RosController
+            native=RosController(gains)
         acc = ACC(**gains)
         aeb = AEBController()
         latched = 0.0
@@ -139,6 +147,28 @@ def run_case(cfg, mode, gains, camera=None, trace_path=None):
             steer, cross_track, heading_error = route.update(ego)
             if lateral_mode == "legacy":
                 steer = steering.compute_steering_angle(ego, ego_wp.next(6)[0])[0]
+            backend_error=backend_us=0.
+            if native:
+                values=dict(route.control_input,dt=cfg["step_s"],speed=speed,cruise=cfg["ego_speed_mps"],
+                            gap=gap,closing=closing,aeb_request=requested,
+                            has_target=int(following),acc_enabled=int(mode=="acc"))
+                expected=dict(reference=reference,throttle=throttle,brake=brake,steer=steer,latched_brake=latched)
+                started=time.perf_counter()
+                try:
+                    if cfg.get("backend")=="ros2":
+                        native.set_scene(pose,route.points)
+                    computed=native.step(values)
+                except Exception as exc:
+                    replies=sim.client.apply_batch_sync([carla.command.ApplyVehicleControl(ego.id,
+                                                 carla.VehicleControl(throttle=0.,brake=1.))],False)
+                    accepted=all(not reply.error for reply in replies)
+                    raise RuntimeError('Control backend failed; safe_brake_batch_accepted='+str(accepted)+
+                                       '; '+repr(exc)) from exc
+                backend_us=(time.perf_counter()-started)*1e6
+                backend_error=max(abs(computed[k]-expected[k]) for k in expected)
+                if backend_error>1e-9:
+                    raise RuntimeError("Native/Python command mismatch")
+                reference,throttle,brake,steer,latched=(computed[k] for k in ("reference","throttle","brake","steer","latched_brake"))
             commands = [carla.command.ApplyVehicleControl(ego.id,
                         carla.VehicleControl(throttle=throttle, brake=brake, steer=steer))]
             if kinematic:
@@ -185,6 +215,7 @@ def run_case(cfg, mode, gains, camera=None, trace_path=None):
                              lead_path_error_m=lead_route.state(lead)["error"] if lead_route else 0.,
                              chord_gap_m=chord_gap,path_gap_m=path_gap,
                              path_distance_m=path_gap+ego.bounding_box.extent.x+lead.bounding_box.extent.x,
+                             backend_error_max=backend_error,backend_compute_us=backend_us,
                              event_observed=observed, sumo_background=len(sync.sumo2carla_ids)))
             if camera and hasattr(camera,"on_sample"):
                 camera.on_sample(rows[-1])
@@ -199,6 +230,8 @@ def run_case(cfg, mode, gains, camera=None, trace_path=None):
                    "other_id": actor} for frame, actor in contacts]
         return rows, events
     finally:
+        if native:
+            native.close()
         if trace:
             trace.close()
         try:
@@ -237,7 +270,10 @@ def main():
     parser.add_argument("--relative-gain", type=float)
     parser.add_argument("--lateral", choices=("legacy","stanley","lqr"),default="stanley")
     parser.add_argument("--target-policy",choices=("corridor","route"))
+    parser.add_argument("--backend",choices=("python","cpp","ros2"),default="python")
     args = parser.parse_args()
+    if args.backend!="python" and args.lateral!="stanley":
+        parser.error("The native core implements Stanley lateral control")
     config = load_config(args.config)
     gains = dict(config["gains"])
     for key in ("gap_gain", "relative_gain"):
@@ -252,7 +288,7 @@ def main():
     errors = False
     for case in cases:
         cfg = dict(case, step_s=config["step_s"], seed=config["seed"],lateral_controller=args.lateral,
-                   target_policy=args.target_policy or case.get("target_policy","corridor"))
+                   target_policy=args.target_policy or case.get("target_policy","corridor"),backend=args.backend)
         for mode in ("baseline", "acc") if args.mode == "both" else (args.mode,):
             name = case["name"] + "_" + mode
             report["runs"][name] = dict(config=cfg, mode=mode, status="running")
