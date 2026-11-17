@@ -24,12 +24,44 @@ class RouteTracking:
         self.points = np.array(points)
         self.vectors = np.diff(self.points,axis=0)
         self.lengths2 = np.sum(self.vectors**2,axis=1)
+        self.stations = np.r_[0,np.cumsum(np.sqrt(self.lengths2))]
         inverse = np.array(vehicle.get_transform().get_inverse_matrix())
         wheels = vehicle.get_physics_control().wheels
         local = [inverse@np.array([w.position.x/100,w.position.y/100,w.position.z/100,1]) for w in wheels]
         self.front, self.rear = local[0][0], local[2][0]
         self.max_angle = math.radians(wheels[0].max_steer_angle)
         self.lqr = LQR(max(cruise,1),self.front-self.rear,position_weight=.2) if mode=='lqr' else None
+
+    def locate(self, location):
+        index,fraction,error = project(np.array([location.x,location.y]),self.points[:-1],self.vectors,self.lengths2)
+        tangent = self.vectors[index]/math.sqrt(self.lengths2[index])
+        return dict(error=error,station=float(self.stations[index]+fraction*math.sqrt(self.lengths2[index])),
+                    tangent=tangent)
+
+    def state(self, vehicle):
+        return self.locate(vehicle.get_location())
+
+    def nearest_target(self, ego, world, detection_range=50):
+        origin = self.state(ego)
+        ego_v = ego.get_velocity()
+        ego_speed = ego_v.x*origin["tangent"][0]+ego_v.y*origin["tangent"][1]
+        candidates=[]
+        for actor in world.get_actors().filter("vehicle.*"):
+            if actor.id==ego.id or actor.get_location().distance(ego.get_location())>detection_range:
+                continue
+            state=self.state(actor)
+            distance=state["station"]-origin["station"]
+            if not 0 < distance < detection_range:
+                continue
+            forward=actor.get_transform().get_forward_vector()
+            aligned=forward.x*state["tangent"][0]+forward.y*state["tangent"][1]
+            width=ego.bounding_box.extent.y+actor.bounding_box.extent.y+.3
+            if aligned<.5 or abs(state["error"])>width:
+                continue
+            velocity=actor.get_velocity()
+            closing=ego_speed-(velocity.x*state["tangent"][0]+velocity.y*state["tangent"][1])
+            candidates.append((distance,actor.id,float(closing)))
+        return min(candidates) if candidates else (None,None,0.)
 
     def update(self, vehicle):
         import carla

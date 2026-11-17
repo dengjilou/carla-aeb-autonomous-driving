@@ -32,6 +32,7 @@ results/
 !docs/lqr_comparison.mp4
 !docs/lqr_refinement.mp4
 !docs/integrated_demo.mp4
+!docs/curved_demo.mp4
 *.avi
 *.mov
 

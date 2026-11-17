@@ -13,11 +13,13 @@ def main():
     import carla
     parser=argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--output',type=Path,default=ROOT/'output/integrated-video')
-    output=parser.parse_args().output
+    parser.add_argument('--config',type=Path,default=ROOT/'configs/longitudinal.json')
+    args=parser.parse_args()
+    output=args.output
     output.mkdir(parents=True,exist_ok=False)
-    config=load_config(ROOT/'configs/longitudinal.json')
-    selected=['follow_holdout','slowdown_holdout','hard_brake_holdout',
-              'cutin_holdout','cutout_holdout','adjacent_holdout']
+    config=load_config(args.config)
+    selected=[c['name'] for c in config['cases'] if c['split']=='holdout'] if any(c.get('curved') for c in config['cases']) else [
+        'follow_holdout','slowdown_holdout','hard_brake_holdout','cutin_holdout','cutout_holdout','adjacent_holdout']
     pygame.init()
     canvas=pygame.Surface((640,480))
     font=pygame.font.Font(None,25)
@@ -28,6 +30,7 @@ def main():
     try:
         for name in selected:
             case=next(c for c in config['cases'] if c['name']==name)
+            mode=case.get('demo_mode','acc')
             cfg=dict(case,step_s=config['step_s'],seed=config['seed'],lateral_controller='stanley')
             incoming=queue.Queue()
             def attach(world,ego):
@@ -47,7 +50,7 @@ def main():
                         raise RuntimeError('Camera skipped the recorded control frame')
                 canvas.fill((17,25,36))
                 canvas.blit(pygame.image.frombuffer(data,(640,360),'BGRA'),(0,38))
-                labels=[(9,'CARLA-SUMO | '+name),(408,'t={:.2f}s  speed={:.1f}km/h  state={}'.format(
+                labels=[(9,'CARLA-SUMO | '+name+' ['+mode+']'),(408,'t={:.2f}s  speed={:.1f}km/h  state={}'.format(
                         row['time_s'],row['ego_speed_mps']*3.6,row['control_state'])),
                         (434,'gap={:.1f}m  path error={:+.3f}m  brake={:.0%}'.format(
                         row['gap_m'],row['path_error_m'],row['brake'])),
@@ -55,11 +58,11 @@ def main():
                 for y,text in labels:
                     canvas.blit(font.render(text,True,(235,240,245)),(10,y))
                 writer.send(pygame.image.tostring(canvas,'RGB'))
-                if name=='cutin_holdout' and row['time_s']==1.5:
+                if name in ('cutin_holdout','holdout_follow') and row['time_s']==1.5:
                     pygame.image.save(canvas,str(output/'integrated_demo.png'))
             attach.on_sample=on_sample
-            rows,contacts=run_case(cfg,'acc',config['gains'],camera=attach,trace_path=output/(name+'.csv'))
-            evidence[name]=dict(config=cfg,metrics=evaluate(rows,contacts,cfg),collisions=contacts)
+            rows,contacts=run_case(cfg,mode,config['gains'],camera=attach,trace_path=output/(name+'.csv'))
+            evidence[name]=dict(config=cfg,mode=mode,metrics=evaluate(rows,contacts,cfg),collisions=contacts)
             print(name,evidence[name]['metrics']['verdict'],flush=True)
     finally:
         writer.close()
