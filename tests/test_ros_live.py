@@ -3,6 +3,8 @@ import json
 import math
 import os
 import random
+import socket
+import struct
 import sys
 import unittest
 from pathlib import Path
@@ -60,6 +62,15 @@ class RosLiveTests(unittest.TestCase):
         self.python.reset()
         self.ros.reset()
         self.assertEqual(self.compare(sample())['latched_brake'],0.)
+
+    def test_abrupt_peer_disconnect_and_reconnect(self):
+        self.compare(sample())
+        layout='hh' if os.name=='nt' else 'ii'
+        self.ros.socket.setsockopt(socket.SOL_SOCKET,socket.SO_LINGER,struct.pack(layout,1,0))
+        self.ros.close()
+        self.ros=RosController()
+        self.python.reset()
+        self.compare(sample())
 
 
 if __name__=='__main__':

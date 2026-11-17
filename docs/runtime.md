@@ -152,7 +152,7 @@ py -3.7 scenarios/check_ros_timeout.py --node-pid <WSL_control_node_PID> --outpu
 
 ## 测试与个人练习
 
-Windows 和 Ubuntu 均完成原有 29 项相关离线测试、新增 5 项原生核心测试和 5 项传输校验，共 39 项；两端 CTest 均通过。另有 3 项真实 ROS 集成测试，包括 1,000 帧连续状态对照、缓存/乱序处理、无效首帧及会话重置。没有 ROS 服务时这些集成测试显式跳过，不能把跳过当作通过。
+Windows 和 Ubuntu 均完成原有 29 项相关离线测试、新增 5 项原生核心测试和 5 项传输校验，共 39 项；两端 CTest 均通过。另有 4 项真实 ROS 集成测试，包括 1,000 帧连续状态对照、缓存/乱序处理、无效首帧及会话重置、TCP 强制断开后的重连。最后一项先复现接收线程因 ConnectionResetError 退出的问题，修正后重新验证。没有 ROS 服务时这些集成测试显式跳过，不能把跳过当作通过。
 
 GitHub Actions 分别构建 Windows/Linux 核心，以及 Jazzy ROS 容器内的包和真实消息链路；原离线工作流继续保留。GitHub 上的具体运行结果以 Actions 页面为准。
 

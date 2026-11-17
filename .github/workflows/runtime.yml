@@ -24,6 +24,7 @@ jobs:
       - run: python -m unittest discover -s tests -p test_ros_transport.py -v
   ros:
     runs-on: ubuntu-24.04
+    timeout-minutes: 10
     container: ros:jazzy-ros-base-noble
     defaults:
       run:
@@ -40,7 +41,7 @@ jobs:
           export ROS_DOMAIN_ID=53
           ros2 launch control_runtime control.launch.py > output/ros-ci.log 2>&1 &
           launch_pid=$!
-          trap 'kill -INT "$launch_pid"; wait "$launch_pid" || true' EXIT
+          trap 'kill -TERM "$launch_pid"; wait "$launch_pid" || true' EXIT
           for attempt in {1..30}; do
             if ros2 topic info /control/state 2>/dev/null | grep -q 'Subscription count: 1'; then break; fi
             sleep 1

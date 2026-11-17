@@ -7,6 +7,7 @@ import threading
 
 import rclpy
 from rclpy.node import Node
+from rclpy.executors import ExternalShutdownException
 from builtin_interfaces.msg import Time
 from rosgraph_msgs.msg import Clock
 from nav_msgs.msg import Path
@@ -119,9 +120,16 @@ class Bridge(Node):
                 connection,_=self.server.accept()
             except socket.timeout:
                 continue
+            except OSError:
+                if not rclpy.ok():
+                    break
+                raise
             with connection,connection.makefile('rwb') as stream:
                 while rclpy.ok():
-                    line=stream.readline(1048576)
+                    try:
+                        line=stream.readline(1048576)
+                    except OSError:
+                        break
                     if not line:
                         break
                     try:
@@ -142,10 +150,12 @@ def main():
     node=Bridge()
     try:
         rclpy.spin(node)
+    except (KeyboardInterrupt,ExternalShutdownException):
+        pass
     finally:
         node.server.close()
         node.destroy_node()
-        rclpy.shutdown()
+        rclpy.try_shutdown()
 
 
 if __name__=='__main__':
