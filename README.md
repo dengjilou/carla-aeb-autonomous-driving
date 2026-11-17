@@ -253,13 +253,16 @@ py -3.7 scenarios/record_cosim_aeb.py
 The recording and its measured results are saved under `output/cosim-aeb/`.
 
 ### AEB CCRb (Front Vehicle Emergency Brake)
-![aeb_ccrb_demo](docs/images/aeb_ccrb_demo.gif)
+
+[Watch the matched braking runs](docs/independent_aeb_demo.mp4)
 
 ### AEB Cut-in
-![aeb_cutin_demo](docs/images/aeb_cutin_demo.gif)
+
+[Inspect all 18 paired cut-in results](docs/cutin_sweep_reference.json)
 
 ### KML Mountain Road Driving
-![kml_demo](docs/images/kml_demo.gif)
+
+[Route points](tools/screw_shell.kml) · [CARLA demo script](scenarios/run_kml_demo.py)
 
 ## TODO
 
