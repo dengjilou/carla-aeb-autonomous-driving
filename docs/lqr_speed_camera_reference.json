@@ -1,0 +1,193 @@
+{
+  "stress_fixed": {
+    "config": {
+      "name": "stress_fixed",
+      "kind": "hard_brake",
+      "split": "holdout",
+      "spawn_index": 209,
+      "curved": true,
+      "target_policy": "route",
+      "ego_speed_mps": 25,
+      "lead_speed_mps": 20,
+      "offset_m": 30,
+      "trigger_s": 1,
+      "duration_s": 10,
+      "demo_mode": "baseline",
+      "lqr_schedule": false,
+      "steering_filter_alpha": 0.4,
+      "step_s": 0.05,
+      "seed": 42,
+      "lateral_controller": "lqr",
+      "backend": "python",
+      "lqr_model": {
+        "design_speed_mps": 25,
+        "wheelbase_m": 3.0046492581467703,
+        "dt_s": 0.05,
+        "position_weight": 0.2
+      }
+    },
+    "mode": "baseline",
+    "metrics": {
+      "valid": false,
+      "invalid_reasons": [
+        "ego_left_reference_lane"
+      ],
+      "verdict": "invalid",
+      "event_observed_s": 4.65,
+      "first_lead_selected_s": 0.0,
+      "resumed_cruise": null,
+      "collided": true,
+      "collision_callbacks": 1,
+      "first_collision_s": 4.55,
+      "first_aeb_s": 2.5,
+      "aeb_interventions": 1,
+      "peak_deceleration_mps2": 14.556655883789062,
+      "braked_before_contact": true,
+      "pre_contact_speed_kmh": 23.060534477233887,
+      "min_projected_gap_m": -0.03797381753578,
+      "steady_gap_rmse_m": null,
+      "steady_speed_rmse_mps": null,
+      "jerk_rms_mps3": 33.62521624364823,
+      "final_speed_mps": 1.1455179560471151e-07,
+      "aeb_for_other_target": false,
+      "path_rmse_m": 0.48286622824171677,
+      "path_peak_m": 1.1872396643503813,
+      "heading_peak_rad": 0.3437160271848094,
+      "turn_deg": 52.461128175258644,
+      "lead_path_peak_m": 0.2949524206689856,
+      "target_coverage": 1.0,
+      "min_path_gap_m": 0.013268413470541418
+    },
+    "collisions": [
+      {
+        "time_s": 4.55,
+        "other_id": 1215
+      }
+    ]
+  },
+  "stress_scheduled": {
+    "config": {
+      "name": "stress_scheduled",
+      "kind": "hard_brake",
+      "split": "holdout",
+      "spawn_index": 209,
+      "curved": true,
+      "target_policy": "route",
+      "ego_speed_mps": 25,
+      "lead_speed_mps": 20,
+      "offset_m": 30,
+      "trigger_s": 1,
+      "duration_s": 10,
+      "demo_mode": "baseline",
+      "lqr_schedule": true,
+      "steering_filter_alpha": 0.4,
+      "step_s": 0.05,
+      "seed": 42,
+      "lateral_controller": "lqr",
+      "backend": "python",
+      "lqr_model": {
+        "design_speed_mps": 25,
+        "wheelbase_m": 3.0046492581467703,
+        "dt_s": 0.05,
+        "position_weight": 0.2
+      }
+    },
+    "mode": "baseline",
+    "metrics": {
+      "valid": false,
+      "invalid_reasons": [
+        "ego_left_reference_lane"
+      ],
+      "verdict": "invalid",
+      "event_observed_s": 4.55,
+      "first_lead_selected_s": 0.0,
+      "resumed_cruise": null,
+      "collided": false,
+      "collision_callbacks": 0,
+      "first_collision_s": null,
+      "first_aeb_s": 2.5,
+      "aeb_interventions": 1,
+      "peak_deceleration_mps2": 25.43977439403534,
+      "braked_before_contact": null,
+      "pre_contact_speed_kmh": null,
+      "min_projected_gap_m": 0.503296910217442,
+      "steady_gap_rmse_m": null,
+      "steady_speed_rmse_mps": null,
+      "jerk_rms_mps3": 42.93781154276347,
+      "final_speed_mps": 1.2570851026794116e-07,
+      "aeb_for_other_target": false,
+      "path_rmse_m": 0.4566599708489232,
+      "path_peak_m": 1.2700571322137024,
+      "heading_peak_rad": 0.41293544020716877,
+      "turn_deg": 56.04180520772934,
+      "lead_path_peak_m": 0.2949524206689856,
+      "target_coverage": 1.0,
+      "min_path_gap_m": 0.6078984760516448
+    },
+    "collisions": []
+  },
+  "stress_fixed_no_filter": {
+    "config": {
+      "name": "stress_fixed_no_filter",
+      "kind": "hard_brake",
+      "split": "holdout",
+      "spawn_index": 209,
+      "curved": true,
+      "target_policy": "route",
+      "ego_speed_mps": 25,
+      "lead_speed_mps": 20,
+      "offset_m": 30,
+      "trigger_s": 1,
+      "duration_s": 10,
+      "demo_mode": "baseline",
+      "lqr_schedule": false,
+      "steering_filter_alpha": 1.0,
+      "step_s": 0.05,
+      "seed": 42,
+      "lateral_controller": "lqr",
+      "backend": "python",
+      "lqr_model": {
+        "design_speed_mps": 25,
+        "wheelbase_m": 3.0046492581467703,
+        "dt_s": 0.05,
+        "position_weight": 0.2
+      }
+    },
+    "mode": "baseline",
+    "metrics": {
+      "valid": true,
+      "invalid_reasons": [],
+      "verdict": "fail",
+      "event_observed_s": 5.1,
+      "first_lead_selected_s": 0.0,
+      "resumed_cruise": null,
+      "collided": true,
+      "collision_callbacks": 1,
+      "first_collision_s": 3.9,
+      "first_aeb_s": 2.45,
+      "aeb_interventions": 1,
+      "peak_deceleration_mps2": 15.3350830078125,
+      "braked_before_contact": true,
+      "pre_contact_speed_kmh": 42.75073471069336,
+      "min_projected_gap_m": -0.07832616068388143,
+      "steady_gap_rmse_m": null,
+      "steady_speed_rmse_mps": null,
+      "jerk_rms_mps3": 44.21276772638391,
+      "final_speed_mps": 9.918213663695497e-07,
+      "aeb_for_other_target": false,
+      "path_rmse_m": 0.14165968025095693,
+      "path_peak_m": 0.2723204102550587,
+      "heading_peak_rad": 0.06576881190791903,
+      "turn_deg": 33.8302726149559,
+      "lead_path_peak_m": 0.2949524206689856,
+      "target_coverage": 1.0,
+      "min_path_gap_m": -0.050328165256445345
+    },
+    "collisions": [
+      {
+        "time_s": 3.9,
+        "other_id": 1245
+      }
+    ]
+  }
+}

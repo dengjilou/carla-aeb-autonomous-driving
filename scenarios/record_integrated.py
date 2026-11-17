@@ -27,6 +27,7 @@ def main():
     canvas=pygame.display.set_mode((640,480)) if args.preview else pygame.Surface((640,480))
     if args.preview:
         pygame.display.set_caption('CARLA-SUMO '+args.backend+' '+args.lateral+' control')
+    preview_clock=pygame.time.Clock()
     font=pygame.font.Font(None,25)
     writer=imageio_ffmpeg.write_frames(str(output/'integrated_demo.mp4'),(640,480),
                                       fps=20,codec='libx264',pix_fmt_in='rgb24',bitrate='600k')
@@ -65,6 +66,7 @@ def main():
                 writer.send(pygame.image.tostring(canvas,'RGB'))
                 if args.preview:
                     pygame.display.flip()
+                    preview_clock.tick(20)
                     if any(event.type==pygame.QUIT for event in pygame.event.get()):
                         raise RuntimeError('Camera preview closed')
                 if name in ('cutin_holdout','holdout_follow') and row['time_s']==1.5:

@@ -13,6 +13,9 @@ and checks frame identity, bag replay and timeout braking.
 The [Eigen LQR runtime study](docs/lqr_runtime.md) connects the existing fixed-gain
 rear-axle LQR to the same C++/ROS 2 path, with 90 closed-loop runs, numerical
 checks and an explicitly invalid high-speed lane-departure case.
+The [speed scheduling and steering-filter ablation](docs/lqr_speed.md) tests that
+failure directly, retaining both lane-departure and valid rear-end failures rather
+than treating an off-route non-contact run as a safety improvement.
 
 Autonomous driving simulation project based on CARLA 0.9.13, featuring lateral control (Stanley), longitudinal control (PID), and AEB (Automatic Emergency Braking) system validation.
 

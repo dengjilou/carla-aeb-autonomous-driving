@@ -3,12 +3,15 @@ import math
 import numpy as np
 from path_geometry import project
 from stanley_tracking import steering
-from lqr_tracking import LQR
+from lqr_tracking import LQR, ScheduledLQR
 
 
 class RouteTracking:
-    def __init__(self, road, vehicle, mode, cruise):
+    def __init__(self, road, vehicle, mode, cruise, schedule=False, filter_alpha=.4):
+        if not 0 < filter_alpha <= 1:
+            raise ValueError('Steering filter alpha must be in (0, 1]')
         self.mode, self.previous = mode, 0.
+        self.filter_alpha = filter_alpha
         wp = road.get_waypoint(vehicle.get_location())
         history = wp.previous(8)
         wp = history[0] if history else wp
@@ -32,6 +35,7 @@ class RouteTracking:
         self.max_angle = math.radians(wheels[0].max_steer_angle)
         self.wheelbase = self.front-self.rear
         self.lqr = LQR(max(cruise,1),self.wheelbase,position_weight=.2) if mode=='lqr' else None
+        self.scheduled = ScheduledLQR(self.wheelbase) if mode=='lqr' and schedule else None
 
     def locate(self, location):
         index,fraction,error = project(np.array([location.x,location.y]),self.points[:-1],self.vectors,self.lengths2)
@@ -82,9 +86,11 @@ class RouteTracking:
             delta = math.atan2(self.vectors[hi,1],self.vectors[hi,0])-math.atan2(self.vectors[lo,1],self.vectors[lo,0])
             curvature = math.atan2(math.sin(delta),math.cos(delta))/np.sqrt(self.lengths2[lo:hi]).sum()
             command = self.lqr.steering(axle_error,heading-tangent,curvature,self.max_angle)
+            if self.scheduled:
+                command = self.scheduled.steering(axle_error,heading-tangent,curvature,self.max_angle,speed)
         else:
             command = steering(heading,tangent,axle_error,speed,self.max_angle,2.)
         self.control_input=dict(heading=heading,path_heading=tangent,cross_track=axle_error,
                                 max_angle=self.max_angle,curvature=float(curvature))
-        self.previous = .4*max(-.7,min(.7,command))+.6*self.previous
+        self.previous = self.filter_alpha*max(-.7,min(.7,command))+(1-self.filter_alpha)*self.previous
         return self.previous,error,body_heading

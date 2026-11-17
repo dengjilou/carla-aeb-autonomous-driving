@@ -35,6 +35,7 @@ results/
 !docs/curved_demo.mp4
 !docs/runtime_demo.mp4
 !docs/lqr_runtime_demo.mp4
+!docs/lqr_speed_demo.mp4
 *.avi
 *.mov
 

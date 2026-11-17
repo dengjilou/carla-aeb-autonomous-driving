@@ -40,6 +40,8 @@ def load_config(path):
 
 
 def run_case(cfg, mode, gains, camera=None, trace_path=None):
+    if cfg.get('backend','python')!='python' and (cfg.get('lqr_schedule') or cfg.get('steering_filter_alpha',.4)!=.4):
+        raise ValueError('Experimental scheduling/filter ablations require the Python backend')
     # Import CARLA only when executing a simulator experiment.
     from run_cosim_aeb import (carla, CarlaSimulation, SumoSimulation,
                                SimulationSynchronization, AEBController, bridge)
@@ -94,7 +96,8 @@ def run_case(cfg, mode, gains, camera=None, trace_path=None):
         pid, lead_pid = SpeedPID(), SpeedPID()
         steering, lead_steering = StanleyController(k=0.08), StanleyController(k=0.08)
         lateral_mode = cfg.get("lateral_controller","stanley")
-        route = RouteTracking(road,ego,"lqr" if lateral_mode=="lqr" else "stanley",cfg["ego_speed_mps"])
+        route = RouteTracking(road,ego,"lqr" if lateral_mode=="lqr" else "stanley",cfg["ego_speed_mps"],
+                              schedule=cfg.get('lqr_schedule',False),filter_alpha=cfg.get('steering_filter_alpha',.4))
         lead_route = RouteTracking(road,lead,"stanley",cfg["lead_speed_mps"]) if cfg.get("curved") else None
         runtime_gains=dict(gains,lateral_mode=int(lateral_mode=="lqr"),lqr_speed=max(cfg["ego_speed_mps"],1),
                            lqr_wheelbase=route.wheelbase,lqr_dt=cfg["step_s"])

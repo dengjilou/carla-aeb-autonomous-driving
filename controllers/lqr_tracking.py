@@ -31,3 +31,21 @@ class LQR:
     def steering(self, lateral_error, heading_error, curvature, max_angle):
         forward, feedback = self.terms(lateral_error, heading_error, curvature)
         return (forward+feedback)/max_angle
+
+
+class ScheduledLQR:
+    """Interpolate gains on a frozen 1..30 m/s grid; clamp outside that range."""
+    def __init__(self, wheelbase, dt=0.05, position_weight=0.2):
+        self.wheelbase = wheelbase
+        self.speeds = np.arange(1., 31.)
+        self.gains = np.array([LQR(v, wheelbase, dt, position_weight).k[0] for v in self.speeds])
+
+    def gain(self, speed):
+        if not math.isfinite(speed):
+            raise ValueError("Finite speed required")
+        return np.array([np.interp(speed, self.speeds, self.gains[:, i]) for i in range(2)])
+
+    def steering(self, lateral_error, heading_error, curvature, max_angle, speed):
+        wrapped = math.atan2(math.sin(heading_error), math.cos(heading_error))
+        feedback = float(self.gain(speed) @ np.array([lateral_error, wrapped]))
+        return (math.atan(self.wheelbase*curvature)-feedback)/max_angle
