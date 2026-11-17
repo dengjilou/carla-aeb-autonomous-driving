@@ -2,6 +2,10 @@
 
 ## Project Overview
 
+The [integrated showcase](docs/integrated.md) connects fixed-route Stanley,
+time-headway ACC, speed PID and AEB in CARLA-SUMO, with regression evidence
+and a complete six-scene camera video.
+
 Autonomous driving simulation project based on CARLA 0.9.13, featuring lateral control (Stanley), longitudinal control (PID), and AEB (Automatic Emergency Braking) system validation.
 
 The [longitudinal benchmark](docs/longitudinal.md) compares constant-speed

@@ -43,6 +43,7 @@ def run_case(cfg, mode, gains, camera=None, trace_path=None):
     from run_cosim_aeb import (carla, CarlaSimulation, SumoSimulation,
                                SimulationSynchronization, AEBController, bridge)
     from stanley_pid_controller import StanleyController
+    from route_tracking import RouteTracking
     sim = CarlaSimulation("127.0.0.1", 2000, cfg["step_s"])
     sim.client.set_timeout(30)
     world = sim.world
@@ -90,6 +91,8 @@ def run_case(cfg, mode, gains, camera=None, trace_path=None):
             lead.set_simulate_physics(False)
         pid, lead_pid = SpeedPID(), SpeedPID()
         steering, lead_steering = StanleyController(k=0.08), StanleyController(k=0.08)
+        lateral_mode = cfg.get("lateral_controller","stanley")
+        route = RouteTracking(road,ego,"lqr" if lateral_mode=="lqr" else "stanley",cfg["ego_speed_mps"])
         acc = ACC(**gains)
         aeb = AEBController()
         latched = 0.0
@@ -125,8 +128,11 @@ def run_case(cfg, mode, gains, camera=None, trace_path=None):
             throttle, brake = pid.update(reference, speed, cfg["step_s"])
             throttle, brake, latched = arbitrate(throttle, brake, requested, latched)
             ego_wp = road.get_waypoint(pose.location)
-            steer, cross_track, _, _ = steering.compute_steering_angle(ego, ego_wp.next(6)[0])
-            ego.apply_control(carla.VehicleControl(throttle=throttle, brake=brake, steer=steer))
+            steer, cross_track, heading_error = route.update(ego)
+            if lateral_mode == "legacy":
+                steer = steering.compute_steering_angle(ego, ego_wp.next(6)[0])[0]
+            commands = [carla.command.ApplyVehicleControl(ego.id,
+                        carla.VehicleControl(throttle=throttle, brake=brake, steer=steer))]
             if kinematic:
                 fraction = max(0, min(1, (t - cfg["trigger_s"]) / cfg.get("lane_change_s", 2)))
                 shift = (3.5 if cfg["kind"] == "cutin" else -3.5) * fraction
@@ -143,7 +149,11 @@ def run_case(cfg, mode, gains, camera=None, trace_path=None):
                     lt, lb = 0.0, 1.0
                 lead_waypoint = road.get_waypoint(target_pose.location).next(6)[0]
                 ls = lead_steering.compute_steering_angle(lead, lead_waypoint)[0]
-                lead.apply_control(carla.VehicleControl(throttle=lt, brake=lb, steer=ls))
+                commands.append(carla.command.ApplyVehicleControl(lead.id,
+                                carla.VehicleControl(throttle=lt, brake=lb, steer=ls)))
+            replies = sim.client.apply_batch_sync(commands,False)
+            if any(reply.error for reply in replies):
+                raise RuntimeError("Vehicle control batch failed")
             observed = t > cfg["trigger_s"]
             if cfg["kind"] == "follow":
                 observed = observed and following and abs(lead_speed - cfg["lead_speed_mps"]) < 1
@@ -161,7 +171,11 @@ def run_case(cfg, mode, gains, camera=None, trace_path=None):
                              target_id=target_id, lead_id=lead.id, target_speed_mps=reference,
                              throttle=throttle, brake=brake, aeb_brake=requested,
                              latched_brake=latched, cross_track_m=cross_track,
+                             path_error_m=cross_track, heading_error_rad=heading_error, steer=steer,
+                             control_state="AEB" if latched>0 else "FOLLOW" if mode=="acc" and following else "CRUISE",
                              event_observed=observed, sumo_background=len(sync.sumo2carla_ids)))
+            if camera and hasattr(camera,"on_sample"):
+                camera.on_sample(rows[-1])
             if trace:
                 if writer is None:
                     writer = csv.DictWriter(trace, fieldnames=list(rows[-1]))
@@ -209,6 +223,7 @@ def main():
     parser.add_argument("--output", type=Path, default=ROOT / "output" / "longitudinal")
     parser.add_argument("--gap-gain", type=float)
     parser.add_argument("--relative-gain", type=float)
+    parser.add_argument("--lateral", choices=("legacy","stanley","lqr"),default="stanley")
     args = parser.parse_args()
     config = load_config(args.config)
     gains = dict(config["gains"])
@@ -223,7 +238,7 @@ def main():
     report = {"gains": gains, "runs": {}}
     errors = False
     for case in cases:
-        cfg = dict(case, step_s=config["step_s"], seed=config["seed"])
+        cfg = dict(case, step_s=config["step_s"], seed=config["seed"],lateral_controller=args.lateral)
         for mode in ("baseline", "acc") if args.mode == "both" else (args.mode,):
             name = case["name"] + "_" + mode
             report["runs"][name] = dict(config=cfg, mode=mode, status="running")

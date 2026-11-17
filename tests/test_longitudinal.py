@@ -80,6 +80,18 @@ class LongitudinalTests(unittest.TestCase):
         result = evaluate(self.rows(), [dict(time_s=1, other_id=3)], dict(step_s=.05, duration_s=2))
         self.assertIn("non_lead_contact", result["invalid_reasons"])
 
+    def test_path_metrics_exclude_contact_frames(self):
+        rows = self.rows()
+        for row in rows:
+            row.update(path_error_m=.2 if row["time_s"]<1 else 20.,heading_error_rad=.01)
+        result = evaluate(rows,[dict(time_s=1,other_id=2)],dict(step_s=.05,duration_s=2))
+        self.assertAlmostEqual(result["path_rmse_m"],.2)
+        self.assertEqual(result["path_peak_m"],.2)
+
+    def test_historical_rows_keep_metric_schema(self):
+        result = evaluate(self.rows(),[],dict(step_s=.05,duration_s=2))
+        self.assertNotIn("path_rmse_m",result)
+
 
 if __name__ == "__main__":
     unittest.main()

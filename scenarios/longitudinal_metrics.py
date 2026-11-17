@@ -47,7 +47,7 @@ def evaluate(rows, collisions, config):
         passed = passed and onset is not None
     if kind == "cutout":
         passed = passed and resumed and onset is None
-    return {
+    result = {
         "valid": not reasons, "invalid_reasons": reasons,
         "verdict": "invalid" if reasons else ("pass" if passed else "fail"),
         "event_observed_s": event_time, "first_lead_selected_s": acquired,
@@ -65,3 +65,9 @@ def evaluate(rows, collisions, config):
         "final_speed_mps": rows[-1]["ego_speed_mps"],
         "aeb_for_other_target": other_target,
     }
+    if before_contact and "path_error_m" in before_contact[0]:
+        lateral_errors = [r["path_error_m"] for r in before_contact]
+        result.update(path_rmse_m=math.sqrt(statistics.mean(e*e for e in lateral_errors)),
+                      path_peak_m=max(abs(e) for e in lateral_errors),
+                      heading_peak_rad=max(abs(r["heading_error_rad"]) for r in before_contact))
+    return result

@@ -243,7 +243,9 @@ def summarize_sweep(results):
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--sweep", action="store_true", help="Run the paired cut-in parameter matrix.")
-    sweep = parser.parse_args().sweep
+    parser.add_argument("--output",type=Path,default=OUTPUT)
+    args = parser.parse_args()
+    sweep = args.sweep
     sim = CarlaSimulation("127.0.0.1", 2000, STEP)
     sim.client.set_timeout(20.0)
     world = sim.world
@@ -254,7 +256,7 @@ def main():
         raise RuntimeError("CARLA already has a synchronous session.")
     settings = world.get_settings()
     settings.no_rendering_mode = True
-    output = OUTPUT / "sweep" if sweep else OUTPUT
+    output = args.output / "sweep" if sweep else args.output
     output.mkdir(parents=True, exist_ok=True)
     cases = {} if sweep else {
         "same_lane_off": {"enabled": False},
