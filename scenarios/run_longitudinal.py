@@ -96,12 +96,17 @@ def run_case(cfg, mode, gains, camera=None, trace_path=None):
         lateral_mode = cfg.get("lateral_controller","stanley")
         route = RouteTracking(road,ego,"lqr" if lateral_mode=="lqr" else "stanley",cfg["ego_speed_mps"])
         lead_route = RouteTracking(road,lead,"stanley",cfg["lead_speed_mps"]) if cfg.get("curved") else None
+        runtime_gains=dict(gains,lateral_mode=int(lateral_mode=="lqr"),lqr_speed=max(cfg["ego_speed_mps"],1),
+                           lqr_wheelbase=route.wheelbase,lqr_dt=cfg["step_s"])
+        if lateral_mode=="lqr":
+            cfg['lqr_model']=dict(design_speed_mps=runtime_gains['lqr_speed'],wheelbase_m=route.wheelbase,
+                                  dt_s=cfg['step_s'],position_weight=.2)
         if cfg.get("backend","python")=="cpp":
             from control_native import NativeController
-            native=NativeController(gains)
+            native=NativeController(runtime_gains)
         elif cfg.get("backend")=="ros2":
             from control_ros import RosController
-            native=RosController(gains)
+            native=RosController(runtime_gains)
         acc = ACC(**gains)
         aeb = AEBController()
         latched = 0.0
@@ -217,6 +222,12 @@ def run_case(cfg, mode, gains, camera=None, trace_path=None):
                              path_distance_m=path_gap+ego.bounding_box.extent.x+lead.bounding_box.extent.x,
                              backend_error_max=backend_error,backend_compute_us=backend_us,
                              event_observed=observed, sumo_background=len(sync.sumo2carla_ids)))
+            if lateral_mode=="lqr":
+                rows[-1].update(control_cross_track_m=route.control_input['cross_track'],
+                    control_path_heading_rad=route.control_input['path_heading'],
+                    control_curvature_inv_m=route.control_input['curvature'],
+                    control_max_angle_rad=route.control_input['max_angle'],control_closing_mps=closing,
+                    control_has_target=following)
             if camera and hasattr(camera,"on_sample"):
                 camera.on_sample(rows[-1])
             if trace:
@@ -272,8 +283,8 @@ def main():
     parser.add_argument("--target-policy",choices=("corridor","route"))
     parser.add_argument("--backend",choices=("python","cpp","ros2"),default="python")
     args = parser.parse_args()
-    if args.backend!="python" and args.lateral!="stanley":
-        parser.error("The native core implements Stanley lateral control")
+    if args.backend!="python" and args.lateral=="legacy":
+        parser.error("The native core implements Stanley and LQR lateral control")
     config = load_config(args.config)
     gains = dict(config["gains"])
     for key in ("gap_gain", "relative_gain"):

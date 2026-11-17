@@ -12,7 +12,7 @@ import rclpy
 from ament_index_python.packages import get_package_prefix
 from rclpy.node import Node
 from rclpy.serialization import deserialize_message
-from control_runtime.msg import ControlState, ControlCommand
+from control_runtime.msg import ControlState, ControlCommand, LqrState
 
 FIELDS=('reference','throttle','brake','steer','latched_brake')
 
@@ -27,15 +27,20 @@ def main():
                 rosbag2_py.ConverterOptions('cdr','cdr'))
     expected={}
     states={}
+    first_time=last_time=None
     while reader.has_next():
-        topic,data,_=reader.read_next()
+        topic,data,stamp=reader.read_next()
+        if first_time is None:
+            first_time=stamp
+        last_time=stamp
         if topic=='/control/command':
             msg=deserialize_message(data,ControlCommand)
             assert msg.status==0
             expected[(msg.session,msg.sequence)]=msg
-        elif topic=='/control/state':
-            msg=deserialize_message(data,ControlState)
-            states[(msg.session,msg.sequence)]=msg
+        elif topic in ('/control/state','/control/lqr_state'):
+            msg=deserialize_message(data,LqrState if topic.endswith('lqr_state') else ControlState)
+            state=msg.state if topic.endswith('lqr_state') else msg
+            states[(state.session,state.sequence)]=msg
     assert states and set(states)==set(expected),'Incomplete recording'
     rclpy.init()
     node=Node('bag_verifier')
@@ -55,8 +60,8 @@ def main():
                 raise TimeoutError('ROS graph discovery')
             rclpy.spin_once(node,timeout_sec=.05)
         player=subprocess.Popen(['ros2','bag','play',args.bag,'--rate','0.5','--topics',
-                                 '/control/state','/clock','/reference_path','/actual_path','/tf'])
-        deadline=time.monotonic()+45
+                                 '/control/state','/control/lqr_state','/clock','/reference_path','/actual_path','/tf'])
+        deadline=time.monotonic()+max(45,2*(last_time-first_time)/1e9+15)
         while len(received)<len(expected) and time.monotonic()<deadline:
             rclpy.spin_once(node,timeout_sec=.05)
         assert set(received)==set(expected),(len(received),len(expected))

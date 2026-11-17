@@ -15,6 +15,7 @@ def main():
     parser.add_argument('--output',type=Path,default=ROOT/'output/integrated-video')
     parser.add_argument('--config',type=Path,default=ROOT/'configs/longitudinal.json')
     parser.add_argument('--backend',choices=('python','cpp','ros2'),default='python')
+    parser.add_argument('--lateral',choices=('stanley','lqr'),default='stanley')
     parser.add_argument('--preview',action='store_true')
     args=parser.parse_args()
     output=args.output
@@ -25,7 +26,7 @@ def main():
     pygame.init()
     canvas=pygame.display.set_mode((640,480)) if args.preview else pygame.Surface((640,480))
     if args.preview:
-        pygame.display.set_caption('CARLA-SUMO '+args.backend+' control')
+        pygame.display.set_caption('CARLA-SUMO '+args.backend+' '+args.lateral+' control')
     font=pygame.font.Font(None,25)
     writer=imageio_ffmpeg.write_frames(str(output/'integrated_demo.mp4'),(640,480),
                                       fps=20,codec='libx264',pix_fmt_in='rgb24',bitrate='600k')
@@ -35,7 +36,7 @@ def main():
         for name in selected:
             case=next(c for c in config['cases'] if c['name']==name)
             mode=case.get('demo_mode','acc')
-            cfg=dict(case,step_s=config['step_s'],seed=config['seed'],lateral_controller='stanley',backend=args.backend)
+            cfg=dict(case,step_s=config['step_s'],seed=config['seed'],lateral_controller=args.lateral,backend=args.backend)
             incoming=queue.Queue()
             def attach(world,ego):
                 bp=world.get_blueprint_library().find('sensor.camera.rgb')
@@ -58,7 +59,7 @@ def main():
                         row['time_s'],row['ego_speed_mps']*3.6,row['control_state'])),
                         (434,'gap={:.1f}m  path error={:+.3f}m  brake={:.0%}'.format(
                         row['gap_m'],row['path_error_m'],row['brake'])),
-                        (458,'SUMO actors={} | Stanley + ACC/PID + AEB'.format(row['sumo_background']))]
+                        (458,'SUMO actors={} | {} + ACC/PID + AEB'.format(row['sumo_background'],args.lateral))]
                 for y,text in labels:
                     canvas.blit(font.render(text,True,(235,240,245)),(10,y))
                 writer.send(pygame.image.tostring(canvas,'RGB'))

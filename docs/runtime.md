@@ -70,19 +70,20 @@ RViz2 经 WSLg 实际打开检查，Global Status 为 OK。配置默认视角面
 
 仿真端使用已有预编译 CARLA 0.9.13 和 SUMO 1.18.0，无需改版或重编引擎。下面命令从仓库根目录运行。Windows 仿真 Python 必须能导入匹配的 CARLA egg、numpy、pygame、SUMO 工具和原项目依赖；离线测试可使用 Python 3.12。
 
-Windows 安装 Visual Studio C++ 工具链及 CMake 后：
+Windows 安装 Visual Studio C++ 工具链及 CMake 后，先按 [Eigen 构建步骤](lqr_runtime.md) 安装新增的 Eigen 3.4 依赖：
 
 ```powershell
-cmake -S native -B output/native-win -A x64
+cmake -S native -B output/native-win -A x64 -DCMAKE_PREFIX_PATH="$PWD/output/deps/eigen-install"
 cmake --build output/native-win --config Release
 ctest --test-dir output/native-win -C Release --output-on-failure
 py -3.12 -m unittest discover -s tests -p test_control_native.py -v
 py -3.12 -m unittest discover -s tests -p test_ros_transport.py -v
 ```
 
-Linux 原生核心：
+Linux 原生核心需要 libeigen3-dev：
 
 ```bash
+sudo apt-get install -y libeigen3-dev
 cmake -S native -B output/native-linux -G Ninja -DCMAKE_BUILD_TYPE=Debug
 cmake --build output/native-linux
 ctest --test-dir output/native-linux --output-on-failure
@@ -111,7 +112,7 @@ py -3.7 scenarios/run_longitudinal.py --backend ros2 --case follow_holdout --mod
 py -3.7 scenarios/run_longitudinal.py --backend cpp --config configs/curved.json --mode acc --output output/native-check-01
 ```
 
-保留原默认入口，省略 backend 即 Python。C++/ROS 核心本轮支持 Stanley；命令行拒绝将其用于 LQR/legacy 横向模式。
+保留原默认入口，省略 backend 即 Python。本页冻结结果使用 Stanley；新增的 LQR 后端及专用消息见 [LQR 运行时验证](lqr_runtime.md)。legacy 横向模式仍由 Python 入口执行。
 
 WSL 另开终端显示和录包，均设置同一 ROS_DOMAIN_ID：
 
