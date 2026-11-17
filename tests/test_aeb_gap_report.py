@@ -13,6 +13,19 @@ from report_aeb_gap import audit_run
 
 
 class GapAuditTests(unittest.TestCase):
+    def test_rejects_a_guard_flag_on_legacy_false_braking(self):
+        name='equal_4_body_acc'
+        with zipfile.ZipFile(ROOT/'docs/aeb_gap_traces.zip') as archive:
+            run=json.loads(archive.read('equal-a/summary.json'))['runs'][name]
+            trace=archive.read('equal-a/'+name+'.csv')
+        with tempfile.TemporaryDirectory() as directory:
+            folder=Path(directory)
+            (folder/(name+'.csv')).write_bytes(trace)
+            audit_run(folder,name,run)
+            run['config']['aeb_closing_guard']=True
+            with self.assertRaises(AssertionError):
+                audit_run(folder,name,run)
+
     def test_rejects_distance_and_ttc_corruption(self):
         name='diagnosis_stress_body_baseline'
         with zipfile.ZipFile(ROOT/'docs/aeb_gap_traces.zip') as archive:

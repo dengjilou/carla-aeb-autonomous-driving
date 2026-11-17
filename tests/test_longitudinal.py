@@ -21,6 +21,8 @@ class LongitudinalTests(unittest.TestCase):
             run_case({'aeb_distance_reference':'body'},'acc',{})
         with self.assertRaisesRegex(ValueError,'Unknown AEB'):
             run_case({'aeb_distance_reference':'unknown'},'acc',{})
+        with self.assertRaisesRegex(ValueError,'Closing-guard'):
+            run_case({'aeb_closing_guard':True},'acc',{})
 
     def test_free_cruise(self):
         self.assertEqual(ACC().target_speed(8, 12), 12)

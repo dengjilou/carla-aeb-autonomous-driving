@@ -47,6 +47,8 @@ def run_case(cfg, mode, gains, camera=None, trace_path=None):
         raise ValueError('Unknown AEB distance reference')
     if distance_reference=='body' and cfg.get('target_policy')!='route':
         raise ValueError('Body-gap experiment requires route target selection')
+    if cfg.get('aeb_closing_guard',False) and distance_reference!='body':
+        raise ValueError('Closing-guard experiment requires body-gap distance')
     if cfg.get('backend','python')!='python' and (cfg.get('lqr_schedule') or cfg.get('steering_filter_alpha',.4)!=.4):
         raise ValueError('Experimental scheduling/filter ablations require the Python backend')
     # Import CARLA only when executing a simulator experiment.
@@ -118,7 +120,7 @@ def run_case(cfg, mode, gains, camera=None, trace_path=None):
             from control_ros import RosController
             native=RosController(runtime_gains)
         acc = ACC(**gains)
-        aeb = AEBController()
+        aeb = AEBController(closing_guard=cfg.get('aeb_closing_guard',False))
         latched = 0.0
         previous_location = None
         initial_frame = world.get_snapshot().frame

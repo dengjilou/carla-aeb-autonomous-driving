@@ -15,6 +15,7 @@ import sys
 import math
 from datetime import datetime
 from simple_pid import PID
+from aeb_protection import distance_level
 
 
 # ==================== 配置参数 ====================
@@ -153,7 +154,7 @@ class AEBController:
     """AEB自动紧急制动控制器"""
     
     def __init__(self, ttc_warning=2.5, ttc_partial=1.6, ttc_full=0.6, detection_range=50.0, *,
-                 predict_cutin=True):
+                 predict_cutin=True, closing_guard=False):
         # 状态机状态：0-正常 1-预警 2-部分制动 3-全力制动
         self.NORMAL = 0
         self.WARNING = 1
@@ -166,6 +167,7 @@ class AEBController:
         self.ttc_full = ttc_full  # 全力制动TTC阈值（秒）
         self.detection_range = detection_range  # 检测范围（米）
         self.predict_cutin = predict_cutin
+        self.closing_guard = closing_guard
         self.last_target_id = None
         self.last_target_entry_s = None
         
@@ -339,10 +341,8 @@ class AEBController:
             target_state = self.NORMAL
         
         # 距离紧急保护：当距离过近时强制升级（防止相对速度=0时TTC=∞导致无法升级）
-        if distance < 10.0:
-            target_state = self.FULL_BRAKE
-        elif distance < 15.0:
-            target_state = max(target_state, self.PARTIAL_BRAKE)
+        # 实验开关限制正间距下的追近窗口；默认保留原规则。
+        target_state = max(target_state, distance_level(distance, relative_speed, self.closing_guard))
         
         # 单向锁定：只允许状态升级，不允许降级
         if target_state > self.state:

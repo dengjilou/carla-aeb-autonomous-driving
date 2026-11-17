@@ -37,6 +37,7 @@ results/
 !docs/lqr_runtime_demo.mp4
 !docs/lqr_speed_demo.mp4
 !docs/aeb_gap_demo.mp4
+!docs/aeb_closing_demo.mp4
 *.avi
 *.mov
 

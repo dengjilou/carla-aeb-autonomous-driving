@@ -19,6 +19,9 @@ than treating an off-route non-contact run as a safety improvement.
 The [AEB distance-reference study](docs/aeb_gap.md) isolates center distance versus
 projected body gap, with 64 runs, held-out combinations and an explicit low-speed
 false-braking counterexample. Both experimental options remain opt-in.
+The [closing-window follow-up](docs/aeb_closing.md) tests a bounded-distance guard
+against low-speed false braking, retaining unchanged acceptance rules and any
+functional verdict regression separately from collision outcomes.
 
 Autonomous driving simulation project based on CARLA 0.9.13, featuring lateral control (Stanley), longitudinal control (PID), and AEB (Automatic Emergency Braking) system validation.
 

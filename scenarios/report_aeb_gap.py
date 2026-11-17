@@ -20,10 +20,13 @@ def audit_run(folder,name,run):
             ttc=distance/closing if closing>.1 else math.inf
             assert math.isclose(float(r['aeb_ttc_s']),ttc,abs_tol=1e-12)
             target=3 if ttc<=.6 else 2 if ttc<=1.6 else 1 if ttc<=2.5 else 0
-            if distance<10:
-                target=3
-            elif distance<15:
-                target=max(target,2)
+            allow_distance=(not run['config'].get('aeb_closing_guard',False) or distance<=0
+                            or (closing>.1 and distance/closing<=5.))
+            if allow_distance:
+                if distance<10:
+                    target=3
+                elif distance<15:
+                    target=max(target,2)
             level=max(level,target)
         assert level==int(r['aeb_level'])
         assert float(r['aeb_brake'])==(0.,0.,.4,1.)[level]
