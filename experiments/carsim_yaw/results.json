@@ -1,0 +1,70 @@
+{
+  "source_sha256": {
+    "data_unit_1.mat": "8d5e2178681dfc2c7c43328876587a5fdcc52668d86a7b65858721a56abe6ddc",
+    "data_unit_2.mat": "2542fb56de22d595de25fffd9859d2d6e3433ff5f92cc37f717963b834e17ce1",
+    "data_unit_3.mat": "c3974add04074c4eb00c4f8ca4da7020391f7cf8ba7df6bdd07a3c2199b67f37",
+    "data_unit_4.mat": "5a6489733102a846c8addae258478e4d15f3407062ba32d99bc7a393b5222d47",
+    "data_unit_5.mat": "c49f23e3e812dab1f442d30b09f6d2b9e47f487ee627e7b726f98621741924e5",
+    "data_unit_6.mat": "df41a72123f3233b65669121fcfa8159cf6e61f9b6cbf380c6418c24a16e159c"
+  },
+  "training_files": [
+    1,
+    2,
+    3,
+    4
+  ],
+  "step_s": 0.05,
+  "horizon_s": 0.5,
+  "coefficients": [
+    0.8534553642570466,
+    0.051494025641710094
+  ],
+  "holdout": {
+    "5": {
+      "windows": 900,
+      "persistence": {
+        "rmse_rad_s": 0.013510554942878129,
+        "p95_abs_rad_s": 0.022514467196272484
+      },
+      "model": {
+        "rmse_rad_s": 0.012370715065906882,
+        "p95_abs_rad_s": 0.02411354078146956
+      },
+      "worst_window": {
+        "start_s": 29.51,
+        "initial_steer_rad": 0.049460639526031344,
+        "end_steer_rad": 0.10144549562303101,
+        "prediction_rad_s": 0.17880427636964996,
+        "actual_rad_s": 0.3061432553605758
+      }
+    },
+    "6": {
+      "windows": 1000,
+      "persistence": {
+        "rmse_rad_s": 0.012545338255109865,
+        "p95_abs_rad_s": 0.020501618649517748
+      },
+      "model": {
+        "rmse_rad_s": 0.01110820173990684,
+        "p95_abs_rad_s": 0.021013223279607467
+      },
+      "worst_window": {
+        "start_s": 239.51,
+        "initial_steer_rad": 0.0032362906788954526,
+        "end_steer_rad": 0.054382456821456704,
+        "prediction_rad_s": 0.010808892716937711,
+        "actual_rad_s": 0.1385059417958586
+      }
+    }
+  },
+  "pooled": {
+    "persistence": {
+      "rmse_rad_s": 0.013011474638568245,
+      "p95_abs_rad_s": 0.02167225557602211
+    },
+    "model": {
+      "rmse_rad_s": 0.011723195136860745,
+      "p95_abs_rad_s": 0.02285326137713614
+    }
+  }
+}

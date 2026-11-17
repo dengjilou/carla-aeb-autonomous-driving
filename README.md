@@ -13,6 +13,8 @@
 
 ## Project Overview
 
+独立数据分析项目使用公开 CarSim 轨迹，按整段记录留出测试横摆角速度预测误差。[模型、数据来源与复现](experiments/carsim_yaw/README.md)
+
 The [integrated showcase](docs/integrated.md) connects fixed-route Stanley,
 time-headway ACC, speed PID and AEB in CARLA-SUMO, with regression evidence
 and a complete six-scene camera video.
