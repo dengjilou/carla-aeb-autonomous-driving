@@ -18,4 +18,8 @@ void* control_create(const ControlConfig* config);
 void control_reset(void* handle);
 int control_step(void* handle, const ControlInput* input, ControlOutput* output);
 void control_destroy(void* handle);
+void* control_create_lqr(const ControlConfig* config, double speed, double wheelbase,
+                         double dt, double position_weight);
+int control_step_lqr(void* handle, const ControlInput* input, double curvature, ControlOutput* output);
+int control_lqr_solution(void* handle, double* gain, double* riccati);
 }

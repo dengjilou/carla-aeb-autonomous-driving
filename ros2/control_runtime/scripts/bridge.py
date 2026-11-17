@@ -13,7 +13,7 @@ from rosgraph_msgs.msg import Clock
 from nav_msgs.msg import Path
 from geometry_msgs.msg import PoseStamped, TransformStamped
 from tf2_ros import TransformBroadcaster
-from control_runtime.msg import ControlState, ControlCommand
+from control_runtime.msg import ControlState, ControlCommand, LqrState
 
 INPUTS=('dt','speed','cruise','gap','closing','heading','path_heading','cross_track','max_angle','aeb_request')
 CONFIG=('gap_gain','relative_gain','standstill_gap','headway','stanley_gain','steer_limit','steer_alpha')
@@ -24,6 +24,7 @@ class Bridge(Node):
     def __init__(self):
         super().__init__('control_bridge')
         self.publisher=self.create_publisher(ControlState,'/control/state',1)
+        self.lqr_publisher=self.create_publisher(LqrState,'/control/lqr_state',1)
         self.clock=self.create_publisher(Clock,'/clock',1)
         self.reference=self.create_publisher(Path,'/reference_path',1)
         self.actual=self.create_publisher(Path,'/actual_path',1)
@@ -105,7 +106,12 @@ class Bridge(Node):
         with self.condition:
             self.pending=(state.session,state.sequence)
             self.reply=None
-            self.publisher.publish(state)
+            if packet['config'].get('lateral_mode',0)==1:
+                self.lqr_publisher.publish(LqrState(state=state,curvature=float(packet['input'].get('curvature',0.)),
+                    design_speed=float(packet['config']['lqr_speed']),wheelbase=float(packet['config']['lqr_wheelbase']),
+                    design_dt=float(packet['config']['lqr_dt']),position_weight=float(packet['config']['lqr_position_weight'])))
+            else:
+                self.publisher.publish(state)
             arrived=self.condition.wait_for(lambda:self.reply is not None,timeout=.8)
             self.pending=None
             if not arrived:

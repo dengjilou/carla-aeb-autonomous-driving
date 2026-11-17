@@ -29,8 +29,14 @@ class Output(ct.Structure):
 
 def default_config(gains=None):
     config=dict(gap_gain=.3,relative_gain=.4,standstill_gap=8.,headway=1.8,
-                stanley_gain=2.,steer_limit=.7,steer_alpha=.4)
+                stanley_gain=2.,steer_limit=.7,steer_alpha=.4,lateral_mode=0,
+                lqr_speed=12.,lqr_wheelbase=3.,lqr_dt=.05,lqr_position_weight=.2)
     config.update(gains or {})
+    if config['lateral_mode'] not in (0,1):
+        raise ValueError('Unknown lateral mode')
+    if config['lateral_mode']==1 and not all(math.isfinite(config[k]) and config[k]>0
+            for k in ('lqr_speed','lqr_wheelbase','lqr_dt','lqr_position_weight')):
+        raise ValueError('Positive finite LQR parameters required')
     return config
 
 
@@ -57,6 +63,10 @@ class PythonController:
         self.pid=SpeedPID()
         self.previous=0.
         self.latched=0.
+        self.lqr=None
+        if c['lateral_mode']==1:
+            from lqr_tracking import LQR
+            self.lqr=LQR(c['lqr_speed'],c['lqr_wheelbase'],c['lqr_dt'],c['lqr_position_weight'])
 
     def step(self,values):
         validate_input(values)
@@ -66,6 +76,9 @@ class PythonController:
         throttle,brake=self.pid.update(reference,i['speed'],i['dt'])
         raw=steering(i['heading'],i['path_heading'],i['cross_track'],i['speed'],
                      i['max_angle'],c['stanley_gain'])
+        if self.lqr:
+            raw=self.lqr.steering(i['cross_track'],i['heading']-i['path_heading'],
+                                  i.get('curvature',0.),i['max_angle'])
         self.previous=c['steer_alpha']*max(-c['steer_limit'],min(c['steer_limit'],raw))+(1-c['steer_alpha'])*self.previous
         throttle,brake,self.latched=arbitrate(throttle,brake,i['aeb_request'],self.latched)
         return dict(reference=reference,throttle=throttle,brake=brake,
@@ -77,6 +90,7 @@ class PythonController:
 
 class NativeController:
     def __init__(self,gains=None,library=None):
+        self.config=default_config(gains)
         name='control_native.dll' if os.name=='nt' else 'libcontrol_native.so'
         default=ROOT/'output'/('native-win/Release' if os.name=='nt' else 'native-linux')/name
         self.library=ct.CDLL(str(library or os.environ.get('CONTROL_NATIVE_LIBRARY',default)))
@@ -88,18 +102,40 @@ class NativeController:
         self.library.control_reset.restype=None
         self.library.control_destroy.argtypes=[ct.c_void_p]
         self.library.control_destroy.restype=None
-        self.handle=self.library.control_create(ct.byref(Config(**default_config(gains))))
+        self.library.control_create_lqr.argtypes=[ct.POINTER(Config)]+[ct.c_double]*4
+        self.library.control_create_lqr.restype=ct.c_void_p
+        self.library.control_step_lqr.argtypes=[ct.c_void_p,ct.POINTER(Input),ct.c_double,ct.POINTER(Output)]
+        self.library.control_step_lqr.restype=ct.c_int
+        self.library.control_lqr_solution.argtypes=[ct.c_void_p,ct.POINTER(ct.c_double),ct.POINTER(ct.c_double)]
+        self.library.control_lqr_solution.restype=ct.c_int
+        c=self.config
+        config=Config(**{k:c[k] for k in CONFIG_FIELDS})
+        if c['lateral_mode']==1:
+            self.handle=self.library.control_create_lqr(ct.byref(config),c['lqr_speed'],c['lqr_wheelbase'],
+                                                        c['lqr_dt'],c['lqr_position_weight'])
+        else:
+            self.handle=self.library.control_create(ct.byref(config))
         if not self.handle:
             raise ValueError('Invalid native configuration or allocation failure')
 
     def step(self,values):
         if not self.handle:
             raise RuntimeError('Native controller is closed')
-        input_value=Input(**values)
+        input_value=Input(**{k:v for k,v in values.items() if k!='curvature'})
         output=Output()
-        if self.library.control_step(self.handle,ct.byref(input_value),ct.byref(output)):
+        status=(self.library.control_step_lqr(self.handle,ct.byref(input_value),values.get('curvature',0.),ct.byref(output))
+                if self.config['lateral_mode']==1 else
+                self.library.control_step(self.handle,ct.byref(input_value),ct.byref(output)))
+        if status:
             raise ValueError('Invalid control input')
         return {name:getattr(output,name) for name in OUTPUT_FIELDS}
+
+    def lqr_solution(self):
+        gain=(ct.c_double*2)()
+        riccati=(ct.c_double*4)()
+        if self.library.control_lqr_solution(self.handle,gain,riccati):
+            raise RuntimeError('An open LQR controller is required')
+        return list(gain),list(riccati)
 
     def reset(self):
         if not self.handle:

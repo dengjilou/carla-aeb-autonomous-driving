@@ -5,7 +5,7 @@ find_package(rosidl_default_generators REQUIRED)
 find_package(builtin_interfaces REQUIRED)
 find_package(rclcpp REQUIRED)
 rosidl_generate_interfaces(${PROJECT_NAME}
-  "msg/ControlState.msg" "msg/ControlCommand.msg"
+  "msg/ControlState.msg" "msg/ControlCommand.msg" "msg/LqrState.msg"
   DEPENDENCIES builtin_interfaces)
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/../../native ${CMAKE_CURRENT_BINARY_DIR}/native)
 add_executable(control_node src/control_node.cpp)

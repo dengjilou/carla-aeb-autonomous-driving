@@ -72,6 +72,22 @@ class RosLiveTests(unittest.TestCase):
         self.python.reset()
         self.compare(sample())
 
+    def test_lqr_fixed_gain_sequences_and_rejected_curvature(self):
+        rng=random.Random(17)
+        for speed in (4.,12.,25.):
+            self.ros.close()
+            config=dict(lateral_mode=1,lqr_speed=speed,lqr_wheelbase=2.9)
+            self.ros=RosController(config)
+            self.python=PythonController(config)
+            self.assertIn('error',self.packet(0,sample(curvature=float('nan'))))
+            for tick in range(200):
+                row=sample(speed=rng.uniform(0,30),cross_track=rng.uniform(-1,1),
+                           heading=rng.uniform(-math.pi,math.pi),path_heading=rng.uniform(-math.pi,math.pi),
+                           curvature=rng.uniform(-.05,.05),aeb_request=.4 if tick==150 else 0.)
+                actual=self.compare(row)
+                if tick==100:
+                    self.assertEqual(self.packet(tick,row)['output'],actual)
+
 
 if __name__=='__main__':
     unittest.main()

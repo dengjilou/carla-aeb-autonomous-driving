@@ -30,7 +30,8 @@ class RouteTracking:
         local = [inverse@np.array([w.position.x/100,w.position.y/100,w.position.z/100,1]) for w in wheels]
         self.front, self.rear = local[0][0], local[2][0]
         self.max_angle = math.radians(wheels[0].max_steer_angle)
-        self.lqr = LQR(max(cruise,1),self.front-self.rear,position_weight=.2) if mode=='lqr' else None
+        self.wheelbase = self.front-self.rear
+        self.lqr = LQR(max(cruise,1),self.wheelbase,position_weight=.2) if mode=='lqr' else None
 
     def locate(self, location):
         index,fraction,error = project(np.array([location.x,location.y]),self.points[:-1],self.vectors,self.lengths2)
@@ -75,13 +76,15 @@ class RouteTracking:
         axle = pose.transform(carla.Location(x=self.rear if self.mode=='lqr' else self.front))
         index,_,axle_error = project(np.array([axle.x,axle.y]),self.points[:-1],self.vectors,self.lengths2)
         tangent = math.atan2(self.vectors[index,1],self.vectors[index,0])
+        curvature = 0.
         if self.mode=='lqr':
             lo,hi = max(0,index-2),min(len(self.vectors)-1,index+2)
             delta = math.atan2(self.vectors[hi,1],self.vectors[hi,0])-math.atan2(self.vectors[lo,1],self.vectors[lo,0])
             curvature = math.atan2(math.sin(delta),math.cos(delta))/np.sqrt(self.lengths2[lo:hi]).sum()
             command = self.lqr.steering(axle_error,heading-tangent,curvature,self.max_angle)
         else:
-            self.control_input=dict(heading=heading,path_heading=tangent,cross_track=axle_error,max_angle=self.max_angle)
             command = steering(heading,tangent,axle_error,speed,self.max_angle,2.)
+        self.control_input=dict(heading=heading,path_heading=tangent,cross_track=axle_error,
+                                max_angle=self.max_angle,curvature=float(curvature))
         self.previous = .4*max(-.7,min(.7,command))+.6*self.previous
         return self.previous,error,body_heading

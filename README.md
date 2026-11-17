@@ -10,6 +10,9 @@ on two bends, route-based truth targeting, repeats and an explicit emergency-bra
 The [C++17 and ROS 2 runtime validation](docs/runtime.md) ports the deployed control
 core to Windows/Linux, drives the same CARLA-SUMO cases through ROS 2 Jazzy,
 and checks frame identity, bag replay and timeout braking.
+The [Eigen LQR runtime study](docs/lqr_runtime.md) connects the existing fixed-gain
+rear-axle LQR to the same C++/ROS 2 path, with 90 closed-loop runs, numerical
+checks and an explicitly invalid high-speed lane-departure case.
 
 Autonomous driving simulation project based on CARLA 0.9.13, featuring lateral control (Stanley), longitudinal control (PID), and AEB (Automatic Emergency Braking) system validation.
 
@@ -32,7 +35,7 @@ frozen parameters with lateral and heading offsets.
 
 - **Simulation**: CARLA 0.9.13
 - **Language**: Python 3.7 (CARLA), Python 3.12 (offline/ROS), C++17 (control core)
-- **Runtime**: CMake/CTest, MSVC/GCC/GDB, ROS 2 Jazzy, rosbag2, RViz2, WSL Ubuntu 24.04
+- **Runtime**: Eigen 3.4, CMake/CTest, MSVC/GCC/GDB, ROS 2 Jazzy, rosbag2, RViz2, WSL Ubuntu 24.04
 - **Lateral Control**: fixed-route Stanley, Pure Pursuit and discrete kinematic LQR comparisons
 - **Longitudinal Control**: time-headway ACC, anti-windup speed PID and latched AEB arbitration
 - **Safety System**: AEB 4-state FSM (Normal -> Warning -> Partial Brake -> Full Brake)
