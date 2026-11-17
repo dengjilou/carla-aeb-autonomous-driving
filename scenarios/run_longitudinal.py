@@ -62,7 +62,7 @@ def run_case(cfg, mode, gains, camera=None, trace_path=None):
         random.seed(cfg["seed"])
         sumo = SumoSimulation(str(bridge / "examples" / "Town04.sumocfg"), cfg["step_s"])
         sync = SimulationSynchronization(sumo, sim, tls_manager="none")
-        start = road.get_spawn_points()[269]
+        start = road.get_spawn_points()[cfg.get("spawn_index",269)]
         wp = road.get_waypoint(start.location)
         lead_wp = wp.get_left_lane() if cfg["kind"] in ("cutin", "adjacent") else wp
         target = lead_wp.next(cfg["offset_m"])[0].transform
@@ -93,6 +93,7 @@ def run_case(cfg, mode, gains, camera=None, trace_path=None):
         steering, lead_steering = StanleyController(k=0.08), StanleyController(k=0.08)
         lateral_mode = cfg.get("lateral_controller","stanley")
         route = RouteTracking(road,ego,"lqr" if lateral_mode=="lqr" else "stanley",cfg["ego_speed_mps"])
+        lead_route = RouteTracking(road,lead,"stanley",cfg["lead_speed_mps"]) if cfg.get("curved") else None
         acc = ACC(**gains)
         aeb = AEBController()
         latched = 0.0
@@ -109,6 +110,10 @@ def run_case(cfg, mode, gains, camera=None, trace_path=None):
             half_length = abs(math.cos(yaw)) * lead.bounding_box.extent.x + abs(math.sin(yaw)) * lead.bounding_box.extent.y
             half_width = abs(math.sin(yaw)) * lead.bounding_box.extent.x + abs(math.cos(yaw)) * lead.bounding_box.extent.y
             gap = longitudinal - ego.bounding_box.extent.x - half_length
+            chord_gap = gap
+            path_gap = route.state(lead)["station"]-route.state(ego)["station"]-ego.bounding_box.extent.x-lead.bounding_box.extent.x
+            if cfg.get("curved"):
+                gap=path_gap
             clearance = abs(lateral) - ego.bounding_box.extent.y - half_width
             speed, lead_speed = ego.get_velocity().length(), lead.get_velocity().length()
             overrides = None
@@ -120,6 +125,9 @@ def run_case(cfg, mode, gains, camera=None, trace_path=None):
                 lead_speed = velocity.length()
             previous_location = target_pose.location
             distance, closing = aeb.detect_front_vehicle(ego, world, velocity_overrides=overrides)
+            if cfg.get("target_policy")=="route":
+                distance,actor_id,closing=route.nearest_target(ego,world,aeb.detection_range)
+                aeb.last_target_id=actor_id
             requested = aeb.update_state(distance, closing)
             target_id = aeb.last_target_id
             # ACC only follows the designated lead; unexpected traffic is reported.
@@ -148,7 +156,7 @@ def run_case(cfg, mode, gains, camera=None, trace_path=None):
                 if cfg["kind"] in ("hard_brake", "adjacent") and t >= cfg["trigger_s"]:
                     lt, lb = 0.0, 1.0
                 lead_waypoint = road.get_waypoint(target_pose.location).next(6)[0]
-                ls = lead_steering.compute_steering_angle(lead, lead_waypoint)[0]
+                ls = lead_route.update(lead)[0] if lead_route else lead_steering.compute_steering_angle(lead, lead_waypoint)[0]
                 commands.append(carla.command.ApplyVehicleControl(lead.id,
                                 carla.VehicleControl(throttle=lt, brake=lb, steer=ls)))
             replies = sim.client.apply_batch_sync(commands,False)
@@ -173,6 +181,10 @@ def run_case(cfg, mode, gains, camera=None, trace_path=None):
                              latched_brake=latched, cross_track_m=cross_track,
                              path_error_m=cross_track, heading_error_rad=heading_error, steer=steer,
                              control_state="AEB" if latched>0 else "FOLLOW" if mode=="acc" and following else "CRUISE",
+                             ego_yaw_rad=heading,
+                             lead_path_error_m=lead_route.state(lead)["error"] if lead_route else 0.,
+                             chord_gap_m=chord_gap,path_gap_m=path_gap,
+                             path_distance_m=path_gap+ego.bounding_box.extent.x+lead.bounding_box.extent.x,
                              event_observed=observed, sumo_background=len(sync.sumo2carla_ids)))
             if camera and hasattr(camera,"on_sample"):
                 camera.on_sample(rows[-1])
@@ -224,6 +236,7 @@ def main():
     parser.add_argument("--gap-gain", type=float)
     parser.add_argument("--relative-gain", type=float)
     parser.add_argument("--lateral", choices=("legacy","stanley","lqr"),default="stanley")
+    parser.add_argument("--target-policy",choices=("corridor","route"))
     args = parser.parse_args()
     config = load_config(args.config)
     gains = dict(config["gains"])
@@ -238,7 +251,8 @@ def main():
     report = {"gains": gains, "runs": {}}
     errors = False
     for case in cases:
-        cfg = dict(case, step_s=config["step_s"], seed=config["seed"],lateral_controller=args.lateral)
+        cfg = dict(case, step_s=config["step_s"], seed=config["seed"],lateral_controller=args.lateral,
+                   target_policy=args.target_policy or case.get("target_policy","corridor"))
         for mode in ("baseline", "acc") if args.mode == "both" else (args.mode,):
             name = case["name"] + "_" + mode
             report["runs"][name] = dict(config=cfg, mode=mode, status="running")

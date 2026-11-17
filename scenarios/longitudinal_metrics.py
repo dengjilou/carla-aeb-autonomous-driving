@@ -33,7 +33,7 @@ def evaluate(rows, collisions, config):
     # Ignore initial 1 s for comfort metrics. Contact frames are excluded.
     jerk = jerk[max(0, round(1 / dt) - 2):]
     pre_contact = before_contact[-1] if first_contact is not None and before_contact else None
-    gaps = [r["gap_m"] for r in before_contact if r["lateral_clearance_m"] <= 0 and r["longitudinal_m"] >= 0]
+    gaps = [r.get("chord_gap_m",r["gap_m"]) for r in before_contact if r["lateral_clearance_m"] <= 0 and r["longitudinal_m"] >= 0]
     resumed = (kind == "cutout" and event_time is not None and acquired is not None
                and acquired < event_time and rows[-1]["target_id"] != rows[-1]["lead_id"]
                and abs(rows[-1]["ego_speed_mps"] - config["ego_speed_mps"]) < 1)
@@ -70,4 +70,23 @@ def evaluate(rows, collisions, config):
         result.update(path_rmse_m=math.sqrt(statistics.mean(e*e for e in lateral_errors)),
                       path_peak_m=max(abs(e) for e in lateral_errors),
                       heading_peak_rad=max(abs(r["heading_error_rad"]) for r in before_contact))
+    if config.get("curved") and before_contact:
+        headings=[before_contact[0]["ego_yaw_rad"]]
+        for a,b in zip(before_contact,before_contact[1:]):
+            delta=b["ego_yaw_rad"]-a["ego_yaw_rad"]
+            headings.append(headings[-1]+math.atan2(math.sin(delta),math.cos(delta)))
+        turn=math.degrees(max(headings)-min(headings))
+        lead_error=max(abs(r["lead_path_error_m"]) for r in before_contact)
+        eligible=[r for r in before_contact if 0<r["path_distance_m"]<50]
+        coverage=sum(r["target_id"]==r["lead_id"] for r in eligible)/len(eligible) if eligible else 0
+        if turn<2:
+            reasons.append("insufficient_observed_turn")
+        if lead_error>.5:
+            reasons.append("lead_left_reference_route")
+        if kind in ("follow","slowdown") and coverage<.95:
+            passed=False
+        result.update(turn_deg=turn,lead_path_peak_m=lead_error,target_coverage=coverage,
+                      min_path_gap_m=min(r["path_gap_m"] for r in eligible) if eligible else None,
+                      valid=not reasons,invalid_reasons=reasons,
+                      verdict="invalid" if reasons else "pass" if passed else "fail")
     return result

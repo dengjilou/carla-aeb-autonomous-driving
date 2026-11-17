@@ -5,6 +5,8 @@
 The [integrated showcase](docs/integrated.md) connects fixed-route Stanley,
 time-headway ACC, speed PID and AEB in CARLA-SUMO, with regression evidence
 and a complete six-scene camera video.
+The [curved-road joint validation](docs/curved.md) adds physical lead tracking
+on two bends, route-based truth targeting, repeats and an explicit emergency-braking failure.
 
 Autonomous driving simulation project based on CARLA 0.9.13, featuring lateral control (Stanley), longitudinal control (PID), and AEB (Automatic Emergency Braking) system validation.
 
