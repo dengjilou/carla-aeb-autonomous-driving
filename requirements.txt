@@ -1,5 +1,6 @@
 numpy>=1.18.4
 pygame>=2.0
+imageio-ffmpeg==0.5.1
 opencv-python>=4.5
 simple-pid>=1.0
 matplotlib>=3.3
