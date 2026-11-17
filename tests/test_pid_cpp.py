@@ -10,8 +10,11 @@ test_pid_cpp.py - C++ PID控制器的pytest测试用例
 
 import pytest
 import time
+import sys
+from pathlib import Path
 import numpy as np
 from simple_pid import PID as PythonPID
+sys.path.insert(0, str(Path(__file__).resolve().parents[1] / 'controllers'))
 from pid_cpp_bridge import PID as CppPID
 
 

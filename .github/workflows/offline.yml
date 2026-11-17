@@ -29,4 +29,6 @@ jobs:
       - run: python scenarios/audit_brake_onset.py output/brake-onset/staged --warning-folder output/brake-onset/warning
       - run: python -m zipfile -e docs/independent_aeb_traces.zip output/independent-aeb
       - run: python scenarios/report_independent_aeb.py --input output/independent-aeb --output output/independent-aeb-report
+      - run: python -m zipfile -e docs/offset_check_traces.zip output/offset-check
+      - run: python scenarios/audit_offset_check.py output/offset-check
       - run: python scenarios/report_longitudinal.py --input docs/longitudinal_reference.json --output output/reference-report

@@ -35,17 +35,17 @@ def main():
     config_path = ROOT/'configs/independent_aeb.json'
     assert configuration_sha256(config_path.read_bytes()) == manifest['config_lf_sha256']
     config = json.loads(config_path.read_text())
-    cases = {case['name']:case for case in config['cases']}
+    cases = {case['name']+'_'+case['demo_mode']:case for case in config['cases']}
     groups = {}
     traces = {}
     for label in ('a','b'):
         folder = args.input/label
         data = json.loads((folder/'summary.json').read_text())
-        assert len(data['runs']) == 32
+        assert set(data['runs']) == set(cases)
         assert {p.stem for p in folder.glob('*.csv')} == set(data['runs'])
         events = {}
         for name,run in data['runs'].items():
-            frozen = cases[run['config']['name']]
+            frozen = cases[name]
             assert all(run['config'][key] == value for key,value in frozen.items())
             assert run['mode'] == frozen['demo_mode']
             assert run['config']['step_s'] == .05 and run['config']['seed'] == 42
