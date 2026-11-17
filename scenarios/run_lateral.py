@@ -15,6 +15,7 @@ from acc import SpeedPID
 from stanley_pid_controller import StanleyController
 from stanley_tracking import steering as stanley_steering
 from lqr_tracking import LQR
+from path_geometry import project
 
 DT = 0.05
 # name, signed curvature (1/m) of the two 32 m segments, requested speed (m/s)
@@ -53,17 +54,6 @@ def test_map(cases=CASES):
                      '<lanes><laneSection s="0"><left>'+lane.format(1)+'</left><center><lane id="0" type="none" level="false"/>'
                      '</center><right>'+lane.format(-1)+lane.format(-2)+'</right></laneSection></lanes></road>')
     return '<OpenDRIVE><header revMajor="1" revMinor="4"/>'+''.join(roads)+'</OpenDRIVE>'
-
-
-def project(xy, starts, vectors, lengths2):
-    delta = xy - starts
-    t = np.clip(np.sum(delta*vectors, axis=1)/lengths2, 0, 1)
-    offsets = delta - t[:, None]*vectors
-    index = int(np.argmin(np.sum(offsets**2, axis=1)))
-    vx, vy = vectors[index]
-    dx, dy = offsets[index]
-    signed_distance = math.copysign(math.hypot(dx, dy), vx*dy-vy*dx)
-    return index, t[index], signed_distance
 
 
 def run(world, road, case, road_id, mode, folder, camera_hook=None, gain=0.3, lqr_weight=0.2,

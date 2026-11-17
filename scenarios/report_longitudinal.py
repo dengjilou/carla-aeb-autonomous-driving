@@ -15,6 +15,9 @@ def replay(path, run):
         **{k: int(row[k]) if row[k] else None for k in ("lead_id", "target_id", "sumo_background")},
         event_observed=row["event_observed"] == "True",
     ) for row in rows]
+    for item,row in zip(typed,rows):
+        if "path_error_m" in row:
+            item.update(path_error_m=float(row["path_error_m"]),heading_error_rad=float(row["heading_error_rad"]))
     if evaluate(typed, run["collisions"], run["config"]) != run["metrics"]:
         raise ValueError("Trace and summary disagree: " + str(path))
     return rows
