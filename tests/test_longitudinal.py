@@ -12,6 +12,16 @@ from run_longitudinal import load_config
 
 
 class LongitudinalTests(unittest.TestCase):
+    def test_body_gap_config_and_rejected_distance_references(self):
+        from run_longitudinal import run_case
+        for filename in ('aeb_gap.json','aeb_gap_equal_speed.json'):
+            config=load_config(Path(__file__).resolve().parents[1]/'configs'/filename)
+            self.assertTrue(all(c['aeb_distance_reference'] in ('body','center') for c in config['cases']))
+        with self.assertRaisesRegex(ValueError,'route target'):
+            run_case({'aeb_distance_reference':'body'},'acc',{})
+        with self.assertRaisesRegex(ValueError,'Unknown AEB'):
+            run_case({'aeb_distance_reference':'unknown'},'acc',{})
+
     def test_free_cruise(self):
         self.assertEqual(ACC().target_speed(8, 12), 12)
 

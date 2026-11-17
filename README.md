@@ -16,6 +16,9 @@ checks and an explicitly invalid high-speed lane-departure case.
 The [speed scheduling and steering-filter ablation](docs/lqr_speed.md) tests that
 failure directly, retaining both lane-departure and valid rear-end failures rather
 than treating an off-route non-contact run as a safety improvement.
+The [AEB distance-reference study](docs/aeb_gap.md) isolates center distance versus
+projected body gap, with 64 runs, held-out combinations and an explicit low-speed
+false-braking counterexample. Both experimental options remain opt-in.
 
 Autonomous driving simulation project based on CARLA 0.9.13, featuring lateral control (Stanley), longitudinal control (PID), and AEB (Automatic Emergency Braking) system validation.
 

@@ -6,6 +6,14 @@ from stanley_tracking import steering
 from lqr_tracking import LQR, ScheduledLQR
 
 
+def projected_half_length(actor, tangent):
+    forward=actor.get_transform().get_forward_vector()
+    along=forward.x*tangent[0]+forward.y*tangent[1]
+    across=forward.x*tangent[1]-forward.y*tangent[0]
+    extent=actor.bounding_box.extent
+    return abs(along)*extent.x+abs(across)*extent.y
+
+
 class RouteTracking:
     def __init__(self, road, vehicle, mode, cruise, schedule=False, filter_alpha=.4):
         if not 0 < filter_alpha <= 1:
@@ -46,7 +54,7 @@ class RouteTracking:
     def state(self, vehicle):
         return self.locate(vehicle.get_location())
 
-    def nearest_target(self, ego, world, detection_range=50):
+    def nearest_target(self, ego, world, detection_range=50, body_gap=False):
         origin = self.state(ego)
         ego_v = ego.get_velocity()
         ego_speed = ego_v.x*origin["tangent"][0]+ego_v.y*origin["tangent"][1]
@@ -65,8 +73,17 @@ class RouteTracking:
                 continue
             velocity=actor.get_velocity()
             closing=ego_speed-(velocity.x*state["tangent"][0]+velocity.y*state["tangent"][1])
-            candidates.append((distance,actor.id,float(closing)))
-        return min(candidates) if candidates else (None,None,0.)
+            half_length=projected_half_length(actor,state['tangent'])
+            candidates.append((distance,actor.id,float(closing),half_length))
+        if not candidates:
+            self.target_geometry=dict(center_distance_m=None,body_gap_m=None)
+            return None,None,0.
+        distance,number,closing,target_length=min(candidates)
+        gap=distance-projected_half_length(ego,origin['tangent'])-target_length
+        self.target_geometry=dict(center_distance_m=distance,body_gap_m=gap)
+        if body_gap:
+            distance=gap
+        return distance,number,closing
 
     def update(self, vehicle):
         import carla
