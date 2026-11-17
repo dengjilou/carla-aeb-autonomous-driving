@@ -20,7 +20,9 @@
       "Locate one failure in CSV",
       "Modify one scenario and predict outcome",
       "Explain or correct one small control function"
-    ]
+    ],
+    "config_lf_sha256": "6705bbfad6edb57d5bc8704e0629becd2660bb31652301ab44cf226e7c52f744",
+    "hash_normalization": "CRLF to LF only, verified against pre-run commit c2da794"
   },
   "groups": {
     "a": {

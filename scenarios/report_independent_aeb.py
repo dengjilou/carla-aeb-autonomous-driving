@@ -13,6 +13,10 @@ from report_aeb_gap import audit_run
 ROOT = Path(__file__).resolve().parents[1]
 
 
+def configuration_sha256(raw):
+    return hashlib.sha256(raw.replace(b'\r\n',b'\n')).hexdigest()
+
+
 def comfort(rows, end):
     speeds = [float(row['ego_speed_mps']) for row in rows if float(row['time_s']) < end]
     acceleration = [(b-a)/.05 for a,b in zip(speeds,speeds[1:])]
@@ -29,7 +33,7 @@ def main():
     args = parser.parse_args()
     manifest = json.loads((ROOT/'docs/independent_aeb_manifest.json').read_text())
     config_path = ROOT/'configs/independent_aeb.json'
-    assert hashlib.sha256(config_path.read_bytes()).hexdigest() == manifest['config_sha256']
+    assert configuration_sha256(config_path.read_bytes()) == manifest['config_lf_sha256']
     config = json.loads(config_path.read_text())
     cases = {case['name']:case for case in config['cases']}
     groups = {}
