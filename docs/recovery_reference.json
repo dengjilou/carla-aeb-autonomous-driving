@@ -1,0 +1,80 @@
+{
+  "full": {
+    "follow_holdout_acc": {
+      "verdict": "pass",
+      "collided": false,
+      "first_lead_selected_s": 0.0,
+      "event_observed_s": 4.05,
+      "first_aeb_s": null,
+      "first_collision_s": null
+    },
+    "hard_brake_holdout_acc": {
+      "verdict": "fail",
+      "collided": false,
+      "first_lead_selected_s": 0.0,
+      "event_observed_s": 2.7,
+      "first_aeb_s": null,
+      "first_collision_s": null
+    },
+    "short_cutin_failure_acc": {
+      "verdict": "fail",
+      "collided": true,
+      "first_lead_selected_s": 1.1,
+      "event_observed_s": 1.85,
+      "first_aeb_s": 1.1,
+      "first_collision_s": 2.0
+    }
+  },
+  "resumed": {
+    "follow_holdout_acc": {
+      "verdict": "pass",
+      "collided": false,
+      "first_lead_selected_s": 0.0,
+      "event_observed_s": 4.05,
+      "first_aeb_s": null,
+      "first_collision_s": null
+    },
+    "hard_brake_holdout_acc": {
+      "verdict": "fail",
+      "collided": false,
+      "first_lead_selected_s": 0.0,
+      "event_observed_s": 2.7,
+      "first_aeb_s": null,
+      "first_collision_s": null
+    },
+    "short_cutin_failure_acc": {
+      "verdict": "fail",
+      "collided": true,
+      "first_lead_selected_s": 1.1,
+      "event_observed_s": 1.85,
+      "first_aeb_s": 1.1,
+      "first_collision_s": 2.0
+    }
+  },
+  "damaged": {
+    "follow_holdout_acc": {
+      "verdict": "pass",
+      "collided": false,
+      "first_lead_selected_s": 0.0,
+      "event_observed_s": 4.05,
+      "first_aeb_s": null,
+      "first_collision_s": null
+    },
+    "hard_brake_holdout_acc": {
+      "verdict": "fail",
+      "collided": false,
+      "first_lead_selected_s": 0.0,
+      "event_observed_s": 2.7,
+      "first_aeb_s": null,
+      "first_collision_s": null
+    },
+    "short_cutin_failure_acc": {
+      "verdict": "fail",
+      "collided": true,
+      "first_lead_selected_s": 1.1,
+      "event_observed_s": 1.85,
+      "first_aeb_s": 1.1,
+      "first_collision_s": 2.0
+    }
+  }
+}

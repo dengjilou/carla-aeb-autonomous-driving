@@ -2,6 +2,12 @@
 import argparse
 import csv
 import json
+import hashlib
+import os
+import shutil
+import subprocess
+import tempfile
+from contextlib import contextmanager
 import math
 import random
 import sys
@@ -293,6 +299,49 @@ def run_case(cfg, mode, gains, camera=None, trace_path=None):
                 world.apply_settings(initial)
 
 
+def digest(path):
+    return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def code_identity():
+    sources = hashlib.sha256()
+    for directory, pattern in (("scenarios", "*.py"), ("controllers", "*.py"),
+                               ("native", "*.cpp"), ("native", "*.h"), ("ros2", "*.cpp")):
+        for path in sorted((ROOT / directory).rglob(pattern)):
+            sources.update(path.relative_to(ROOT).as_posix().encode() + b"\0")
+            sources.update(path.read_bytes())
+    try:
+        commit = subprocess.check_output(["git", "-C", str(ROOT), "rev-parse", "HEAD"],
+                                         stderr=subprocess.DEVNULL).decode().strip()
+    except (OSError, subprocess.CalledProcessError):
+        commit = None
+    return dict(commit=commit, source_sha256=sources.hexdigest())
+
+
+def save_report(path, report):
+    with tempfile.NamedTemporaryFile(mode="w", encoding="utf-8", dir=str(path.parent),
+                                     delete=False) as stream:
+        json.dump(report, stream, indent=2)
+        stream.write("\n")
+        stream.flush()
+        os.fsync(stream.fileno())
+    os.replace(stream.name, str(path))
+
+
+@contextmanager
+def output_lock(folder):
+    # OS releases the lock even if the runner is interrupted.
+    with (folder / ".batch.lock").open("a+b") as stream:
+        stream.seek(0)
+        if os.name == "nt":
+            import msvcrt
+            msvcrt.locking(stream.fileno(), msvcrt.LK_NBLCK, 1)
+        else:
+            import fcntl
+            fcntl.flock(stream, fcntl.LOCK_EX | fcntl.LOCK_NB)
+        yield
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--config", default=str(ROOT / "configs" / "longitudinal.json"))
@@ -305,6 +354,7 @@ def main():
     parser.add_argument("--lateral", choices=("legacy","stanley","lqr"),default="stanley")
     parser.add_argument("--target-policy",choices=("corridor","route"))
     parser.add_argument("--backend",choices=("python","cpp","ros2"),default="python")
+    parser.add_argument("--resume", action="store_true", help="Reuse verified completed traces in this output directory")
     args = parser.parse_args()
     if args.backend!="python" and args.lateral=="legacy":
         parser.error("The native core implements Stanley and LQR lateral control")
@@ -318,7 +368,21 @@ def main():
     if not cases:
         parser.error("No matching cases")
     args.output.mkdir(parents=True, exist_ok=True)
-    report = {"gains": gains, "runs": {}}
+    with output_lock(args.output):
+        run_batch(args, config, gains, cases)
+
+
+def run_batch(args, config, gains, cases):
+    path = args.output / "summary.json"
+    identity = dict(config=config, gains=gains, backend=args.backend, lateral=args.lateral,
+                    target_policy=args.target_policy, code=code_identity())
+    report = {"gains": gains, "identity": identity, "runs": {}}
+    if args.resume and path.exists():
+        report = json.loads(path.read_text(encoding="utf-8"))
+        if report.get("identity") != identity:
+            raise ValueError("Batch identity differs or is missing. Use a new output folder.")
+    elif args.resume and any(args.output.glob("*.csv")):
+        raise ValueError("Found traces without a summary. Use a new output folder.")
     errors = False
     for case in cases:
         cfg = dict(case, step_s=config["step_s"], seed=config["seed"],lateral_controller=args.lateral,
@@ -326,18 +390,29 @@ def main():
         modes=(case.get('demo_mode','acc'),) if args.mode=='scene' else (('baseline','acc') if args.mode=='both' else (args.mode,))
         for mode in modes:
             name = case["name"] + "_" + mode
+            trace = args.output / (name + ".csv")
+            previous = report["runs"].get(name)
+            if args.resume and previous:
+                if ("metrics" in previous and trace.is_file()
+                        and previous.get("trace_sha256") == digest(trace)):
+                    print("Reusing", name, flush=True)
+                    continue
+                archive = Path(tempfile.mkdtemp(prefix=name + "-attempt-", dir=str(args.output)))
+                save_report(archive / "record.json", previous)
+                if trace.is_file():
+                    shutil.copy2(str(trace), str(archive / trace.name))
             report["runs"][name] = dict(config=cfg, mode=mode, status="running")
-            (args.output / "summary.json").write_text(json.dumps(report, indent=2) + "\n", encoding="utf-8")
+            save_report(path, report)
             try:
-                rows, events = run_case(cfg, mode, gains, trace_path=args.output / (name + ".csv"))
-                result = dict(config=cfg, mode=mode, metrics=evaluate(rows, events, cfg), collisions=events)
+                rows, events = run_case(cfg, mode, gains, trace_path=trace)
+                result = dict(config=cfg, mode=mode, metrics=evaluate(rows, events, cfg), collisions=events, trace_sha256=digest(trace))
                 print(name, result["metrics"], flush=True)
             except Exception as exc:
                 result = dict(config=cfg, mode=mode, execution_error=repr(exc))
                 errors = True
                 print(name, repr(exc), flush=True)
             report["runs"][name] = result
-            (args.output / "summary.json").write_text(json.dumps(report, indent=2) + "\n", encoding="utf-8")
+            save_report(path, report)
             if errors:
                 raise SystemExit("Execution failed; saved error in summary.json. Repair environment before retrying.")
 

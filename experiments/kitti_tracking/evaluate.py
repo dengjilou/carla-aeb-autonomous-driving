@@ -12,6 +12,7 @@ from scipy.optimize import linear_sum_assignment
 # Frame counts from the training left-camera archive, including empty frames.
 LENGTHS = [154,447,233,144,314,297,270,800,390,803,294,373,78,340,106,376,209,145,339,1059,837]
 METHODS = ("greedy", "static_hungarian", "kalman_hungarian")
+ABLATIONS = ("greedy_gap2", "static_hungarian_gap0")
 TRANSITION = np.eye(4)
 TRANSITION[:2, 2:] = np.eye(2)
 
@@ -65,17 +66,18 @@ def associate(sim, greedy):
 
 def track(frames, length, method, output):
     active, next_id = [], 0
+    greedy = method in ("greedy", "greedy_gap2")
+    gap = 0 if method in ("greedy", "static_hungarian_gap0") else 2
     motion = method == "kalman_hungarian"
     with output.open("w", encoding="ascii") as out:
         for frame in range(length):
             detections = frames[frame]
             boxes = np.array([d[:4] for d in detections]).reshape(-1, 4)
-            gap = 0 if method == "greedy" else 2
             active = [t for t in active if frame - t.last <= gap + 1]
             predicted = np.array([t.predict(motion) for t in active]).reshape(-1, 4)
             assigned = {}
             if len(predicted) and len(boxes):
-                for i, j in associate(overlaps(predicted, boxes), method == "greedy"):
+                for i, j in associate(overlaps(predicted, boxes), greedy):
                     active[i].update(boxes[j], frame, motion)
                     assigned[j] = active[i].ident
             for j, (x1, y1, x2, y2, score) in enumerate(detections):
@@ -92,13 +94,13 @@ def metrics(hota, clear):
             **{k: int(clear[k]) for k in ("IDSW", "CLR_FP", "CLR_FN", "CLR_TP")}}
 
 
-def evaluate_tracks(root):
+def evaluate_tracks(root, methods=METHODS):
     import trackeval
     dataset = trackeval.datasets.Kitti2DBox(dict(GT_FOLDER=str(root / "gt"), TRACKERS_FOLDER=str(root),
-        TRACKERS_TO_EVAL=list(METHODS), CLASSES_TO_EVAL=["car"], PRINT_CONFIG=False))
+        TRACKERS_TO_EVAL=list(methods), CLASSES_TO_EVAL=["car"], PRINT_CONFIG=False))
     hota, clear = trackeval.metrics.HOTA(), trackeval.metrics.CLEAR(dict(PRINT_CONFIG=False))
     result = {}
-    for method in METHODS:
+    for method in methods:
         hs, cs = {}, {}
         for seq in dataset.seq_list:
             data = dataset.get_preprocessed_seq_data(dataset.get_raw_seq_data(method, seq), "car")
@@ -113,7 +115,9 @@ def main():
     parser.add_argument("data", type=Path, help="folder containing labels.zip and regionlets.zip")
     parser.add_argument("output", type=Path)
     parser.add_argument("split", choices=("development", "holdout"))
+    parser.add_argument("--factorial", action="store_true", help="Include two matching / max-gap controls")
     args = parser.parse_args()
+    methods = METHODS + ABLATIONS if args.factorial else METHODS
     ids = range(15) if args.split == "development" else range(15, 21)
     root = args.output / args.split
     gt = root / "gt"
@@ -129,15 +133,15 @@ def main():
                     box = list(map(float, fields[6:10]))
                     assert box[2] > box[0] and box[3] > box[1] and 0 <= int(fields[0]) < LENGTHS[seq]
                     frames[int(fields[0])].append(box + [float(fields[-1])])
-            for method in METHODS:
+            for method in methods:
                 folder = root / method / "data"
                 folder.mkdir(parents=True, exist_ok=True)
                 track(frames, LENGTHS[seq], method, folder / name)
     (gt / "evaluate_tracking.seqmap.training").write_text(
         "".join(f"{i:04} empty 0 {LENGTHS[i]}\n" for i in ids), encoding="ascii")
-    result = evaluate_tracks(root)
+    result = evaluate_tracks(root, methods)
     (root / "metrics.json").write_text(json.dumps(result, indent=2) + "\n", encoding="utf-8")
-    print({m: result[m]["combined"] for m in METHODS})
+    print({m: result[m]["combined"] for m in methods})
 
 
 if __name__ == "__main__":
