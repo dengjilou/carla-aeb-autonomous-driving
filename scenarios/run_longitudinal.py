@@ -48,6 +48,10 @@ def load_config(path):
 
 
 def run_case(cfg, mode, gains, camera=None, trace_path=None):
+    substep = cfg.get("physics_substep_s")
+    if substep is not None and (not math.isfinite(substep) or
+                               not cfg["step_s"] / 16 <= substep <= cfg["step_s"]):
+        raise ValueError("Physics substep must be finite and cover the simulation step in 1 to 16 substeps")
     distance_reference=cfg.get('aeb_distance_reference','center')
     if distance_reference not in ('center','body'):
         raise ValueError('Unknown AEB distance reference')
@@ -71,6 +75,10 @@ def run_case(cfg, mode, gains, camera=None, trace_path=None):
         raise RuntimeError("An idle asynchronous Town04 with no vehicles is required")
     settings = world.get_settings()
     settings.no_rendering_mode = camera is None
+    if "physics_substep_s" in cfg:
+        settings.substepping = True
+        settings.max_substep_delta_time = cfg["physics_substep_s"]
+        settings.max_substeps = math.ceil(cfg["step_s"] / cfg["physics_substep_s"])
     owned, contacts, rows = [], [], []
     native = None
     sync = sumo = None
@@ -136,6 +144,13 @@ def run_case(cfg, mode, gains, camera=None, trace_path=None):
         initial_frame = world.get_snapshot().frame
         for tick in range(round(cfg["duration_s"] / cfg["step_s"])):
             t = tick * cfg["step_s"]
+            if cfg.get("brake_diagnostics"):
+                snapshot = world.get_snapshot()
+                state = snapshot.find(ego.id)
+                velocity = state.get_velocity()
+                acceleration = state.get_acceleration()
+                applied = ego.get_control()
+                physics = world.get_settings()
             pose, target_pose = ego.get_transform(), lead.get_transform()
             heading = math.radians(pose.rotation.yaw)
             dx, dy = target_pose.location.x - pose.location.x, target_pose.location.y - pose.location.y
@@ -248,6 +263,21 @@ def run_case(cfg, mode, gains, camera=None, trace_path=None):
             rows[-1].update(aeb_distance_m=distance,aeb_closing_mps=closing,
                             aeb_ttc_s=aeb.calculate_ttc(distance,closing) if distance is not None else None,
                             aeb_level=aeb.state)
+            if cfg.get("brake_diagnostics"):
+                fwd = pose.get_forward_vector()
+                rows[-1].update(
+                    snapshot_frame=snapshot.frame, elapsed_s=snapshot.timestamp.elapsed_seconds,
+                    delta_s=snapshot.timestamp.delta_seconds,
+                    velocity_x_mps=velocity.x, velocity_y_mps=velocity.y, velocity_z_mps=velocity.z,
+                    longitudinal_speed_mps=velocity.x*fwd.x+velocity.y*fwd.y+velocity.z*fwd.z,
+                    acceleration_x_mps2=acceleration.x, acceleration_y_mps2=acceleration.y,
+                    acceleration_z_mps2=acceleration.z,
+                    longitudinal_acceleration_mps2=acceleration.x*fwd.x+acceleration.y*fwd.y+acceleration.z*fwd.z,
+                    pitch_deg=pose.rotation.pitch, altitude_m=pose.location.z,
+                    applied_throttle=applied.throttle, applied_brake=applied.brake,
+                    applied_gear=applied.gear, substepping=physics.substepping,
+                    max_substep_delta_time=physics.max_substep_delta_time,
+                    max_substeps=physics.max_substeps)
             if cfg.get('target_policy')=='route':
                 rows[-1].update(aeb_center_distance_m=route.target_geometry['center_distance_m'],
                                 aeb_body_gap_m=route.target_geometry['body_gap_m'])
