@@ -2,6 +2,8 @@
 
 ## CARLA–SUMO 自动驾驶控制与场景评测
 
+[AEB 制动尖峰诊断](docs/brake_physics.md) 对照 30 次物理子步运行，检查真实施加制动与同帧状态，并展示统计窗口对 jerk 结论的影响。
+
 [90 秒项目演示](docs/verification_demo.mp4) · [运行命令、急刹曲线与切入失败逐帧分析](docs/recovery_study.md) · [KITTI 匹配与轨迹保留对照](experiments/kitti_tracking/README.md)
 
 在 Town04 以 50 ms 固定步长推进 CARLA 和 SUMO，用仿真真值选择目标，并从逐帧日志复算控制介入与碰撞事件。[40 秒仿真对照录像](docs/independent_aeb_demo.mp4)

@@ -1,5 +1,5 @@
 {
-  "holdout_config_lf_sha256": "3024ffaf71e3cd3d23b4e40f5a8210d46140ba252f90e53a219d3e402dc6fc4d",
+  "holdout_config_lf_sha256": "b4eaae2123a8e5aa23cf33209660d126232913f86ef2ae92a756b8d168ddafc1",
   "policy": "unchanged earlier full braking, ground truth and physical vehicles",
   "physics_substeps_s": [
     0.01,
@@ -10,5 +10,7 @@
   "selection": "fixed 3 speed/distance/trigger combinations before running; previously seen brake_0 is diagnostic development",
   "acceptance": "audit trace clocks, controls, physics consistency and repeated event times; publish collisions and all comfort outcomes",
   "scope": "physics sensitivity study, no deployment claim or comfort improvement threshold",
-  "excluded": "2.5 ms needs 20 substeps above 16; four diagnostic runs excluded"
+  "excluded": "2.5 ms needs 20 substeps above 16; four diagnostic runs excluded",
+  "predeclared_windows_sha256": "3024ffaf71e3cd3d23b4e40f5a8210d46140ba252f90e53a219d3e402dc6fc4d",
+  "hash_note": "Initial declaration e72f89a hashed Windows CRLF bytes; raw hash retained, LF-normalized hash added for portable audit; scenario values unchanged"
 }

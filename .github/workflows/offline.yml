@@ -11,6 +11,9 @@ jobs:
         with:
           python-version: '3.10'
       - run: python -m unittest discover -s tests -p test_batch_resume.py -v
+      - run: python -m unittest discover -s tests -p test_brake_diagnostics.py -v
+      - run: python -m zipfile -e docs/brake_physics_traces.zip output/brake-physics-ci
+      - run: python scenarios/report_brake_diagnostics.py output/brake-physics-ci output/brake-physics-report
       - run: python -m unittest discover -s tests -p test_longitudinal.py -v
       - run: python -m unittest discover -s tests -p test_aeb_protection.py -v
       - run: python -m unittest discover -s tests -p test_independent_manifest.py -v

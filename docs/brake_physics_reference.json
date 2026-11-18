@@ -1,0 +1,1538 @@
+{
+  "manifest": {
+    "holdout_config_lf_sha256": "b4eaae2123a8e5aa23cf33209660d126232913f86ef2ae92a756b8d168ddafc1",
+    "policy": "unchanged earlier full braking, ground truth and physical vehicles",
+    "physics_substeps_s": [
+      0.01,
+      0.005,
+      0.003125
+    ],
+    "repeats": 2,
+    "selection": "fixed 3 speed/distance/trigger combinations before running; previously seen brake_0 is diagnostic development",
+    "acceptance": "audit trace clocks, controls, physics consistency and repeated event times; publish collisions and all comfort outcomes",
+    "scope": "physics sensitivity study, no deployment claim or comfort improvement threshold",
+    "excluded": "2.5 ms needs 20 substeps above 16; four diagnostic runs excluded",
+    "predeclared_windows_sha256": "3024ffaf71e3cd3d23b4e40f5a8210d46140ba252f90e53a219d3e402dc6fc4d",
+    "hash_note": "Initial declaration e72f89a hashed Windows CRLF bytes; raw hash retained, LF-normalized hash added for portable audit; scenario values unchanged"
+  },
+  "results": {
+    "a": {
+      "brake_0_staged_baseline": {
+        "metrics": {
+          "valid": true,
+          "invalid_reasons": [],
+          "verdict": "fail",
+          "event_observed_s": 3.35,
+          "first_lead_selected_s": 0.0,
+          "resumed_cruise": null,
+          "collided": true,
+          "collision_callbacks": 1,
+          "first_collision_s": 4.35,
+          "first_aeb_s": 2.8,
+          "aeb_interventions": 1,
+          "peak_deceleration_mps2": 8.391265869140625,
+          "braked_before_contact": true,
+          "pre_contact_speed_kmh": 24.01135311126709,
+          "min_projected_gap_m": -0.11418227376247003,
+          "steady_gap_rmse_m": null,
+          "steady_speed_rmse_mps": null,
+          "jerk_rms_mps3": 19.9472787701788,
+          "final_speed_mps": 6.484985988208791e-07,
+          "aeb_for_other_target": false,
+          "path_rmse_m": 0.05123034390690692,
+          "path_peak_m": 0.08942513089150106,
+          "heading_peak_rad": 0.016084183903959604,
+          "turn_deg": 19.29766082763672,
+          "lead_path_peak_m": 0.05994122354053971,
+          "target_coverage": 1.0,
+          "min_path_gap_m": -0.08134478156804903
+        },
+        "diagnostics": {
+          "peak_time_s": 4.35,
+          "peak_fd_deceleration_mps2": 125.09467720985413,
+          "api_acceleration_at_peak_mps2": -140.96915866598698,
+          "applied_brake_at_peak": 1.0,
+          "previous_requested_brake": 1.0,
+          "vector_acceleration_max_error_mps2": 3.814697265625e-06,
+          "stopped_s": 4.4
+        },
+        "full_precontact": {
+          "window_end_s": 4.35,
+          "peak_deceleration_mps2": 8.391265869140625,
+          "jerk_rms_mps3": 19.9472787701788
+        },
+        "fixed_4_35s_window": {
+          "window_end_s": 4.35,
+          "peak_deceleration_mps2": 8.391265869140625,
+          "jerk_rms_mps3": 19.9472787701788
+        }
+      },
+      "brake_0_warning_baseline": {
+        "metrics": {
+          "valid": true,
+          "invalid_reasons": [],
+          "verdict": "pass",
+          "event_observed_s": 3.35,
+          "first_lead_selected_s": 0.0,
+          "resumed_cruise": null,
+          "collided": false,
+          "collision_callbacks": 0,
+          "first_collision_s": null,
+          "first_aeb_s": 2.4,
+          "aeb_interventions": 1,
+          "peak_deceleration_mps2": 26.942338943481445,
+          "braked_before_contact": null,
+          "pre_contact_speed_kmh": null,
+          "min_projected_gap_m": 6.480887911701859,
+          "steady_gap_rmse_m": null,
+          "steady_speed_rmse_mps": null,
+          "jerk_rms_mps3": 37.122264294679894,
+          "final_speed_mps": 1.2398096771448763e-07,
+          "aeb_for_other_target": false,
+          "path_rmse_m": 0.034185215228223334,
+          "path_peak_m": 0.08942513089150106,
+          "heading_peak_rad": 0.016084183903959604,
+          "turn_deg": 17.35123443603515,
+          "lead_path_peak_m": 0.05994122354053971,
+          "target_coverage": 1.0,
+          "min_path_gap_m": 6.552710083040111
+        },
+        "diagnostics": {
+          "peak_time_s": 4.0,
+          "peak_fd_deceleration_mps2": 26.942338943481445,
+          "api_acceleration_at_peak_mps2": -26.942436875261194,
+          "applied_brake_at_peak": 1.0,
+          "previous_requested_brake": 1.0,
+          "vector_acceleration_max_error_mps2": 2.1457672119140625e-06,
+          "stopped_s": 4.15
+        },
+        "full_precontact": {
+          "window_end_s": 12,
+          "peak_deceleration_mps2": 26.942338943481445,
+          "jerk_rms_mps3": 37.122264294679894
+        },
+        "fixed_4_35s_window": {
+          "window_end_s": 4.35,
+          "peak_deceleration_mps2": 26.942338943481445,
+          "jerk_rms_mps3": 67.26798118612083
+        }
+      }
+    },
+    "b": {
+      "brake_0_staged_baseline": {
+        "metrics": {
+          "valid": true,
+          "invalid_reasons": [],
+          "verdict": "fail",
+          "event_observed_s": 3.35,
+          "first_lead_selected_s": 0.0,
+          "resumed_cruise": null,
+          "collided": true,
+          "collision_callbacks": 1,
+          "first_collision_s": 4.35,
+          "first_aeb_s": 2.8,
+          "aeb_interventions": 1,
+          "peak_deceleration_mps2": 8.391265869140625,
+          "braked_before_contact": true,
+          "pre_contact_speed_kmh": 24.01135311126709,
+          "min_projected_gap_m": -0.11418227376247003,
+          "steady_gap_rmse_m": null,
+          "steady_speed_rmse_mps": null,
+          "jerk_rms_mps3": 19.9472787701788,
+          "final_speed_mps": 6.484985988208791e-07,
+          "aeb_for_other_target": false,
+          "path_rmse_m": 0.05123034390690692,
+          "path_peak_m": 0.08942513089150106,
+          "heading_peak_rad": 0.016084183903959604,
+          "turn_deg": 19.29766082763672,
+          "lead_path_peak_m": 0.05994122354053971,
+          "target_coverage": 1.0,
+          "min_path_gap_m": -0.08134478156804903
+        },
+        "diagnostics": {
+          "peak_time_s": 4.35,
+          "peak_fd_deceleration_mps2": 125.09467720985413,
+          "api_acceleration_at_peak_mps2": -140.96915866598698,
+          "applied_brake_at_peak": 1.0,
+          "previous_requested_brake": 1.0,
+          "vector_acceleration_max_error_mps2": 3.814697265625e-06,
+          "stopped_s": 4.4
+        },
+        "full_precontact": {
+          "window_end_s": 4.35,
+          "peak_deceleration_mps2": 8.391265869140625,
+          "jerk_rms_mps3": 19.9472787701788
+        },
+        "fixed_4_35s_window": {
+          "window_end_s": 4.35,
+          "peak_deceleration_mps2": 8.391265869140625,
+          "jerk_rms_mps3": 19.9472787701788
+        }
+      },
+      "brake_0_warning_baseline": {
+        "metrics": {
+          "valid": true,
+          "invalid_reasons": [],
+          "verdict": "pass",
+          "event_observed_s": 3.35,
+          "first_lead_selected_s": 0.0,
+          "resumed_cruise": null,
+          "collided": false,
+          "collision_callbacks": 0,
+          "first_collision_s": null,
+          "first_aeb_s": 2.4,
+          "aeb_interventions": 1,
+          "peak_deceleration_mps2": 26.942338943481445,
+          "braked_before_contact": null,
+          "pre_contact_speed_kmh": null,
+          "min_projected_gap_m": 6.480887911701859,
+          "steady_gap_rmse_m": null,
+          "steady_speed_rmse_mps": null,
+          "jerk_rms_mps3": 37.122264294679894,
+          "final_speed_mps": 1.2398096771448763e-07,
+          "aeb_for_other_target": false,
+          "path_rmse_m": 0.034185215228223334,
+          "path_peak_m": 0.08942513089150106,
+          "heading_peak_rad": 0.016084183903959604,
+          "turn_deg": 17.35123443603515,
+          "lead_path_peak_m": 0.05994122354053971,
+          "target_coverage": 1.0,
+          "min_path_gap_m": 6.552710083040111
+        },
+        "diagnostics": {
+          "peak_time_s": 4.0,
+          "peak_fd_deceleration_mps2": 26.942338943481445,
+          "api_acceleration_at_peak_mps2": -26.942436875261194,
+          "applied_brake_at_peak": 1.0,
+          "previous_requested_brake": 1.0,
+          "vector_acceleration_max_error_mps2": 2.1457672119140625e-06,
+          "stopped_s": 4.15
+        },
+        "full_precontact": {
+          "window_end_s": 12,
+          "peak_deceleration_mps2": 26.942338943481445,
+          "jerk_rms_mps3": 37.122264294679894
+        },
+        "fixed_4_35s_window": {
+          "window_end_s": 4.35,
+          "peak_deceleration_mps2": 26.942338943481445,
+          "jerk_rms_mps3": 67.26798118612083
+        }
+      }
+    },
+    "substep-a": {
+      "brake_0_staged_baseline": {
+        "metrics": {
+          "valid": true,
+          "invalid_reasons": [],
+          "verdict": "fail",
+          "event_observed_s": 4.35,
+          "first_lead_selected_s": 0.0,
+          "resumed_cruise": null,
+          "collided": true,
+          "collision_callbacks": 1,
+          "first_collision_s": 5.15,
+          "first_aeb_s": 2.8,
+          "aeb_interventions": 1,
+          "peak_deceleration_mps2": 7.969818115234375,
+          "braked_before_contact": true,
+          "pre_contact_speed_kmh": 8.822852325439454,
+          "min_projected_gap_m": -0.0373380309805027,
+          "steady_gap_rmse_m": null,
+          "steady_speed_rmse_mps": null,
+          "jerk_rms_mps3": 18.14287336392933,
+          "final_speed_mps": 2.017021415667841e-06,
+          "aeb_for_other_target": false,
+          "path_rmse_m": 0.0467431031574227,
+          "path_peak_m": 0.0897855639135404,
+          "heading_peak_rad": 0.01627806203131743,
+          "turn_deg": 20.293411254882805,
+          "lead_path_peak_m": 0.05596159960022302,
+          "target_coverage": 1.0,
+          "min_path_gap_m": -0.0075297208226317025
+        },
+        "diagnostics": {
+          "peak_time_s": 5.15,
+          "peak_fd_deceleration_mps2": 48.5653617978096,
+          "api_acceleration_at_peak_mps2": -49.13547351069054,
+          "applied_brake_at_peak": 1.0,
+          "previous_requested_brake": 1.0,
+          "vector_acceleration_max_error_mps2": 1.391395926475525e-06,
+          "stopped_s": 5.15
+        },
+        "full_precontact": {
+          "window_end_s": 5.15,
+          "peak_deceleration_mps2": 7.969818115234375,
+          "jerk_rms_mps3": 18.14287336392933
+        },
+        "fixed_4_35s_window": {
+          "window_end_s": 4.35,
+          "peak_deceleration_mps2": 7.969818115234375,
+          "jerk_rms_mps3": 20.16673994690426
+        }
+      },
+      "brake_0_warning_baseline": {
+        "metrics": {
+          "valid": true,
+          "invalid_reasons": [],
+          "verdict": "pass",
+          "event_observed_s": 4.35,
+          "first_lead_selected_s": 0.0,
+          "resumed_cruise": null,
+          "collided": false,
+          "collision_callbacks": 0,
+          "first_collision_s": null,
+          "first_aeb_s": 2.4,
+          "aeb_interventions": 1,
+          "peak_deceleration_mps2": 20.540982466191053,
+          "braked_before_contact": null,
+          "pre_contact_speed_kmh": null,
+          "min_projected_gap_m": 7.201758275100856,
+          "steady_gap_rmse_m": null,
+          "steady_speed_rmse_mps": null,
+          "jerk_rms_mps3": 37.298848074901194,
+          "final_speed_mps": 2.2888300463819178e-06,
+          "aeb_for_other_target": false,
+          "path_rmse_m": 0.030792452736333235,
+          "path_peak_m": 0.0897855639135404,
+          "heading_peak_rad": 0.01627806203131743,
+          "turn_deg": 18.094604492187496,
+          "lead_path_peak_m": 0.05596159960022302,
+          "target_coverage": 1.0,
+          "min_path_gap_m": 7.278527970358425
+        },
+        "diagnostics": {
+          "peak_time_s": 5.0,
+          "peak_fd_deceleration_mps2": 20.540982466191053,
+          "api_acceleration_at_peak_mps2": -20.540480200663218,
+          "applied_brake_at_peak": 1.0,
+          "previous_requested_brake": 1.0,
+          "vector_acceleration_max_error_mps2": 3.2782554626464844e-07,
+          "stopped_s": 5.0
+        },
+        "full_precontact": {
+          "window_end_s": 12,
+          "peak_deceleration_mps2": 20.540982466191053,
+          "jerk_rms_mps3": 37.298848074901194
+        },
+        "fixed_4_35s_window": {
+          "window_end_s": 4.35,
+          "peak_deceleration_mps2": 8.327713012695312,
+          "jerk_rms_mps3": 20.94844947185138
+        }
+      }
+    },
+    "substep-b": {
+      "brake_0_staged_baseline": {
+        "metrics": {
+          "valid": true,
+          "invalid_reasons": [],
+          "verdict": "fail",
+          "event_observed_s": 4.35,
+          "first_lead_selected_s": 0.0,
+          "resumed_cruise": null,
+          "collided": true,
+          "collision_callbacks": 1,
+          "first_collision_s": 5.15,
+          "first_aeb_s": 2.8,
+          "aeb_interventions": 1,
+          "peak_deceleration_mps2": 7.969818115234375,
+          "braked_before_contact": true,
+          "pre_contact_speed_kmh": 8.822852325439454,
+          "min_projected_gap_m": -0.0373380309805027,
+          "steady_gap_rmse_m": null,
+          "steady_speed_rmse_mps": null,
+          "jerk_rms_mps3": 18.14287336392933,
+          "final_speed_mps": 2.017021415667841e-06,
+          "aeb_for_other_target": false,
+          "path_rmse_m": 0.0467431031574227,
+          "path_peak_m": 0.0897855639135404,
+          "heading_peak_rad": 0.01627806203131743,
+          "turn_deg": 20.293411254882805,
+          "lead_path_peak_m": 0.05596159960022302,
+          "target_coverage": 1.0,
+          "min_path_gap_m": -0.0075297208226317025
+        },
+        "diagnostics": {
+          "peak_time_s": 5.15,
+          "peak_fd_deceleration_mps2": 48.5653617978096,
+          "api_acceleration_at_peak_mps2": -49.13547351069054,
+          "applied_brake_at_peak": 1.0,
+          "previous_requested_brake": 1.0,
+          "vector_acceleration_max_error_mps2": 1.391395926475525e-06,
+          "stopped_s": 5.15
+        },
+        "full_precontact": {
+          "window_end_s": 5.15,
+          "peak_deceleration_mps2": 7.969818115234375,
+          "jerk_rms_mps3": 18.14287336392933
+        },
+        "fixed_4_35s_window": {
+          "window_end_s": 4.35,
+          "peak_deceleration_mps2": 7.969818115234375,
+          "jerk_rms_mps3": 20.16673994690426
+        }
+      },
+      "brake_0_warning_baseline": {
+        "metrics": {
+          "valid": true,
+          "invalid_reasons": [],
+          "verdict": "pass",
+          "event_observed_s": 4.35,
+          "first_lead_selected_s": 0.0,
+          "resumed_cruise": null,
+          "collided": false,
+          "collision_callbacks": 0,
+          "first_collision_s": null,
+          "first_aeb_s": 2.4,
+          "aeb_interventions": 1,
+          "peak_deceleration_mps2": 20.540982466191053,
+          "braked_before_contact": null,
+          "pre_contact_speed_kmh": null,
+          "min_projected_gap_m": 7.201758275100856,
+          "steady_gap_rmse_m": null,
+          "steady_speed_rmse_mps": null,
+          "jerk_rms_mps3": 37.298848074901194,
+          "final_speed_mps": 2.2888300463819178e-06,
+          "aeb_for_other_target": false,
+          "path_rmse_m": 0.030792452736333235,
+          "path_peak_m": 0.0897855639135404,
+          "heading_peak_rad": 0.01627806203131743,
+          "turn_deg": 18.094604492187496,
+          "lead_path_peak_m": 0.05596159960022302,
+          "target_coverage": 1.0,
+          "min_path_gap_m": 7.278527970358425
+        },
+        "diagnostics": {
+          "peak_time_s": 5.0,
+          "peak_fd_deceleration_mps2": 20.540982466191053,
+          "api_acceleration_at_peak_mps2": -20.540480200663218,
+          "applied_brake_at_peak": 1.0,
+          "previous_requested_brake": 1.0,
+          "vector_acceleration_max_error_mps2": 3.2782554626464844e-07,
+          "stopped_s": 5.0
+        },
+        "full_precontact": {
+          "window_end_s": 12,
+          "peak_deceleration_mps2": 20.540982466191053,
+          "jerk_rms_mps3": 37.298848074901194
+        },
+        "fixed_4_35s_window": {
+          "window_end_s": 4.35,
+          "peak_deceleration_mps2": 8.327713012695312,
+          "jerk_rms_mps3": 20.94844947185138
+        }
+      }
+    },
+    "substep3125-a": {
+      "brake_0_staged_baseline": {
+        "metrics": {
+          "valid": true,
+          "invalid_reasons": [],
+          "verdict": "fail",
+          "event_observed_s": 4.35,
+          "first_lead_selected_s": 0.0,
+          "resumed_cruise": null,
+          "collided": true,
+          "collision_callbacks": 1,
+          "first_collision_s": 5.15,
+          "first_aeb_s": 2.8,
+          "aeb_interventions": 1,
+          "peak_deceleration_mps2": 7.877979278564453,
+          "braked_before_contact": true,
+          "pre_contact_speed_kmh": 8.824988651275635,
+          "min_projected_gap_m": 0.03547712399573699,
+          "steady_gap_rmse_m": null,
+          "steady_speed_rmse_mps": null,
+          "jerk_rms_mps3": 18.715821128391124,
+          "final_speed_mps": 2.9230170639493736e-06,
+          "aeb_for_other_target": false,
+          "path_rmse_m": 0.04647864071955912,
+          "path_peak_m": 0.0908188448228166,
+          "heading_peak_rad": 0.016359421602619273,
+          "turn_deg": 20.30248260498047,
+          "lead_path_peak_m": 0.05513625331042675,
+          "target_coverage": 1.0,
+          "min_path_gap_m": 0.06571447288020238
+        },
+        "diagnostics": {
+          "peak_time_s": 5.15,
+          "peak_fd_deceleration_mps2": 47.56257817149162,
+          "api_acceleration_at_peak_mps2": -50.18620524047217,
+          "applied_brake_at_peak": 1.0,
+          "previous_requested_brake": 1.0,
+          "vector_acceleration_max_error_mps2": 3.1888484954833984e-06,
+          "stopped_s": 5.15
+        },
+        "full_precontact": {
+          "window_end_s": 5.15,
+          "peak_deceleration_mps2": 7.877979278564453,
+          "jerk_rms_mps3": 18.715821128391124
+        },
+        "fixed_4_35s_window": {
+          "window_end_s": 4.35,
+          "peak_deceleration_mps2": 7.877979278564453,
+          "jerk_rms_mps3": 20.80568985989756
+        }
+      },
+      "brake_0_warning_baseline": {
+        "metrics": {
+          "valid": true,
+          "invalid_reasons": [],
+          "verdict": "pass",
+          "event_observed_s": 4.35,
+          "first_lead_selected_s": 0.0,
+          "resumed_cruise": null,
+          "collided": false,
+          "collision_callbacks": 0,
+          "first_collision_s": null,
+          "first_aeb_s": 2.4,
+          "aeb_interventions": 1,
+          "peak_deceleration_mps2": 13.407927527441643,
+          "braked_before_contact": null,
+          "pre_contact_speed_kmh": null,
+          "min_projected_gap_m": 7.200102496176038,
+          "steady_gap_rmse_m": null,
+          "steady_speed_rmse_mps": null,
+          "jerk_rms_mps3": 25.331676028973515,
+          "final_speed_mps": 1.907460500660818e-08,
+          "aeb_for_other_target": false,
+          "path_rmse_m": 0.03058712780059415,
+          "path_peak_m": 0.0908188448228166,
+          "heading_peak_rad": 0.016359421602619273,
+          "turn_deg": 18.14130401611328,
+          "lead_path_peak_m": 0.05513625331042675,
+          "target_coverage": 1.0,
+          "min_path_gap_m": 7.2761579103505625
+        },
+        "diagnostics": {
+          "peak_time_s": 5.1,
+          "peak_fd_deceleration_mps2": 13.407927527441643,
+          "api_acceleration_at_peak_mps2": -13.407546943755143,
+          "applied_brake_at_peak": 1.0,
+          "previous_requested_brake": 1.0,
+          "vector_acceleration_max_error_mps2": 4.470348358154297e-07,
+          "stopped_s": 5.1
+        },
+        "full_precontact": {
+          "window_end_s": 12,
+          "peak_deceleration_mps2": 13.407927527441643,
+          "jerk_rms_mps3": 25.331676028973515
+        },
+        "fixed_4_35s_window": {
+          "window_end_s": 4.35,
+          "peak_deceleration_mps2": 8.330001831054688,
+          "jerk_rms_mps3": 21.558005712291354
+        }
+      }
+    },
+    "substep3125-b": {
+      "brake_0_staged_baseline": {
+        "metrics": {
+          "valid": true,
+          "invalid_reasons": [],
+          "verdict": "fail",
+          "event_observed_s": 4.35,
+          "first_lead_selected_s": 0.0,
+          "resumed_cruise": null,
+          "collided": true,
+          "collision_callbacks": 1,
+          "first_collision_s": 5.15,
+          "first_aeb_s": 2.8,
+          "aeb_interventions": 1,
+          "peak_deceleration_mps2": 7.877979278564453,
+          "braked_before_contact": true,
+          "pre_contact_speed_kmh": 8.824988651275635,
+          "min_projected_gap_m": 0.03547712399573699,
+          "steady_gap_rmse_m": null,
+          "steady_speed_rmse_mps": null,
+          "jerk_rms_mps3": 18.715821128391124,
+          "final_speed_mps": 2.9230170639493736e-06,
+          "aeb_for_other_target": false,
+          "path_rmse_m": 0.04647864071955912,
+          "path_peak_m": 0.0908188448228166,
+          "heading_peak_rad": 0.016359421602619273,
+          "turn_deg": 20.30248260498047,
+          "lead_path_peak_m": 0.05513625331042675,
+          "target_coverage": 1.0,
+          "min_path_gap_m": 0.06571447288020238
+        },
+        "diagnostics": {
+          "peak_time_s": 5.15,
+          "peak_fd_deceleration_mps2": 47.56257817149162,
+          "api_acceleration_at_peak_mps2": -50.18620524047217,
+          "applied_brake_at_peak": 1.0,
+          "previous_requested_brake": 1.0,
+          "vector_acceleration_max_error_mps2": 3.1888484954833984e-06,
+          "stopped_s": 5.15
+        },
+        "full_precontact": {
+          "window_end_s": 5.15,
+          "peak_deceleration_mps2": 7.877979278564453,
+          "jerk_rms_mps3": 18.715821128391124
+        },
+        "fixed_4_35s_window": {
+          "window_end_s": 4.35,
+          "peak_deceleration_mps2": 7.877979278564453,
+          "jerk_rms_mps3": 20.80568985989756
+        }
+      },
+      "brake_0_warning_baseline": {
+        "metrics": {
+          "valid": true,
+          "invalid_reasons": [],
+          "verdict": "pass",
+          "event_observed_s": 4.35,
+          "first_lead_selected_s": 0.0,
+          "resumed_cruise": null,
+          "collided": false,
+          "collision_callbacks": 0,
+          "first_collision_s": null,
+          "first_aeb_s": 2.4,
+          "aeb_interventions": 1,
+          "peak_deceleration_mps2": 13.407927527441643,
+          "braked_before_contact": null,
+          "pre_contact_speed_kmh": null,
+          "min_projected_gap_m": 7.200102496176038,
+          "steady_gap_rmse_m": null,
+          "steady_speed_rmse_mps": null,
+          "jerk_rms_mps3": 25.331676028973515,
+          "final_speed_mps": 1.907460500660818e-08,
+          "aeb_for_other_target": false,
+          "path_rmse_m": 0.03058712780059415,
+          "path_peak_m": 0.0908188448228166,
+          "heading_peak_rad": 0.016359421602619273,
+          "turn_deg": 18.14130401611328,
+          "lead_path_peak_m": 0.05513625331042675,
+          "target_coverage": 1.0,
+          "min_path_gap_m": 7.2761579103505625
+        },
+        "diagnostics": {
+          "peak_time_s": 5.1,
+          "peak_fd_deceleration_mps2": 13.407927527441643,
+          "api_acceleration_at_peak_mps2": -13.407546943755143,
+          "applied_brake_at_peak": 1.0,
+          "previous_requested_brake": 1.0,
+          "vector_acceleration_max_error_mps2": 4.470348358154297e-07,
+          "stopped_s": 5.1
+        },
+        "full_precontact": {
+          "window_end_s": 12,
+          "peak_deceleration_mps2": 13.407927527441643,
+          "jerk_rms_mps3": 25.331676028973515
+        },
+        "fixed_4_35s_window": {
+          "window_end_s": 4.35,
+          "peak_deceleration_mps2": 8.330001831054688,
+          "jerk_rms_mps3": 21.558005712291354
+        }
+      }
+    },
+    "holdout-a": {
+      "physics_holdout_0_0_baseline": {
+        "metrics": {
+          "valid": true,
+          "invalid_reasons": [],
+          "verdict": "pass",
+          "event_observed_s": 3.65,
+          "first_lead_selected_s": 0.0,
+          "resumed_cruise": null,
+          "collided": false,
+          "collision_callbacks": 0,
+          "first_collision_s": null,
+          "first_aeb_s": 2.55,
+          "aeb_interventions": 1,
+          "peak_deceleration_mps2": 26.975317001342773,
+          "braked_before_contact": null,
+          "pre_contact_speed_kmh": null,
+          "min_projected_gap_m": 6.6136240108508595,
+          "steady_gap_rmse_m": null,
+          "steady_speed_rmse_mps": null,
+          "jerk_rms_mps3": 37.75733318649602,
+          "final_speed_mps": 1.907369195919273e-08,
+          "aeb_for_other_target": false,
+          "path_rmse_m": 0.03720539690460858,
+          "path_peak_m": 0.10020494886664906,
+          "heading_peak_rad": 0.01685867275352404,
+          "turn_deg": 19.314819335937493,
+          "lead_path_peak_m": 0.07245944553156801,
+          "target_coverage": 1.0,
+          "min_path_gap_m": 6.688152911968373
+        },
+        "diagnostics": {
+          "peak_time_s": 4.25,
+          "peak_fd_deceleration_mps2": 26.975317001342773,
+          "api_acceleration_at_peak_mps2": -26.97538660220625,
+          "applied_brake_at_peak": 1.0,
+          "previous_requested_brake": 1.0,
+          "vector_acceleration_max_error_mps2": 9.5367431640625e-07,
+          "stopped_s": 4.4
+        },
+        "full_precontact": {
+          "window_end_s": 12,
+          "peak_deceleration_mps2": 26.975317001342773,
+          "jerk_rms_mps3": 37.75733318649602
+        }
+      },
+      "physics_holdout_0_1_baseline": {
+        "metrics": {
+          "valid": true,
+          "invalid_reasons": [],
+          "verdict": "pass",
+          "event_observed_s": 4.7,
+          "first_lead_selected_s": 0.0,
+          "resumed_cruise": null,
+          "collided": false,
+          "collision_callbacks": 0,
+          "first_collision_s": null,
+          "first_aeb_s": 2.55,
+          "aeb_interventions": 1,
+          "peak_deceleration_mps2": 20.529283131472766,
+          "braked_before_contact": null,
+          "pre_contact_speed_kmh": null,
+          "min_projected_gap_m": 7.652887007793682,
+          "steady_gap_rmse_m": null,
+          "steady_speed_rmse_mps": null,
+          "jerk_rms_mps3": 37.725944889078924,
+          "final_speed_mps": 7.685557079639693e-08,
+          "aeb_for_other_target": false,
+          "path_rmse_m": 0.03440587352270539,
+          "path_peak_m": 0.10166878811756641,
+          "heading_peak_rad": 0.01826217430208321,
+          "turn_deg": 20.042724609374996,
+          "lead_path_peak_m": 0.06970324774203492,
+          "target_coverage": 1.0,
+          "min_path_gap_m": 7.733453231027582
+        },
+        "diagnostics": {
+          "peak_time_s": 5.25,
+          "peak_fd_deceleration_mps2": 20.529283131472766,
+          "api_acceleration_at_peak_mps2": -20.52857177300394,
+          "applied_brake_at_peak": 1.0,
+          "previous_requested_brake": 1.0,
+          "vector_acceleration_max_error_mps2": 9.047798812389374e-07,
+          "stopped_s": 5.25
+        },
+        "full_precontact": {
+          "window_end_s": 12,
+          "peak_deceleration_mps2": 20.529283131472766,
+          "jerk_rms_mps3": 37.725944889078924
+        }
+      },
+      "physics_holdout_0_2_baseline": {
+        "metrics": {
+          "valid": true,
+          "invalid_reasons": [],
+          "verdict": "pass",
+          "event_observed_s": 4.7,
+          "first_lead_selected_s": 0.0,
+          "resumed_cruise": null,
+          "collided": false,
+          "collision_callbacks": 0,
+          "first_collision_s": null,
+          "first_aeb_s": 2.55,
+          "aeb_interventions": 1,
+          "peak_deceleration_mps2": 13.318800318520516,
+          "braked_before_contact": null,
+          "pre_contact_speed_kmh": null,
+          "min_projected_gap_m": 7.610156645056737,
+          "steady_gap_rmse_m": null,
+          "steady_speed_rmse_mps": null,
+          "jerk_rms_mps3": 25.258754389006683,
+          "final_speed_mps": 9.179134963233082e-07,
+          "aeb_for_other_target": false,
+          "path_rmse_m": 0.03438948779561287,
+          "path_peak_m": 0.10268386044496275,
+          "heading_peak_rad": 0.01863485715354951,
+          "turn_deg": 20.10407257080078,
+          "lead_path_peak_m": 0.07009150225079468,
+          "target_coverage": 1.0,
+          "min_path_gap_m": 7.689116661065242
+        },
+        "diagnostics": {
+          "peak_time_s": 5.35,
+          "peak_fd_deceleration_mps2": 13.318800318520516,
+          "api_acceleration_at_peak_mps2": -13.318204088405746,
+          "applied_brake_at_peak": 1.0,
+          "previous_requested_brake": 1.0,
+          "vector_acceleration_max_error_mps2": 6.621703505516052e-07,
+          "stopped_s": 5.35
+        },
+        "full_precontact": {
+          "window_end_s": 12,
+          "peak_deceleration_mps2": 13.318800318520516,
+          "jerk_rms_mps3": 25.258754389006683
+        }
+      },
+      "physics_holdout_1_0_baseline": {
+        "metrics": {
+          "valid": true,
+          "invalid_reasons": [],
+          "verdict": "pass",
+          "event_observed_s": 3.45,
+          "first_lead_selected_s": 0.0,
+          "resumed_cruise": null,
+          "collided": false,
+          "collision_callbacks": 0,
+          "first_collision_s": null,
+          "first_aeb_s": 2.25,
+          "aeb_interventions": 1,
+          "peak_deceleration_mps2": 26.977782249450684,
+          "braked_before_contact": null,
+          "pre_contact_speed_kmh": null,
+          "min_projected_gap_m": 1.1050317138278443,
+          "steady_gap_rmse_m": null,
+          "steady_speed_rmse_mps": null,
+          "jerk_rms_mps3": 37.87149079019191,
+          "final_speed_mps": 1.3828276905769599e-06,
+          "aeb_for_other_target": false,
+          "path_rmse_m": 0.0642840782357195,
+          "path_peak_m": 0.19097322498883335,
+          "heading_peak_rad": 0.040555135954605526,
+          "turn_deg": 29.240932404994965,
+          "lead_path_peak_m": 0.15332083103006894,
+          "target_coverage": 1.0,
+          "min_path_gap_m": 1.1598686562424234
+        },
+        "diagnostics": {
+          "peak_time_s": 4.3,
+          "peak_fd_deceleration_mps2": 26.977782249450684,
+          "api_acceleration_at_peak_mps2": -26.977947835670697,
+          "applied_brake_at_peak": 1.0,
+          "previous_requested_brake": 1.0,
+          "vector_acceleration_max_error_mps2": 9.5367431640625e-07,
+          "stopped_s": 4.45
+        },
+        "full_precontact": {
+          "window_end_s": 12,
+          "peak_deceleration_mps2": 26.977782249450684,
+          "jerk_rms_mps3": 37.87149079019191
+        }
+      },
+      "physics_holdout_1_1_baseline": {
+        "metrics": {
+          "valid": true,
+          "invalid_reasons": [],
+          "verdict": "pass",
+          "event_observed_s": 4.3,
+          "first_lead_selected_s": 0.0,
+          "resumed_cruise": null,
+          "collided": false,
+          "collision_callbacks": 0,
+          "first_collision_s": null,
+          "first_aeb_s": 2.25,
+          "aeb_interventions": 1,
+          "peak_deceleration_mps2": 14.14971113204956,
+          "braked_before_contact": null,
+          "pre_contact_speed_kmh": null,
+          "min_projected_gap_m": 1.0744648077086696,
+          "steady_gap_rmse_m": null,
+          "steady_speed_rmse_mps": null,
+          "jerk_rms_mps3": 27.230496476423934,
+          "final_speed_mps": 1.2397774753480917e-06,
+          "aeb_for_other_target": false,
+          "path_rmse_m": 0.0601341573041844,
+          "path_peak_m": 0.19565045521232055,
+          "heading_peak_rad": 0.04182492038011626,
+          "turn_deg": 30.35703843832016,
+          "lead_path_peak_m": 0.15134938587990732,
+          "target_coverage": 1.0,
+          "min_path_gap_m": 1.1318971903055797
+        },
+        "diagnostics": {
+          "peak_time_s": 5.3,
+          "peak_fd_deceleration_mps2": 14.14971113204956,
+          "api_acceleration_at_peak_mps2": -14.149438874972738,
+          "applied_brake_at_peak": 1.0,
+          "previous_requested_brake": 1.0,
+          "vector_acceleration_max_error_mps2": 2.9634975362569094e-07,
+          "stopped_s": 5.35
+        },
+        "full_precontact": {
+          "window_end_s": 12,
+          "peak_deceleration_mps2": 14.14971113204956,
+          "jerk_rms_mps3": 27.230496476423934
+        }
+      },
+      "physics_holdout_1_2_baseline": {
+        "metrics": {
+          "valid": true,
+          "invalid_reasons": [],
+          "verdict": "pass",
+          "event_observed_s": 4.3,
+          "first_lead_selected_s": 0.0,
+          "resumed_cruise": null,
+          "collided": false,
+          "collision_callbacks": 0,
+          "first_collision_s": null,
+          "first_aeb_s": 2.25,
+          "aeb_interventions": 1,
+          "peak_deceleration_mps2": 12.982177734375,
+          "braked_before_contact": null,
+          "pre_contact_speed_kmh": null,
+          "min_projected_gap_m": 1.041671580326672,
+          "steady_gap_rmse_m": null,
+          "steady_speed_rmse_mps": null,
+          "jerk_rms_mps3": 21.139098181953887,
+          "final_speed_mps": 3.3379020436541396e-08,
+          "aeb_for_other_target": false,
+          "path_rmse_m": 0.05914989747575744,
+          "path_peak_m": 0.19334342593529374,
+          "heading_peak_rad": 0.04208451601197552,
+          "turn_deg": 30.431617677211765,
+          "lead_path_peak_m": 0.15235182003257644,
+          "target_coverage": 1.0,
+          "min_path_gap_m": 1.0988280367262888
+        },
+        "diagnostics": {
+          "peak_time_s": 1.25,
+          "peak_fd_deceleration_mps2": 12.982177734375,
+          "api_acceleration_at_peak_mps2": -12.965376951574717,
+          "applied_brake_at_peak": 0.0,
+          "previous_requested_brake": 0.0,
+          "vector_acceleration_max_error_mps2": 2.384185791015625e-07,
+          "stopped_s": 5.45
+        },
+        "full_precontact": {
+          "window_end_s": 12,
+          "peak_deceleration_mps2": 12.982177734375,
+          "jerk_rms_mps3": 21.139098181953887
+        }
+      },
+      "physics_holdout_2_0_baseline": {
+        "metrics": {
+          "valid": true,
+          "invalid_reasons": [],
+          "verdict": "pass",
+          "event_observed_s": 4.75,
+          "first_lead_selected_s": 0.0,
+          "resumed_cruise": null,
+          "collided": false,
+          "collision_callbacks": 0,
+          "first_collision_s": null,
+          "first_aeb_s": 2.5,
+          "aeb_interventions": 1,
+          "peak_deceleration_mps2": 27.0969295501709,
+          "braked_before_contact": null,
+          "pre_contact_speed_kmh": null,
+          "min_projected_gap_m": 10.971383163918588,
+          "steady_gap_rmse_m": null,
+          "steady_speed_rmse_mps": null,
+          "jerk_rms_mps3": 43.578258830912695,
+          "final_speed_mps": 2.7656872703119006e-07,
+          "aeb_for_other_target": false,
+          "path_rmse_m": 0.07941467522284588,
+          "path_peak_m": 0.23063566707429242,
+          "heading_peak_rad": 0.06002111229864249,
+          "turn_deg": 28.705677032470703,
+          "lead_path_peak_m": 0.2033398428945846,
+          "target_coverage": 1.0,
+          "min_path_gap_m": 11.07375040169623
+        },
+        "diagnostics": {
+          "peak_time_s": 4.8,
+          "peak_fd_deceleration_mps2": 27.0969295501709,
+          "api_acceleration_at_peak_mps2": -27.097057931168756,
+          "applied_brake_at_peak": 1.0,
+          "previous_requested_brake": 1.0,
+          "vector_acceleration_max_error_mps2": 9.5367431640625e-07,
+          "stopped_s": 5.0
+        },
+        "full_precontact": {
+          "window_end_s": 12,
+          "peak_deceleration_mps2": 27.0969295501709,
+          "jerk_rms_mps3": 43.578258830912695
+        }
+      },
+      "physics_holdout_2_1_baseline": {
+        "metrics": {
+          "valid": true,
+          "invalid_reasons": [],
+          "verdict": "pass",
+          "event_observed_s": 5.8,
+          "first_lead_selected_s": 0.0,
+          "resumed_cruise": null,
+          "collided": false,
+          "collision_callbacks": 0,
+          "first_collision_s": null,
+          "first_aeb_s": 2.5,
+          "aeb_interventions": 1,
+          "peak_deceleration_mps2": 15.303421020507812,
+          "braked_before_contact": null,
+          "pre_contact_speed_kmh": null,
+          "min_projected_gap_m": 11.704829072952158,
+          "steady_gap_rmse_m": null,
+          "steady_speed_rmse_mps": null,
+          "jerk_rms_mps3": 28.280277561404972,
+          "final_speed_mps": 2.3938557660585502e-06,
+          "aeb_for_other_target": false,
+          "path_rmse_m": 0.0733169311479683,
+          "path_peak_m": 0.2316104441575974,
+          "heading_peak_rad": 0.060480585729235425,
+          "turn_deg": 29.57376861572266,
+          "lead_path_peak_m": 0.2032195304431114,
+          "target_coverage": 1.0,
+          "min_path_gap_m": 11.81190618418286
+        },
+        "diagnostics": {
+          "peak_time_s": 1.05,
+          "peak_fd_deceleration_mps2": 15.303421020507812,
+          "api_acceleration_at_peak_mps2": -15.303426400334308,
+          "applied_brake_at_peak": 0.0,
+          "previous_requested_brake": 0.0,
+          "vector_acceleration_max_error_mps2": 5.960464477539062e-07,
+          "stopped_s": 5.9
+        },
+        "full_precontact": {
+          "window_end_s": 12,
+          "peak_deceleration_mps2": 15.303421020507812,
+          "jerk_rms_mps3": 28.280277561404972
+        }
+      },
+      "physics_holdout_2_2_baseline": {
+        "metrics": {
+          "valid": true,
+          "invalid_reasons": [],
+          "verdict": "pass",
+          "event_observed_s": 5.8,
+          "first_lead_selected_s": 0.0,
+          "resumed_cruise": null,
+          "collided": false,
+          "collision_callbacks": 0,
+          "first_collision_s": null,
+          "first_aeb_s": 2.5,
+          "aeb_interventions": 1,
+          "peak_deceleration_mps2": 15.168342590332031,
+          "braked_before_contact": null,
+          "pre_contact_speed_kmh": null,
+          "min_projected_gap_m": 11.64922742391144,
+          "steady_gap_rmse_m": null,
+          "steady_speed_rmse_mps": null,
+          "jerk_rms_mps3": 23.243520768986947,
+          "final_speed_mps": 1.924254320329055e-06,
+          "aeb_for_other_target": false,
+          "path_rmse_m": 0.07218595197805877,
+          "path_peak_m": 0.2311200958668258,
+          "heading_peak_rad": 0.060094216070565316,
+          "turn_deg": 29.57057571411133,
+          "lead_path_peak_m": 0.2042649608181669,
+          "target_coverage": 1.0,
+          "min_path_gap_m": 11.756882857709101
+        },
+        "diagnostics": {
+          "peak_time_s": 1.05,
+          "peak_fd_deceleration_mps2": 15.168342590332031,
+          "api_acceleration_at_peak_mps2": -15.168376288991965,
+          "applied_brake_at_peak": 0.0,
+          "previous_requested_brake": 0.0,
+          "vector_acceleration_max_error_mps2": 5.364418029785156e-07,
+          "stopped_s": 6.0
+        },
+        "full_precontact": {
+          "window_end_s": 12,
+          "peak_deceleration_mps2": 15.168342590332031,
+          "jerk_rms_mps3": 23.243520768986947
+        }
+      }
+    },
+    "holdout-b": {
+      "physics_holdout_0_0_baseline": {
+        "metrics": {
+          "valid": true,
+          "invalid_reasons": [],
+          "verdict": "pass",
+          "event_observed_s": 3.65,
+          "first_lead_selected_s": 0.0,
+          "resumed_cruise": null,
+          "collided": false,
+          "collision_callbacks": 0,
+          "first_collision_s": null,
+          "first_aeb_s": 2.55,
+          "aeb_interventions": 1,
+          "peak_deceleration_mps2": 26.975317001342773,
+          "braked_before_contact": null,
+          "pre_contact_speed_kmh": null,
+          "min_projected_gap_m": 6.6136240108508595,
+          "steady_gap_rmse_m": null,
+          "steady_speed_rmse_mps": null,
+          "jerk_rms_mps3": 37.75733318649602,
+          "final_speed_mps": 1.907369195919273e-08,
+          "aeb_for_other_target": false,
+          "path_rmse_m": 0.03720539690460858,
+          "path_peak_m": 0.10020494886664906,
+          "heading_peak_rad": 0.01685867275352404,
+          "turn_deg": 19.314819335937493,
+          "lead_path_peak_m": 0.07245944553156801,
+          "target_coverage": 1.0,
+          "min_path_gap_m": 6.688152911968373
+        },
+        "diagnostics": {
+          "peak_time_s": 4.25,
+          "peak_fd_deceleration_mps2": 26.975317001342773,
+          "api_acceleration_at_peak_mps2": -26.97538660220625,
+          "applied_brake_at_peak": 1.0,
+          "previous_requested_brake": 1.0,
+          "vector_acceleration_max_error_mps2": 9.5367431640625e-07,
+          "stopped_s": 4.4
+        },
+        "full_precontact": {
+          "window_end_s": 12,
+          "peak_deceleration_mps2": 26.975317001342773,
+          "jerk_rms_mps3": 37.75733318649602
+        }
+      },
+      "physics_holdout_0_1_baseline": {
+        "metrics": {
+          "valid": true,
+          "invalid_reasons": [],
+          "verdict": "pass",
+          "event_observed_s": 4.7,
+          "first_lead_selected_s": 0.0,
+          "resumed_cruise": null,
+          "collided": false,
+          "collision_callbacks": 0,
+          "first_collision_s": null,
+          "first_aeb_s": 2.55,
+          "aeb_interventions": 1,
+          "peak_deceleration_mps2": 20.529283131472766,
+          "braked_before_contact": null,
+          "pre_contact_speed_kmh": null,
+          "min_projected_gap_m": 7.652887007793682,
+          "steady_gap_rmse_m": null,
+          "steady_speed_rmse_mps": null,
+          "jerk_rms_mps3": 37.725944889078924,
+          "final_speed_mps": 7.685557079639693e-08,
+          "aeb_for_other_target": false,
+          "path_rmse_m": 0.03440587352270539,
+          "path_peak_m": 0.10166878811756641,
+          "heading_peak_rad": 0.01826217430208321,
+          "turn_deg": 20.042724609374996,
+          "lead_path_peak_m": 0.06970324774203492,
+          "target_coverage": 1.0,
+          "min_path_gap_m": 7.733453231027582
+        },
+        "diagnostics": {
+          "peak_time_s": 5.25,
+          "peak_fd_deceleration_mps2": 20.529283131472766,
+          "api_acceleration_at_peak_mps2": -20.52857177300394,
+          "applied_brake_at_peak": 1.0,
+          "previous_requested_brake": 1.0,
+          "vector_acceleration_max_error_mps2": 9.047798812389374e-07,
+          "stopped_s": 5.25
+        },
+        "full_precontact": {
+          "window_end_s": 12,
+          "peak_deceleration_mps2": 20.529283131472766,
+          "jerk_rms_mps3": 37.725944889078924
+        }
+      },
+      "physics_holdout_0_2_baseline": {
+        "metrics": {
+          "valid": true,
+          "invalid_reasons": [],
+          "verdict": "pass",
+          "event_observed_s": 4.7,
+          "first_lead_selected_s": 0.0,
+          "resumed_cruise": null,
+          "collided": false,
+          "collision_callbacks": 0,
+          "first_collision_s": null,
+          "first_aeb_s": 2.55,
+          "aeb_interventions": 1,
+          "peak_deceleration_mps2": 13.318800318520516,
+          "braked_before_contact": null,
+          "pre_contact_speed_kmh": null,
+          "min_projected_gap_m": 7.610156645056737,
+          "steady_gap_rmse_m": null,
+          "steady_speed_rmse_mps": null,
+          "jerk_rms_mps3": 25.258754389006683,
+          "final_speed_mps": 9.179134963233082e-07,
+          "aeb_for_other_target": false,
+          "path_rmse_m": 0.03438948779561287,
+          "path_peak_m": 0.10268386044496275,
+          "heading_peak_rad": 0.01863485715354951,
+          "turn_deg": 20.10407257080078,
+          "lead_path_peak_m": 0.07009150225079468,
+          "target_coverage": 1.0,
+          "min_path_gap_m": 7.689116661065242
+        },
+        "diagnostics": {
+          "peak_time_s": 5.35,
+          "peak_fd_deceleration_mps2": 13.318800318520516,
+          "api_acceleration_at_peak_mps2": -13.318204088405746,
+          "applied_brake_at_peak": 1.0,
+          "previous_requested_brake": 1.0,
+          "vector_acceleration_max_error_mps2": 6.621703505516052e-07,
+          "stopped_s": 5.35
+        },
+        "full_precontact": {
+          "window_end_s": 12,
+          "peak_deceleration_mps2": 13.318800318520516,
+          "jerk_rms_mps3": 25.258754389006683
+        }
+      },
+      "physics_holdout_1_0_baseline": {
+        "metrics": {
+          "valid": true,
+          "invalid_reasons": [],
+          "verdict": "pass",
+          "event_observed_s": 3.45,
+          "first_lead_selected_s": 0.0,
+          "resumed_cruise": null,
+          "collided": false,
+          "collision_callbacks": 0,
+          "first_collision_s": null,
+          "first_aeb_s": 2.25,
+          "aeb_interventions": 1,
+          "peak_deceleration_mps2": 26.977782249450684,
+          "braked_before_contact": null,
+          "pre_contact_speed_kmh": null,
+          "min_projected_gap_m": 1.1050317138278443,
+          "steady_gap_rmse_m": null,
+          "steady_speed_rmse_mps": null,
+          "jerk_rms_mps3": 37.87149079019191,
+          "final_speed_mps": 1.3828276905769599e-06,
+          "aeb_for_other_target": false,
+          "path_rmse_m": 0.0642840782357195,
+          "path_peak_m": 0.19097322498883335,
+          "heading_peak_rad": 0.040555135954605526,
+          "turn_deg": 29.240932404994965,
+          "lead_path_peak_m": 0.15332083103006894,
+          "target_coverage": 1.0,
+          "min_path_gap_m": 1.1598686562424234
+        },
+        "diagnostics": {
+          "peak_time_s": 4.3,
+          "peak_fd_deceleration_mps2": 26.977782249450684,
+          "api_acceleration_at_peak_mps2": -26.977947835670697,
+          "applied_brake_at_peak": 1.0,
+          "previous_requested_brake": 1.0,
+          "vector_acceleration_max_error_mps2": 9.5367431640625e-07,
+          "stopped_s": 4.45
+        },
+        "full_precontact": {
+          "window_end_s": 12,
+          "peak_deceleration_mps2": 26.977782249450684,
+          "jerk_rms_mps3": 37.87149079019191
+        }
+      },
+      "physics_holdout_1_1_baseline": {
+        "metrics": {
+          "valid": true,
+          "invalid_reasons": [],
+          "verdict": "pass",
+          "event_observed_s": 4.3,
+          "first_lead_selected_s": 0.0,
+          "resumed_cruise": null,
+          "collided": false,
+          "collision_callbacks": 0,
+          "first_collision_s": null,
+          "first_aeb_s": 2.25,
+          "aeb_interventions": 1,
+          "peak_deceleration_mps2": 14.14971113204956,
+          "braked_before_contact": null,
+          "pre_contact_speed_kmh": null,
+          "min_projected_gap_m": 1.0744648077086696,
+          "steady_gap_rmse_m": null,
+          "steady_speed_rmse_mps": null,
+          "jerk_rms_mps3": 27.230496476423934,
+          "final_speed_mps": 1.2397774753480917e-06,
+          "aeb_for_other_target": false,
+          "path_rmse_m": 0.0601341573041844,
+          "path_peak_m": 0.19565045521232055,
+          "heading_peak_rad": 0.04182492038011626,
+          "turn_deg": 30.35703843832016,
+          "lead_path_peak_m": 0.15134938587990732,
+          "target_coverage": 1.0,
+          "min_path_gap_m": 1.1318971903055797
+        },
+        "diagnostics": {
+          "peak_time_s": 5.3,
+          "peak_fd_deceleration_mps2": 14.14971113204956,
+          "api_acceleration_at_peak_mps2": -14.149438874972738,
+          "applied_brake_at_peak": 1.0,
+          "previous_requested_brake": 1.0,
+          "vector_acceleration_max_error_mps2": 2.9634975362569094e-07,
+          "stopped_s": 5.35
+        },
+        "full_precontact": {
+          "window_end_s": 12,
+          "peak_deceleration_mps2": 14.14971113204956,
+          "jerk_rms_mps3": 27.230496476423934
+        }
+      },
+      "physics_holdout_1_2_baseline": {
+        "metrics": {
+          "valid": true,
+          "invalid_reasons": [],
+          "verdict": "pass",
+          "event_observed_s": 4.3,
+          "first_lead_selected_s": 0.0,
+          "resumed_cruise": null,
+          "collided": false,
+          "collision_callbacks": 0,
+          "first_collision_s": null,
+          "first_aeb_s": 2.25,
+          "aeb_interventions": 1,
+          "peak_deceleration_mps2": 12.982177734375,
+          "braked_before_contact": null,
+          "pre_contact_speed_kmh": null,
+          "min_projected_gap_m": 1.041671580326672,
+          "steady_gap_rmse_m": null,
+          "steady_speed_rmse_mps": null,
+          "jerk_rms_mps3": 21.139098181953887,
+          "final_speed_mps": 3.3379020436541396e-08,
+          "aeb_for_other_target": false,
+          "path_rmse_m": 0.05914989747575744,
+          "path_peak_m": 0.19334342593529374,
+          "heading_peak_rad": 0.04208451601197552,
+          "turn_deg": 30.431617677211765,
+          "lead_path_peak_m": 0.15235182003257644,
+          "target_coverage": 1.0,
+          "min_path_gap_m": 1.0988280367262888
+        },
+        "diagnostics": {
+          "peak_time_s": 1.25,
+          "peak_fd_deceleration_mps2": 12.982177734375,
+          "api_acceleration_at_peak_mps2": -12.965376951574717,
+          "applied_brake_at_peak": 0.0,
+          "previous_requested_brake": 0.0,
+          "vector_acceleration_max_error_mps2": 2.384185791015625e-07,
+          "stopped_s": 5.45
+        },
+        "full_precontact": {
+          "window_end_s": 12,
+          "peak_deceleration_mps2": 12.982177734375,
+          "jerk_rms_mps3": 21.139098181953887
+        }
+      },
+      "physics_holdout_2_0_baseline": {
+        "metrics": {
+          "valid": true,
+          "invalid_reasons": [],
+          "verdict": "pass",
+          "event_observed_s": 4.75,
+          "first_lead_selected_s": 0.0,
+          "resumed_cruise": null,
+          "collided": false,
+          "collision_callbacks": 0,
+          "first_collision_s": null,
+          "first_aeb_s": 2.5,
+          "aeb_interventions": 1,
+          "peak_deceleration_mps2": 27.0969295501709,
+          "braked_before_contact": null,
+          "pre_contact_speed_kmh": null,
+          "min_projected_gap_m": 10.971383163918588,
+          "steady_gap_rmse_m": null,
+          "steady_speed_rmse_mps": null,
+          "jerk_rms_mps3": 43.578258830912695,
+          "final_speed_mps": 2.7656872703119006e-07,
+          "aeb_for_other_target": false,
+          "path_rmse_m": 0.07941467522284588,
+          "path_peak_m": 0.23063566707429242,
+          "heading_peak_rad": 0.06002111229864249,
+          "turn_deg": 28.705677032470703,
+          "lead_path_peak_m": 0.2033398428945846,
+          "target_coverage": 1.0,
+          "min_path_gap_m": 11.07375040169623
+        },
+        "diagnostics": {
+          "peak_time_s": 4.8,
+          "peak_fd_deceleration_mps2": 27.0969295501709,
+          "api_acceleration_at_peak_mps2": -27.097057931168756,
+          "applied_brake_at_peak": 1.0,
+          "previous_requested_brake": 1.0,
+          "vector_acceleration_max_error_mps2": 9.5367431640625e-07,
+          "stopped_s": 5.0
+        },
+        "full_precontact": {
+          "window_end_s": 12,
+          "peak_deceleration_mps2": 27.0969295501709,
+          "jerk_rms_mps3": 43.578258830912695
+        }
+      },
+      "physics_holdout_2_1_baseline": {
+        "metrics": {
+          "valid": true,
+          "invalid_reasons": [],
+          "verdict": "pass",
+          "event_observed_s": 5.8,
+          "first_lead_selected_s": 0.0,
+          "resumed_cruise": null,
+          "collided": false,
+          "collision_callbacks": 0,
+          "first_collision_s": null,
+          "first_aeb_s": 2.5,
+          "aeb_interventions": 1,
+          "peak_deceleration_mps2": 15.303421020507812,
+          "braked_before_contact": null,
+          "pre_contact_speed_kmh": null,
+          "min_projected_gap_m": 11.704829072952158,
+          "steady_gap_rmse_m": null,
+          "steady_speed_rmse_mps": null,
+          "jerk_rms_mps3": 28.280277561404972,
+          "final_speed_mps": 2.3938557660585502e-06,
+          "aeb_for_other_target": false,
+          "path_rmse_m": 0.0733169311479683,
+          "path_peak_m": 0.2316104441575974,
+          "heading_peak_rad": 0.060480585729235425,
+          "turn_deg": 29.57376861572266,
+          "lead_path_peak_m": 0.2032195304431114,
+          "target_coverage": 1.0,
+          "min_path_gap_m": 11.81190618418286
+        },
+        "diagnostics": {
+          "peak_time_s": 1.05,
+          "peak_fd_deceleration_mps2": 15.303421020507812,
+          "api_acceleration_at_peak_mps2": -15.303426400334308,
+          "applied_brake_at_peak": 0.0,
+          "previous_requested_brake": 0.0,
+          "vector_acceleration_max_error_mps2": 5.960464477539062e-07,
+          "stopped_s": 5.9
+        },
+        "full_precontact": {
+          "window_end_s": 12,
+          "peak_deceleration_mps2": 15.303421020507812,
+          "jerk_rms_mps3": 28.280277561404972
+        }
+      },
+      "physics_holdout_2_2_baseline": {
+        "metrics": {
+          "valid": true,
+          "invalid_reasons": [],
+          "verdict": "pass",
+          "event_observed_s": 5.8,
+          "first_lead_selected_s": 0.0,
+          "resumed_cruise": null,
+          "collided": false,
+          "collision_callbacks": 0,
+          "first_collision_s": null,
+          "first_aeb_s": 2.5,
+          "aeb_interventions": 1,
+          "peak_deceleration_mps2": 15.168342590332031,
+          "braked_before_contact": null,
+          "pre_contact_speed_kmh": null,
+          "min_projected_gap_m": 11.64922742391144,
+          "steady_gap_rmse_m": null,
+          "steady_speed_rmse_mps": null,
+          "jerk_rms_mps3": 23.243520768986947,
+          "final_speed_mps": 1.924254320329055e-06,
+          "aeb_for_other_target": false,
+          "path_rmse_m": 0.07218595197805877,
+          "path_peak_m": 0.2311200958668258,
+          "heading_peak_rad": 0.060094216070565316,
+          "turn_deg": 29.57057571411133,
+          "lead_path_peak_m": 0.2042649608181669,
+          "target_coverage": 1.0,
+          "min_path_gap_m": 11.756882857709101
+        },
+        "diagnostics": {
+          "peak_time_s": 1.05,
+          "peak_fd_deceleration_mps2": 15.168342590332031,
+          "api_acceleration_at_peak_mps2": -15.168376288991965,
+          "applied_brake_at_peak": 0.0,
+          "previous_requested_brake": 0.0,
+          "vector_acceleration_max_error_mps2": 5.364418029785156e-07,
+          "stopped_s": 6.0
+        },
+        "full_precontact": {
+          "window_end_s": 12,
+          "peak_deceleration_mps2": 15.168342590332031,
+          "jerk_rms_mps3": 23.243520768986947
+        }
+      }
+    }
+  },
+  "repeat_event_deltas": {
+    "a/brake_0_staged_baseline": {
+      "first_lead_selected_s": 0.0,
+      "first_aeb_s": 0.0,
+      "first_collision_s": 0.0,
+      "event_observed_s": 0.0
+    },
+    "a/brake_0_warning_baseline": {
+      "first_lead_selected_s": 0.0,
+      "first_aeb_s": 0.0,
+      "first_collision_s": 0,
+      "event_observed_s": 0.0
+    },
+    "substep-a/brake_0_staged_baseline": {
+      "first_lead_selected_s": 0.0,
+      "first_aeb_s": 0.0,
+      "first_collision_s": 0.0,
+      "event_observed_s": 0.0
+    },
+    "substep-a/brake_0_warning_baseline": {
+      "first_lead_selected_s": 0.0,
+      "first_aeb_s": 0.0,
+      "first_collision_s": 0,
+      "event_observed_s": 0.0
+    },
+    "substep3125-a/brake_0_staged_baseline": {
+      "first_lead_selected_s": 0.0,
+      "first_aeb_s": 0.0,
+      "first_collision_s": 0.0,
+      "event_observed_s": 0.0
+    },
+    "substep3125-a/brake_0_warning_baseline": {
+      "first_lead_selected_s": 0.0,
+      "first_aeb_s": 0.0,
+      "first_collision_s": 0,
+      "event_observed_s": 0.0
+    },
+    "holdout-a/physics_holdout_0_0_baseline": {
+      "first_lead_selected_s": 0.0,
+      "first_aeb_s": 0.0,
+      "first_collision_s": 0,
+      "event_observed_s": 0.0
+    },
+    "holdout-a/physics_holdout_0_1_baseline": {
+      "first_lead_selected_s": 0.0,
+      "first_aeb_s": 0.0,
+      "first_collision_s": 0,
+      "event_observed_s": 0.0
+    },
+    "holdout-a/physics_holdout_0_2_baseline": {
+      "first_lead_selected_s": 0.0,
+      "first_aeb_s": 0.0,
+      "first_collision_s": 0,
+      "event_observed_s": 0.0
+    },
+    "holdout-a/physics_holdout_1_0_baseline": {
+      "first_lead_selected_s": 0.0,
+      "first_aeb_s": 0.0,
+      "first_collision_s": 0,
+      "event_observed_s": 0.0
+    },
+    "holdout-a/physics_holdout_1_1_baseline": {
+      "first_lead_selected_s": 0.0,
+      "first_aeb_s": 0.0,
+      "first_collision_s": 0,
+      "event_observed_s": 0.0
+    },
+    "holdout-a/physics_holdout_1_2_baseline": {
+      "first_lead_selected_s": 0.0,
+      "first_aeb_s": 0.0,
+      "first_collision_s": 0,
+      "event_observed_s": 0.0
+    },
+    "holdout-a/physics_holdout_2_0_baseline": {
+      "first_lead_selected_s": 0.0,
+      "first_aeb_s": 0.0,
+      "first_collision_s": 0,
+      "event_observed_s": 0.0
+    },
+    "holdout-a/physics_holdout_2_1_baseline": {
+      "first_lead_selected_s": 0.0,
+      "first_aeb_s": 0.0,
+      "first_collision_s": 0,
+      "event_observed_s": 0.0
+    },
+    "holdout-a/physics_holdout_2_2_baseline": {
+      "first_lead_selected_s": 0.0,
+      "first_aeb_s": 0.0,
+      "first_collision_s": 0,
+      "event_observed_s": 0.0
+    }
+  }
+}
