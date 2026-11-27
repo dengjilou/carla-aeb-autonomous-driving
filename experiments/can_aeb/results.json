@@ -1,0 +1,105 @@
+{
+  "a_staged": {
+    "frames": 240,
+    "first_aeb_s": 2.8,
+    "issues": [],
+    "max_abs_error": {
+      "Speed": 0.004994743037968874,
+      "OrdinaryBrake": 0.0,
+      "FinalBrake": 0.0,
+      "AebRequest": 0.0,
+      "AebLevel": 0,
+      "Counter": 0
+    }
+  },
+  "drop": {
+    "frames": 239,
+    "first_aeb_s": 2.8,
+    "issues": [
+      {
+        "id": "500",
+        "observed_ms": 500,
+        "reason": "counter_gap"
+      }
+    ]
+  },
+  "repeat": {
+    "frames": 241,
+    "first_aeb_s": 2.8,
+    "issues": [
+      {
+        "id": "500",
+        "observed_ms": 450,
+        "reason": "duplicate"
+      }
+    ]
+  },
+  "timeout": {
+    "frames": 237,
+    "first_aeb_s": 2.8,
+    "issues": [
+      {
+        "id": "500",
+        "observed_ms": 600,
+        "reason": "timeout"
+      },
+      {
+        "id": "500",
+        "observed_ms": 600,
+        "reason": "counter_gap"
+      }
+    ]
+  },
+  "terminal": {
+    "observation_end_ms": 11950,
+    "frames": 237,
+    "first_aeb_s": 2.8,
+    "issues": [
+      {
+        "id": "500",
+        "observed_ms": 11950,
+        "deadline_ms": 11950,
+        "reason": "terminal_timeout"
+      }
+    ]
+  },
+  "a_warning": {
+    "frames": 240,
+    "first_aeb_s": 2.4,
+    "issues": [],
+    "max_abs_error": {
+      "Speed": 0.004977073669433452,
+      "OrdinaryBrake": 0.0,
+      "FinalBrake": 0.0,
+      "AebRequest": 0.0,
+      "AebLevel": 0,
+      "Counter": 0
+    }
+  },
+  "b_staged": {
+    "frames": 240,
+    "first_aeb_s": 2.8,
+    "issues": [],
+    "max_abs_error": {
+      "Speed": 0.004994743037968874,
+      "OrdinaryBrake": 0.0,
+      "FinalBrake": 0.0,
+      "AebRequest": 0.0,
+      "AebLevel": 0,
+      "Counter": 0
+    }
+  },
+  "b_warning": {
+    "frames": 240,
+    "first_aeb_s": 2.4,
+    "issues": [],
+    "max_abs_error": {
+      "Speed": 0.004977073669433452,
+      "OrdinaryBrake": 0.0,
+      "FinalBrake": 0.0,
+      "AebRequest": 0.0,
+      "AebLevel": 0,
+      "Counter": 0
+    }
+  }
+}

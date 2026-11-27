@@ -1,0 +1,12 @@
+VERSION "Educational offline CARLA replay"
+NS_ :
+BS_:
+BU_: Simulator Monitor
+
+BO_ 1280 BrakeStatus: 8 Simulator
+ SG_ Speed : 0|16@1+ (0.01,0) [0|655.35] "m/s" Monitor
+ SG_ OrdinaryBrake : 16|8@1+ (0.01,0) [0|1] "" Monitor
+ SG_ AebRequest : 24|8@1+ (0.01,0) [0|1] "" Monitor
+ SG_ FinalBrake : 32|8@1+ (0.01,0) [0|1] "" Monitor
+ SG_ Counter : 40|4@1+ (1,0) [0|15] "" Monitor
+ SG_ AebLevel : 44|4@1+ (1,0) [0|3] "" Monitor
