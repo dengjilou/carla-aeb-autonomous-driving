@@ -1,0 +1,44 @@
+Panels:
+  - Class: rviz_common/Displays
+    Name: Displays
+Visualization Manager:
+  Global Options:
+    Fixed Frame: map
+    Background Color: 26; 33; 44
+  Displays:
+    - Class: rviz_default_plugins/PointCloud2
+      Name: KITTI laser points
+      Enabled: true
+      Topic:
+        Value: /kitti/points
+        Reliability Policy: Reliable
+      Color Transformer: FlatColor
+      Color: 152; 172; 193
+      Style: Points
+      Size (Pixels): 2
+    - Class: rviz_default_plugins/Path
+      Name: Ground truth
+      Enabled: true
+      Topic:
+        Value: /kitti/truth
+      Color: 72; 229; 172
+      Line Style: Billboards
+      Line Width: 0.45
+    - Class: rviz_default_plugins/Path
+      Name: ICP estimate
+      Enabled: true
+      Topic:
+        Value: /kitti/estimate
+      Color: 254; 152; 60
+      Line Style: Billboards
+      Line Width: 0.45
+  Views:
+    Current:
+      Class: rviz_default_plugins/TopDownOrtho
+      Target Frame: map
+      Scale: 4
+      X: 0
+      Y: 0
+Window Geometry:
+  Width: 1100
+  Height: 720
