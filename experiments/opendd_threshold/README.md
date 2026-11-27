@@ -4,6 +4,8 @@
 
 ## 30 段主分析，88 对车辆
 
+[打开 15 个敏感片段的轨迹与速度图册](gallery/README.md) · [直接查看 rdb5_379 第 6 对车辆](gallery/rdb5_379_6.png)
+
 | 1 s 降速阈值（m/s） | 数据库速度 V | 原始位置差分 | 50 ms 重采样位置差分 |
 |---:|---:|---:|---:|
 | 0.8 | 14 | 22 | 18 |
@@ -40,4 +42,10 @@ for group in development earlier heldout; do
 done
 python prepare.py audits regenerated.csv
 python evaluate.py regenerated.csv reproduced.json
+```
+
+安装 Matplotlib 与 NumPy 后，可在同一目录从原始数据库生成图册。程序重新计算图中的一秒降速，并逐项核对已发布的逐对峰值。
+
+```bash
+PYTHONPATH="$PWD/roundabout" MPLBACKEND=Agg python case_gallery.py "$DB" gallery
 ```

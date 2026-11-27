@@ -24,10 +24,8 @@ def resample(points):
         yield t, x + weight*(xx-x), y + weight*(yy-y)
 
 
-def best_drop(points, start, stop, rules, grid):
-    duration = rules['speed']['drop_window_s']
+def position_speed_segments(points, start, stop, rules, grid):
     gap = rules['max_frame_gap_s']
-    peaks = []
     # Break gaps before both interpolation and differencing.
     cuts = [0] + [i for i in range(1,len(points)) if points[i][0]-points[i-1][0] > gap] + [len(points)]
     for a,b in pairwise(cuts):
@@ -39,10 +37,14 @@ def best_drop(points, start, stop, rules, grid):
             middle = (t+tt)/2
             if start <= middle <= stop:
                 samples.append((middle, hypot(xx-x,yy-y)/(tt-t)))
-        peak = speed_drop(samples,duration,gap)
-        if peak:
-            peaks.append(peak)
-    return max(peaks,key=lambda p:p['drop_mps'],default=None)
+        if samples:
+            yield samples
+
+
+def best_drop(points, start, stop, rules, grid):
+    peaks = (speed_drop(s, rules['speed']['drop_window_s'], rules['max_frame_gap_s'])
+             for s in position_speed_segments(points, start, stop, rules, grid))
+    return max((p for p in peaks if p),key=lambda p:p['drop_mps'],default=None)
 
 
 def audit(database, numbers=COHORTS['heldout']):
